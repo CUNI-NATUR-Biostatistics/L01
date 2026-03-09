@@ -444,6 +444,22 @@ include_local_figure("pocet_tucnaku.gif")
 include_local_figure("pocet_tucnaku.png")
 ```
 
+## Co vidíme v datech?
+
+```{r}
+#| label: co-vidime-otazka
+#| echo: false
+include_local_figure("pocet_tucnaku.png")
+```
+
+*Než pokračujeme — zapište si jednu věc, co z grafu vidíte.*
+
+::: {.incremental}
+- Kde jsou průzkumy nejkoncentrovanější?
+- Jsou v datech nějaké neobvyklé hodnoty?
+- Jsou všechny průzkumy podobně velké, nebo jsou velké rozdíly?
+:::
+
 ## Naše data
 
 Nyní máme data. Jak je **vizualizovat**?
@@ -664,6 +680,22 @@ include_local_figure("pocet_tucnaku_hustota.png")
 - „vyhlazená" verze histogramu – nezávisí na šířce koše
 - ukazuje **relativní četnost**: kde jsou hodnoty pravděpodobnější
 - vhodný pro porovnání **více skupin** najednou
+:::
+
+## Jak interpretujeme tento graf?
+
+```{r}
+#| label: interpretace-histogramu
+#| echo: false
+include_local_figure("pocet_tucnaku_histogram.png")
+```
+
+*Co o datech sděluje tento histogram?*
+
+::: {.incremental}
+- Kde jsou průzkumy nejčastější?
+- Je distribuce symetrická nebo asymetrická?
+- Který graf (bodový / histogram / hustota) byl pro vás nejinformativnější?
 :::
 
 # Deskriptivní statistiky
@@ -998,6 +1030,14 @@ include_local_figure("pocet_tucnaku_prumer.png")
 :::
 
 ::::
+
+## Otázka k zamyšlení
+
+Přidáme do dat jeden průzkum s **90 tučňáky**. Jak se změní průměr a medián?
+
+- A) Oba se zvýší přibližně stejně
+- B) Průměr se zvýší výrazně, medián jen mírně
+- C) Medián se zvýší výrazně, průměr jen mírně
 
 ## Průměr vs. Medián
 
@@ -1577,6 +1617,12 @@ include_local_figure("pocet_tucnaku_boxplot_beeswarm.png")
 Boxplot není nový koncept – je to jen statistiky, které znáte, nakreslený jako tvar.
 :::
 
+## Diskuze se sousedem (2 min)
+
+Kamarád říká: „Přece víme průměr a SD — proč bychom kreslili boxplot?"
+
+*Diskutujte se sousedem. Co byste mu odpověděli?*
+
 # Typy proměnných
 
 ```{r}
@@ -2079,5 +2125,27 @@ ggview::save_ggplot(
 include_local_figure("kategorie_hmotnosti.png")
 ```
 
+:::
+
+# Závěr
+
+## Shrnutí
+
+::: {.incremental}
+- **Vždy nejdřív vizualizujte** — grafy odhalují, co čísla skrývají
+- **Průměr je citlivý na odlehlé hodnoty** — medián je odolnější
+- **Boxplot** shrnuje medián, IQR, vousy a odlehlé hodnoty najednou
+- **Typ proměnné** určuje správnou statistiku i vizualizaci
+- **Střed ≠ popis variability** — potřebujeme obojí
+:::
+
+## Závěrečná otázka
+
+Kdy byste **nepoužili průměr** jako míru polohy?
+
+::: {.incremental}
+- Kdy data obsahují odlehlé hodnoty
+- Kdy je distribuce silně asymetrická
+- Kdy chcete popsat „typický" případ ve zkosených datech
 :::
 
