@@ -1,7 +1,7 @@
 # L-example – Ukázkový repozitář přednášky
 
 Ukázkový repozitář demonstrující strukturu a workflow týdenních repozitářů kurzu **Biostatistika (MB120P163)**.
-
+Téma: Vizualizace dat a deskriptivní statistika. Data: reálná ekologická data z projektu [Palmer Penguins](https://allisonhorst.github.io/palmerpenguins/) (počty tučňáků z průzkumů, délka zobáku).
 Slouží jako reference při vytváření `_L-template` a jednotlivých repozitářů `L01`–`L12`.
 
 ---
@@ -14,11 +14,12 @@ L-example/
 │   ├── presentation.qmd   # Hlavní zdrojový soubor
 │   ├── presentation.html  # Výstup renderování (lokální)
 │   ├── presentation_raw.pdf  # PDF export přes decktape
-│   └── Materials/         # Podpůrné materiály ke snímkům
+│   └── Materials/         # Podpůrné materiály ke snímkům (obrázky, GIFy)
 ├── Learing_materials/     # Podkladová čtenářská skripta
 │   ├── skripta.qmd        # Hlavní zdrojový soubor
 │   ├── skripta.html       # HTML výstup
-│   └── skripta.pdf        # PDF výstup (přes Typst)
+│   ├── skripta.pdf        # PDF výstup (přes Typst)
+│   └── images/            # Obrázky pro skripta (viz poznámka níže o Typst)
 ├── R/
 │   └── render_presentatuion.R  # Skript pro renderování a přesun výstupů
 ├── docs/
@@ -59,4 +60,5 @@ Podrobnosti viz [`_internal/obecne/nove/strategie_releases.md`](https://github.c
 
 - Soubory `.html` a `.pdf` v repozitáři jsou renderované výstupy – neslouží jako zdroj; editujeme vždy `.qmd`.
 - Při editaci `.qmd` souborů používejte **výhradně file-edit nástroje** (nikoli PowerShell inline přiřazení), aby nedošlo ke korrupci UTF-8 (diakritiky). Viz instrukce v `.github/instructions/file-editing-safety.instructions.md`.
-- `fix_presentation.ps1` je záchranný skript pro ruční opravu UTF-8 korrupce; za normálního workflow by neměl být potřeba.
+- `fix_presentation.ps1` je záchranný skript pro ruční opravu UTF-8 korrupce; za normálního workflow by neměl být potřeba.- **Typst (PDF) a cesty k obrázkům:** Typst sandboxuje přístup k souborům jen v rámci svého projektového adresáře. Obrázky používané v `skripta.qmd` **musí být uloženy uvnitř `Learing_materials/`** (např. `Learing_materials/images/`). Cesty s `../` (např. do `Presentation/Materials/`) způsobí chybu „access denied“ při renderování do PDF.
+- Po jakékoli změně souboru mimo editor ověřte, že soubor nezahínal BOM (`EF BB BF`) – který znemožňuje parsování YAML. Postup viz `.github/instructions/file-editing-safety.instructions.md`.

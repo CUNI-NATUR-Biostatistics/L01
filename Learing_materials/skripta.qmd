@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Vizualizace dat a deskriptivní statistika"
 subtitle: "Podkladové čtenářské materiály k přednášce"
 lang: cs
@@ -31,9 +31,11 @@ here::i_am("Learing_materials/skripta.qmd")
 
 if (!require("tidyverse")) install.packages("tidyverse")
 if (!require("ggbeeswarm")) install.packages("ggbeeswarm")
+if (!require("palmerpenguins")) install.packages("palmerpenguins")
 
 library(tidyverse)
 library(ggbeeswarm)
+library(palmerpenguins)
 ```
 
 ```{r}
@@ -42,76 +44,74 @@ library(ggbeeswarm)
 #| message: false
 #| warning: false
 
-set.seed(900723)
+# Kompletní dataset bez chybějících hodnot
+data_tucnaci <-
+  palmerpenguins::penguins |>
+  tidyr::drop_na()
 
-vzorek_pocet_listku <-
-  rnorm(
-    n = 100,
-    mean = 7.5,
-    sd = 1.5
-  ) |>
-  round()
+# Hlavní proměnná: počet tučňáků na průzkum (species × island × year)
+data_poctu_tucnaku <-
+  data_tucnaci |>
+  dplyr::count(species, island, year) |>
+  dplyr::rename(pocet_tucnaku = n)
 
-data_pocet_listku <-
+vzorek_poctu_tucnaku <-
+  data_poctu_tucnaku[["pocet_tucnaku"]]
+
+# Outlier: neobvykle velký průzkum
+pocet_tucnaku_outlier <-
+  c(vzorek_poctu_tucnaku, 90L)
+
+# Spojitá: délka zobáku (mm)
+vec_delka_zobaku <-
+  data_tucnaci[["bill_length_mm"]]
+
+data_delka_zobaku <-
   tibble::tibble(
-    pocet_listku = vzorek_pocet_listku
+    delka_zobaku = vec_delka_zobaku
+  )
+
+# Nominální: druh tučňáka
+vec_druh_tucnaku <-
+  as.character(data_tucnaci[["species"]])
+
+data_druh_tucnaku <-
+  tibble::tibble(
+    druh_tucnaku = vec_druh_tucnaku
+  )
+
+barvy_druhu <-
+  c(
+    "Adelie"    = "darkorange",
+    "Chinstrap" = "mediumpurple",
+    "Gentoo"    = "cyan4"
+  )
+
+# Ordinální: kategorie tělesné hmotnosti (tercilement z reálných dat)
+prahy_hmotnosti <-
+  quantile(
+    data_tucnaci[["body_mass_g"]],
+    probs = c(1 / 3, 2 / 3)
+  )
+
+data_kategorie_hmotnosti <-
+  tibble::tibble(
+    hmotnost = data_tucnaci[["body_mass_g"]]
   ) |>
   dplyr::mutate(
-    id = dplyr::row_number()
+    kategorie_hmotnosti = dplyr::case_when(
+      hmotnost < prahy_hmotnosti[[1]] ~ "malý",
+      hmotnost < prahy_hmotnosti[[2]] ~ "střední",
+      TRUE ~ "velký"
+    ) |>
+      factor(
+        levels = c("malý", "střední", "velký"),
+        ordered = TRUE
+      )
   )
 
-pocet_listku_outlier <-
-  c(vzorek_pocet_listku, 50L)
-
-vec_delka_listku <-
-  rnorm(
-    n = 100,
-    mean = 25,
-    sd = 5
-  ) |>
-  round(digits = 1)
-
-data_delka_listku <-
-  tibble::tibble(
-    delka_listku = vec_delka_listku
-  )
-
-vec_barva_kvetiny <-
-  sample(
-    x = c("šedá", "žlutá", "fialová"),
-    size = 100,
-    replace = TRUE,
-    prob = c(0.5, 0.3, 0.2)
-  )
-
-data_barva_kvetiny <-
-  tibble::tibble(
-    barva_kvetiny = vec_barva_kvetiny
-  )
-
-barvy_kvetin <-
-  c(
-    "šedá" = "gray70",
-    "žlutá" = "gold",
-    "fialová" = "mediumpurple"
-  )
-
-vec_stupen_poskozeni <-
-  sample(
-    x = c("0 - žádné", "1 - mírné", "2 - střední", "3 - silné"),
-    size = 100,
-    replace = TRUE,
-    prob = c(0.3, 0.35, 0.25, 0.1)
-  ) |>
-  factor(
-    levels = c("0 - žádné", "1 - mírné", "2 - střední", "3 - silné"),
-    ordered = TRUE
-  )
-
-data_stupen_poskozeni <-
-  tibble::tibble(
-    stupen_poskozeni = vec_stupen_poskozeni
-  )
+vec_kategorie_hmotnosti <-
+  data_kategorie_hmotnosti[["kategorie_hmotnosti"]]
 ```
 
 ```{r}
@@ -133,11 +133,11 @@ col_data <- "steelblue"
 col_highlight <- "firebrick"
 col_median_line <- "darkgreen"
 
-# Sdílený základ pro beeswarm grafy s počtem lístků (horizontální)
+# Sdílený základ pro beeswarm grafy s počtem tučňáků (horizontální)
 plot_base_beeswarm <-
   ggplot2::ggplot(
-    data = data_pocet_listku,
-    mapping = ggplot2::aes(y = vzorek_pocet_listku, x = 1)
+    data = data_poctu_tucnaku,
+    mapping = ggplot2::aes(y = pocet_tucnaku, x = 1)
   ) +
   ggbeeswarm::geom_beeswarm(
     cex = 1.5,
@@ -146,9 +146,9 @@ plot_base_beeswarm <-
     size = 3
   ) +
   ggplot2::coord_flip() +
-  ggplot2::scale_y_continuous(breaks = seq(0, 15, by = 1)) +
+  ggplot2::scale_y_continuous(breaks = seq(0, 55, by = 5)) +
   ggplot2::labs(
-    y = "Počet okvětních lístků",
+    y = "Počet tučňáků (na průzkum)",
     x = ""
   ) +
   ggplot2::theme(
@@ -178,20 +178,20 @@ Ukázky kódu v R jsou ve výchozím stavu **skryté**. Klikněte na tlačítko 
 
 ---
 
-## Naše data — kopretiny
+## Naše data — tučňáci z Palmer Station
 
-Abychom měli konkrétní příklad, vyjdeme pomyšleně na louku a začneme sbírat kopretiny. U každé zapíšeme **počet okvětních lístků**. Proč zrovna kopretiny? Protože jde o jednoduchá, celá čísla, která nepotřebují žádné laboratorní vybavení — a přesto ilustrují všechny koncepty, které v kurzu potřebujeme.
+Jako konkrétní datový příklad použijeme data z projektu **Palmer Penguins** — terénní studie ze tří ostrovů u Antarktidy (Biscoe, Dream, Torgersen). Vědci každoročně (2007–2009) počítali tučňáky tří druhů (*Adelie*, *Chinstrap*, *Gentoo*). Naší hlavní proměnnou bude **počet tučňáků zaznamenaných v jednom průzkumu** — jednoduché celé číslo, které ilustruje všechny statistické koncepty z kurzu.
 
 ### Sběr dat krok za krokem
 
-Zapíšeme první čtyři kopretiny:
+Podívejme se na první čtyři průzkumné záznamy:
 
-| Kopretina | Počet lístků |
-|-----------|:------------:|
-| A         | 8            |
-| B         | 6            |
-| C         | 7            |
-| D         | 8            |
+| Průzkum | Počet tučňáků |
+|---------|:-------------:|
+| 1       | 10            |
+| 2       | 18            |
+| 3       | 16            |
+| 4       | 20            |
 
 V R uložíme tato čtyři čísla do **vektoru** — jednoduché řady hodnot:
 
@@ -199,13 +199,13 @@ V R uložíme tato čtyři čísla do **vektoru** — jednoduché řady hodnot:
 #| label: vytvorit-maly-vektor
 #| echo: true
 #| eval: true
-pocet_listku <-
-  c(8, 6, 7, 8)
+pocet_tucnaku <-
+  c(10L, 18L, 16L, 20L)
 
-pocet_listku
+pocet_tucnaku
 ```
 
-Jak sbíráme více kopretin, vektor se prodlužuje. My jsme nasbírali celkem **100 kopretin**. V těchto materiálech budeme pracovat s vektorem `vzorek_pocet_listku`, který tato data obsahuje. Kdykoli ho uvidíte, jde o naši sadu 100 hodnot.
+Jak přidáváme průzkumy, vektor se prodlužuje. My máme celkem **15 průzkumů** (kombinace třech druhů, tří ostrovů a tří let). V těchto materiálech budeme pracovat s vektorem `vzorek_poctu_tucnaku`, který tato data obsahuje. Kdykoli ho uvidíte, jde o naši sadu 15 hodnot.
 
 ### Pohled na data
 
@@ -215,17 +215,17 @@ Než začneme počítat statistiky, podívejme se alespoň na prvních deset hod
 #| label: zobrazit-delku
 #| echo: true
 #| eval: true
-length(vzorek_pocet_listku)
+length(vzorek_poctu_tucnaku)
 ```
 
 ```{r}
 #| label: prvnich-deset
 #| echo: true
 #| eval: true
-head(vzorek_pocet_listku, n = 10)
+head(vzorek_poctu_tucnaku, n = 10)
 ```
 
-Vidíme různé hodnoty: 8, 9, 7, 7, 8, ... Ale 100 čísel za sebou je příliš mnoho na to, abychom z nich přečetli cokoliv užitečného. Proto **vizualizujeme**.
+Vidíme různé hodnoty: 10, 18, 16, ... I těch 15 čísel nám ale samo o sobě moc neřekne o tvaru distribuce. Proto **vizualizujeme**.
 
 ---
 
@@ -235,7 +235,7 @@ Vidíme různé hodnoty: 8, 9, 7, 7, 8, ... Ale 100 čísel za sebou je příli�
 
 Před tím, než spočítáme jakékoli číslo, bychom se na data měli *podívat*. To není jen zvyk — je to nutnost. Proč?
 
-Mám dvě skupiny kopretin. Obě mají průměrný počet lístků **7**. Výpočty tedy říkají totéž:
+Mám dvě skupiny tučňáků. Obě mají průměrný počet **7**. Výpočty tedy říkají totéž:
 
 ```{r}
 #| label: motivace-statistiky
@@ -257,7 +257,7 @@ Průměry jsou stejné. Ale podívejme se na distribuci hodnot:
 #| warning: false
 data_motivace <-
   tibble::tibble(
-    pocet_listku = c(5, 6, 6, 7, 7, 7, 8, 8, 9, 4, 4, 5, 5, 7, 9, 9, 10, 10),
+    pocet_tucnaku = c(5, 6, 6, 7, 7, 7, 8, 8, 9, 4, 4, 5, 5, 7, 9, 9, 10, 10),
     skupina = rep(c("Skupina A", "Skupina B"), each = 9)
   )
 ```
@@ -270,7 +270,7 @@ data_motivace <-
 ggplot2::ggplot(
   data = data_motivace,
   mapping = ggplot2::aes(
-    x = pocet_listku,
+    x = pocet_tucnaku,
     y = 1
   )
 ) +
@@ -282,8 +282,8 @@ ggplot2::ggplot(
   ggplot2::facet_wrap(~skupina) +
   ggplot2::scale_x_continuous(breaks = 1:12) +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
-    y = "Počet kopretin",
+    x = "Počet tučňáků (na průzkum)",
+    y = "Počet průzkumů",
     title = "Stejný průměr — ale úplně jiný tvar dat"
   ) +
   ggplot2::coord_cartesian(ylim = c(0.9, 1.1)) +
@@ -305,7 +305,7 @@ Skupina A má hodnoty soustředěné kolem 7 — data jsou symetrická, „hezk�
 
 ### Bodový graf (beeswarm)
 
-Nejpřímočařejší vizualizace: **každý bod = jedna kopretina**. Body jsou mírně rozptýleny do stran — technika se nazývá *beeswarm* (roj včel) — aby se vzájemně nepřekrývaly a zůstaly čitelné.
+Nejpřímočařejší vizualizace: **každý bod = jeden průzkum**. Body jsou mírně rozptýleny do stran — technika se nazývá *beeswarm* (roj včel) — aby se vzájemně nepřekrývaly a zůstaly čitelné.
 
 Co bodový graf ukazuje: vidíme **každou jednotlivou hodnotu**, tvar distribuce i případné odlehlé hodnoty.
 
@@ -319,9 +319,9 @@ Co bodový graf ukazuje: vidíme **každou jednotlivou hodnotu**, tvar distribuc
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_pocet_listku,
+  data = data_poctu_tucnaku,
   mapping = ggplot2::aes(
-    y = vzorek_pocet_listku,
+    y = pocet_tucnaku,
     x = 1
   )
 ) +
@@ -332,11 +332,11 @@ ggplot2::ggplot(
     size = 3
   ) +
   ggplot2::coord_flip() +
-  ggplot2::scale_y_continuous(breaks = seq(0, 15, by = 1)) +
+  ggplot2::scale_y_continuous(breaks = seq(0, 55, by = 5)) +
   ggplot2::labs(
-    y = "Počet okvětních lístků",
+    y = "Počet tučňáků (na průzkum)",
     x = "",
-    title = "100 kopretin — každý bod je jedna kopretina"
+    title = "15 průzkumů — každý bod je jeden průzkum"
   ) +
   ggplot2::theme(
     axis.text.y = ggplot2::element_blank(),
@@ -353,24 +353,24 @@ ggplot2::ggplot(
 #| eval: false
 # Jednoduchá alternativa v base R: stripchart
 stripchart(
-  x = vzorek_pocet_listku,
+  x = vzorek_poctu_tucnaku,
   method = "jitter",
   pch = 19,
   col = "steelblue",
-  xlab = "Počet okvětních lístků",
+  xlab = "Počet tučňáků (na průzkum)",
   main = "Bodový graf"
 )
 ```
 
 :::
 
-**Co vidíme?** Velká většina kopretin má 6–9 lístků. Hodnoty na krajích (4–5 nebo 11–12) jsou vzácné. Data jsou přibližně symetrická kolem středu.
+**Co vidíme?** Velká většina průzkumů zaznamenala 16–26 tučňáků. Gentoo průzkumy na ostrově Biscoe dosahují vyšších hodnot (34–46). Data jsou mírně asymetrická — například jeden průzkum Adelie na Biscoe zaznamenal jen 10 jedinců.
 
 ### Histogram
 
-Histogram **seskupuje hodnoty do košů** (binů) a výška každého sloupce říká, kolik kopretin do daného koše spadlo. Šířku koše (binwidth) si volíme sami.
+Histogram **seskupuje hodnoty do košů** (binů) a výška každého sloupce říká, kolik průzkumů do daného koše spadlo. Šířku koše (binwidth) si volíme sami.
 
-Oproti bodovému grafu histogram nezobrazuje každý bod zvlášť — vidíme tvar distribuce, ale ztratíme přesné hodnoty jednotlivých kopretin.
+Oproti bodovému grafu histogram nezobrazuje každý bod zvlášť — vidíme tvar distribuce, ale ztratíme přesné hodnoty jednotlivých průzkumů.
 
 ::: {.panel-tabset}
 
@@ -382,19 +382,19 @@ Oproti bodovému grafu histogram nezobrazuje každý bod zvlášť — vidíme t
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_pocet_listku,
-  mapping = ggplot2::aes(x = pocet_listku)
+  data = data_poctu_tucnaku,
+  mapping = ggplot2::aes(x = pocet_tucnaku)
 ) +
   ggplot2::geom_histogram(
     binwidth = 1,
     fill = col_data,
     color = "white"
   ) +
-  ggplot2::scale_x_continuous(breaks = seq(0, 15, by = 1)) +
+  ggplot2::scale_x_continuous(breaks = seq(0, 55, by = 5)) +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
-    y = "Počet kopretin",
-    title = "Histogram — každý koš odpovídá jednomu počtu lístků"
+    x = "Počet tučňáků (na průzkum)",
+    y = "Počet průzkumů",
+    title = "Histogram — každý koš odpovídá jednomu počtu průzkumů"
   )
 ```
 
@@ -405,12 +405,12 @@ ggplot2::ggplot(
 #| echo: true
 #| eval: false
 hist(
-  x = vzorek_pocet_listku,
-  breaks = seq(3.5, 13.5, by = 1),
+  x = vzorek_poctu_tucnaku,
+  breaks = seq(4.5, 49.5, by = 5),
   col = "steelblue",
   border = "white",
-  xlab = "Počet okvětních lístků",
-  ylab = "Počet kopretin",
+  xlab = "Počet tučňáků (na průzkum)",
+  ylab = "Počet průzkumů",
   main = "Histogram"
 )
 ```
@@ -420,7 +420,7 @@ hist(
 ::: {.callout-tip collapse="true"}
 ## Jak volit šířku koše?
 
-**Koš** (bin) je interval hodnot — například „od 6,5 do 7,5 lístků". Každá kopretina spadne do právě jednoho koše a histogram zobrazí výšku sloupce rovnou počtu kopretin v tom koši.
+**Koš** (bin) je interval hodnot — například „od 14,5 do 19,5 tučňáků". Každý průzkum spadne do právě jednoho koše a histogram zobrazí výšku sloupce rovnou počtu průzkumů v tom koši.
 
 Šířka koše (`binwidth`) tedy říká, jak velký kus osy *x* jeden sloupec pokrývá. Volba šířky zásadně mění, co vidíte:
 
@@ -450,14 +450,14 @@ make_bins <- function(x, bw) {
 
 data_bins <-
   purrr::map(
-    .x = c(0.5, 1, 3),
-    .f = \(bw) make_bins(vzorek_pocet_listku, bw)
+    .x = c(1, 5, 10),
+    .f = \(bw) make_bins(vzorek_poctu_tucnaku, bw)
   ) |>
   purrr::list_rbind() |>
   dplyr::mutate(
     label = factor(
       paste0("binwidth = ", bw),
-      levels = c("binwidth = 0.5", "binwidth = 1", "binwidth = 3")
+      levels = c("binwidth = 1", "binwidth = 5", "binwidth = 10")
     )
   )
 
@@ -471,24 +471,24 @@ ggplot2::ggplot(
   ) +
   ggplot2::facet_wrap(~label, scales = "free_x") +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
-    y = "Počet kopretin",
+    x = "Počet tučňáků (na průzkum)",
+    y = "Počet průzkumů",
     title = "Stejná data, tři různé šířky koše"
   )
 ```
 
-**Jak to konkrétně funguje?** Při `binwidth = 1` a středu koše na 7 zachytí koš všechny hodnoty od 6,5 do 7,5 — tedy kopretiny, které mají přesně 7 lístků. Při `binwidth = 3` a středu na 7 by koš zachytil vše od 5,5 do 8,5 — sloučí dohromady kopretiny s 6, 7 i 8 lístky.
+**Jak to konkrétně funguje?** Při `binwidth = 5` a středu koše na 20 zachytí koš všechny hodnoty od 17,5 do 22,5 — tedy průzkumy s asi 20 tučňáky. Při `binwidth = 10` by koš zachytil vše od 15 do 25 — sloučí dohromady průzkumy s 16, 18 i 20 tučňáky.
 
 **Praktické doporučení:**
 
-- Pro **diskrétní** (celočíselná) data jako počet lístků: `binwidth = 1` — každý koš odpovídá jedné hodnotě.
+- Pro **diskrétní** (celočíselná) data jako počet tučňáků: `binwidth = 5` — každý koš pokryje přirozené rozmezí hodnot.
 - Pro **spojitá** data (délka v mm, hmotnost): experimentujte — začněte s výchozím nastavením R (`breaks = "Sturges"`) a dolaďte.
 - Cíl: koše by měly být dost malé, aby byl vidět tvar distribuce, ale dost velké, aby každý koš obsahoval aspoň několik hodnot.
 :::
 
 ### Graf hustoty
 
-Graf hustoty je **vyhlazená verze histogramu**. Neukazuje absolutní počty, ale relativní hustotu — kde v osovém prostoru jsou hodnoty nejčastější. Osa y má jednotku „hustota" (density), nikoli „počet kopretin".
+Graf hustoty je **vyhlazená verze histogramu**. Neukazuje absolutní počty, ale relativní hustotu — kde v osovém prostoru jsou hodnoty nejčastější. Osa y má jednotku „hustota" (density), nikoli „počet průzkumů".
 
 Prakticky vzato: špička grafu hustoty ukazuje, kde jsou data nejkoncentrovanější.
 
@@ -502,17 +502,17 @@ Prakticky vzato: špička grafu hustoty ukazuje, kde jsou data nejkoncentrovaně
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_pocet_listku,
-  mapping = ggplot2::aes(x = pocet_listku)
+  data = data_poctu_tucnaku,
+  mapping = ggplot2::aes(x = pocet_tucnaku)
 ) +
   ggplot2::geom_density(
     fill = col_data,
     alpha = 0.4,
     color = col_data
   ) +
-  ggplot2::scale_x_continuous(breaks = seq(0, 15, by = 1)) +
+  ggplot2::scale_x_continuous(breaks = seq(0, 55, by = 5)) +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
+    x = "Počet tučňáků (na průzkum)",
     y = "Hustota",
     title = "Graf hustoty — vyhlazená distribuce"
   )
@@ -524,12 +524,12 @@ ggplot2::ggplot(
 #| label: hustota-kod
 #| echo: true
 #| eval: false
-hustota_listku <-
-  density(vzorek_pocet_listku)
+hustota_tucnaku <-
+  density(vzorek_poctu_tucnaku)
 
 plot(
-  hustota_listku,
-  xlab = "Počet okvětních lístků",
+  hustota_tucnaku,
+  xlab = "Počet tučňáků (na průzkum)",
   ylab = "Hustota",
   main = "Graf hustoty"
 )
@@ -545,7 +545,7 @@ Všechny tři grafy — bodový, histogram i hustotní — ukazují tutéž věc
 
 Grafy jsou skvělé pro pochopení dat, ale někdy potřebujeme jedno **číslo** — srovnatelné napříč skupinami, reportovatelné v tabulce. Deskriptivní statistiky nám říkají dvě věci: *kde leží střed dat* a *jak moc jsou data rozptýlená*.
 
-Nejdřív si ukážeme výpočty **ručně na malém příkladu**. Použijeme devět kopretin:
+Nejdřív si ukážeme výpočty **ručně na malém příkladu**. Použijeme devět průzkumných záznamů:
 
 ```{r}
 #| label: demo-vektor
@@ -567,7 +567,7 @@ typeof(5L)   # "integer"
 
 Proč na tom záleží?
 
-- **Počty lístků jsou vždy celá čísla** — kopretina nemůže mít 7,3 lístku. Označení `L` tuto skutečnost explicitně zakóduje do dat.
+- **Počty tučňáků jsou vždy celá čísla** — průzkum nemůže zaznamenat 7,3 tučňáka. Označení `L` tuto skutečnost explicitně zakóduje do dat.
 - **Paměťová úspornost**: `integer` zabírá v paměti přibližně polovinu oproti `double`.
 - **Ochrana před překlepem**: R vás upozorní, pokud byste omylem přiřadili desetinnou hodnotu tam, kde je očekáváno celé číslo.
 
@@ -578,7 +578,7 @@ Seřaďme je od nejmenšího po největší — to nám pomůže pochopit každo
 
 **`r paste(sort(c(5L, 6L, 7L, 7L, 8L, 8L, 8L, 9L, 10L)), collapse = ", ")`**
 
-Kdykoli uvidíte `vzorek_pocet_listku`, jde o plná data ze 100 kopretin.
+Kdykoli uvidíte `vzorek_poctu_tucnaku`, jde o plná data z 15 průzkumů.
 
 ### Minimum a maximum
 
@@ -600,15 +600,15 @@ min(maly_vzorek)
 max(maly_vzorek)
 ```
 
-Na plných datech ze 100 kopretin:
+Na plných datech z 15 průzkumů:
 
 ```{r}
 #| label: min-max-plna-data
 #| echo: true
 #| eval: true
-min(vzorek_pocet_listku)
+min(vzorek_poctu_tucnaku)
 
-max(vzorek_pocet_listku)
+max(vzorek_poctu_tucnaku)
 ```
 
 ::: {.panel-tabset}
@@ -622,14 +622,14 @@ max(vzorek_pocet_listku)
 #| warning: false
 plot_base_beeswarm +
   ggplot2::geom_hline(
-    yintercept = min(vzorek_pocet_listku),
+    yintercept = min(vzorek_poctu_tucnaku),
     color = col_highlight,
     linetype = "dashed",
     linewidth = 1
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Minimum = {min(vzorek_pocet_listku)}"
+      "Minimum = {min(vzorek_poctu_tucnaku)}"
     )
   )
 ```
@@ -643,14 +643,14 @@ plot_base_beeswarm +
 #| warning: false
 plot_base_beeswarm +
   ggplot2::geom_hline(
-    yintercept = max(vzorek_pocet_listku),
+    yintercept = max(vzorek_poctu_tucnaku),
     color = col_highlight,
     linetype = "dashed",
     linewidth = 1
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Maximum = {max(vzorek_pocet_listku)}"
+      "Maximum = {max(vzorek_poctu_tucnaku)}"
     )
   )
 ```
@@ -663,7 +663,7 @@ Percentil je hodnota, pod níž leží určitý **podíl dat**. Pracujeme vždy 
 
 Ukažme si to na malém příkladu (`r paste(sort(c(5L, 6L, 7L, 7L, 8L, 8L, 8L, 9L, 10L)), collapse = ", ")`):
 
-- **0. percentil (minimum):** `r min(maly_vzorek)` — pod touto hodnotou neleží žádná kopretina.
+- **0. percentil (minimum):** `r min(maly_vzorek)` — pod touto hodnotou neleží žádný průzkumový záznam.
 - **25. percentil (Q1, dolní kvartil):** R interpoluje a vrátí **`r quantile(maly_vzorek, 0.25)`**.
 - **50. percentil (medián):** Polovina dat leží pod, polovina nad. R vrátí **`r median(maly_vzorek)`**.
 - **75. percentil (Q3, horní kvartil):** Tři čtvrtiny dat leží pod. R vrátí **`r quantile(maly_vzorek, 0.75)`**.
@@ -682,14 +682,14 @@ quantile(
 ::: {.callout-note}
 ## Proč percentily nevychází vždy „hezky"?
 
-Výpočet percentilů z malého vzorku vyžaduje interpolaci — odhadujeme polohu mezi hodnotami, které ve skutečnosti nemáme. Proto 25. percentil vychází `r quantile(maly_vzorek, 0.25)`, ačkoli v datech tato přesná hodnota nemusí být. S větším vzorkem (100 kopretin) vychází výsledky přirozeněji. R nabízí dokonce 9 různých metod výpočtu (`type = 1` až `9`) — výchozí je metoda 7.
+Výpočet percentilů z malého vzorku vyžaduje interpolaci — odhadujeme polohu mezi hodnotami, které ve skutečnosti nemáme. Proto 25. percentil vychází `r quantile(maly_vzorek, 0.25)`, ačkoli v datech tato přesná hodnota nemusí být. S větším vzorkem vychází výsledky přirozeněji. R nabízí dokonce 9 různých metod výpočtu (`type = 1` až `9`) — výchozí je metoda 7.
 :::
 
 ### Medián
 
 Medián je **50. percentil** — hodnota, která rozděluje seřazená data přesně napůl.
 
-**Číselný příklad.** Seřadíme `r length(maly_vzorek)` kopretin. Prostřední pozice = (`r length(maly_vzorek)` + 1) / 2 = **`r (length(maly_vzorek) + 1L) / 2L`**. Hodnota na `r (length(maly_vzorek) + 1L) / 2L`. místě je `r median(maly_vzorek)`.
+**Číselný příklad.** Seřadíme `r length(maly_vzorek)` průzkumných záznamů. Prostřední pozice = (`r length(maly_vzorek)` + 1) / 2 = **`r (length(maly_vzorek) + 1L) / 2L`**. Hodnota na `r (length(maly_vzorek) + 1L) / 2L`. místě je `r median(maly_vzorek)`.
 
 **Čísla v rovnici** — všechny hodnoty seřazené, prostřední zvýrazněná:
 
@@ -699,7 +699,7 @@ $$`r paste(head(sort(maly_vzorek), (length(maly_vzorek) - 1L) / 2L), collapse = 
 
 $$\tilde{x} = x_{\left(\frac{n+1}{2}\right)}$$
 
-Kdybychom měli sudé n (např. 8 kopretin), prostřední dvě pozice n/2 a n/2 + 1 by se zprůměrovaly:
+Kdybychom měli sudé n (např. 8 záznamů), prostřední dvě pozice n/2 a n/2 + 1 by se zprůměrovaly:
 
 $$\tilde{x} = \frac{x_{\left(\frac{n}{2}\right)} + x_{\left(\frac{n}{2}+1\right)}}{2}$$
 
@@ -716,7 +716,7 @@ Na plných datech:
 #| label: median-plna-data
 #| echo: true
 #| eval: true
-median(vzorek_pocet_listku)
+median(vzorek_poctu_tucnaku)
 ```
 
 ::: {.panel-tabset}
@@ -730,14 +730,14 @@ median(vzorek_pocet_listku)
 #| warning: false
 plot_base_beeswarm +
   ggplot2::geom_hline(
-    yintercept = median(vzorek_pocet_listku),
+    yintercept = median(vzorek_poctu_tucnaku),
     color = col_median_line,
     linetype = "dashed",
     linewidth = 1.2
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Medián = {median(vzorek_pocet_listku)}"
+      "Medián = {median(vzorek_poctu_tucnaku)}"
     )
   )
 ```
@@ -750,7 +750,7 @@ Teď víme, kde leží **střed** dat. Ale jak moc jsou data **rozptýlená**?
 
 Jednou z odpovědí je **mezikvartilové rozpětí** (IQR = interquartile range). Je to vzdálenost mezi horním a dolním kvartilem.
 
-**Číselný příklad.** Z malého příkladu R vrátí Q1 = `r quantile(maly_vzorek, 0.25)` a Q3 = `r quantile(maly_vzorek, 0.75)`. Vzdálenost = `r quantile(maly_vzorek, 0.75)` − `r quantile(maly_vzorek, 0.25)` = **`r IQR(maly_vzorek)` lístků**.
+**Číselný příklad.** Z malého příkladu R vrátí Q1 = `r quantile(maly_vzorek, 0.25)` a Q3 = `r quantile(maly_vzorek, 0.75)`. Vzdálenost = `r quantile(maly_vzorek, 0.75)` − `r quantile(maly_vzorek, 0.25)` = **`r IQR(maly_vzorek)` průzkumných záznamů**.
 
 **Čísla v rovnici:**
 
@@ -760,7 +760,7 @@ $$\text{IQR} = `r quantile(maly_vzorek, 0.75)` - `r quantile(maly_vzorek, 0.25)`
 
 $$\text{IQR} = Q_3 - Q_1$$
 
-To znamená: prostřední polovina (50 %) kopretin má počet lístků v rozmezí `r quantile(maly_vzorek, 0.25)` až `r quantile(maly_vzorek, 0.75)`.
+To znamená: prostřední polovina (50 %) průzkumů má počet tučňáků v rozmezí `r quantile(maly_vzorek, 0.25)` až `r quantile(maly_vzorek, 0.75)`.
 
 ```{r}
 #| label: iqr-demo
@@ -779,11 +779,11 @@ Na plných datech:
 #| label: iqr-plna-data
 #| echo: true
 #| eval: true
-quantile(vzorek_pocet_listku, 0.25)  # Q1
+quantile(vzorek_poctu_tucnaku, 0.25)  # Q1
 
-quantile(vzorek_pocet_listku, 0.75)  # Q3
+quantile(vzorek_poctu_tucnaku, 0.75)  # Q3
 
-IQR(vzorek_pocet_listku)             # Q3 - Q1
+IQR(vzorek_poctu_tucnaku)             # Q3 - Q1
 ```
 
 ::: {.panel-tabset}
@@ -796,10 +796,10 @@ IQR(vzorek_pocet_listku)             # Q3 - Q1
 #| message: false
 #| warning: false
 val_q1 <-
-  quantile(vzorek_pocet_listku, 0.25)
+  quantile(vzorek_poctu_tucnaku, 0.25)
 
 val_q3 <-
-  quantile(vzorek_pocet_listku, 0.75)
+  quantile(vzorek_poctu_tucnaku, 0.75)
 
 plot_base_beeswarm +
   ggplot2::annotate(
@@ -863,7 +863,7 @@ Na plných datech:
 #| echo: true
 #| eval: true
 round(
-  mean(vzorek_pocet_listku),
+  mean(vzorek_poctu_tucnaku),
   digits = 2
 )
 ```
@@ -879,14 +879,14 @@ round(
 #| warning: false
 plot_base_beeswarm +
   ggplot2::geom_hline(
-    yintercept = mean(vzorek_pocet_listku),
+    yintercept = mean(vzorek_poctu_tucnaku),
     color = col_highlight,
     linetype = "dashed",
     linewidth = 1.2
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Průměr = {round(mean(vzorek_pocet_listku), 1)}"
+      "Průměr = {round(mean(vzorek_poctu_tucnaku), 1)}"
     )
   )
 ```
@@ -897,22 +897,19 @@ plot_base_beeswarm +
 
 Průměr a medián měří „střed" dat různými způsoby. Většinou jsou si podobné — ale ne vždy. A ten rozdíl může být biologicky důležitý.
 
-Představme si, že najdeme na louce jednu **výjimečnou kopretinu s 50 lístky** — zřejmě mutant nebo kříženec. Přidáme ji do dat:
+Představme si, že jsme registrovali **neobvykle velký průzkum s 90 tučňáky** — možná rozšíření sledované oblasti nebo výjimečně příznívá sežóna. Přidáme ho do dat:
 
 ```{r}
 #| label: outlier-srovnani
 #| echo: true
 #| eval: true
 # Bez odlehlé hodnoty
-mean(vzorek_pocet_listku)
-median(vzorek_pocet_listku)
+mean(vzorek_poctu_tucnaku)
+median(vzorek_poctu_tucnaku)
 
-# S odlehlou hodnotou (50 lístků)
-pocet_listku_outlier <-
-  c(vzorek_pocet_listku, 50L)
-
-mean(pocet_listku_outlier)
-median(pocet_listku_outlier)
+# S odlehlou hodnotou (90 tučňáků)
+mean(pocet_tucnaku_outlier)
+median(pocet_tucnaku_outlier)
 ```
 
 ```{r}
@@ -923,20 +920,20 @@ median(pocet_listku_outlier)
 data_srovnani <-
   dplyr::bind_rows(
     tibble::tibble(
-      pocet_listku = vzorek_pocet_listku,
-      dataset = "Bez odlehlé hodnoty (n = 100)"
+      pocet_tucnaku = vzorek_poctu_tucnaku,
+      dataset = "Bez odlehlé hodnoty (n = 15)"
     ),
     tibble::tibble(
-      pocet_listku = pocet_listku_outlier,
-      dataset = "S odlehlou hodnotou (n = 101)"
+      pocet_tucnaku = pocet_tucnaku_outlier,
+      dataset = "S odlehlou hodnotou (n = 16)"
     )
   ) |>
   dplyr::mutate(
     dataset = factor(
       dataset,
       levels = c(
-        "Bez odlehlé hodnoty (n = 100)",
-        "S odlehlou hodnotou (n = 101)"
+        "Bez odlehlé hodnoty (n = 15)",
+        "S odlehlou hodnotou (n = 16)"
       )
     )
   )
@@ -945,14 +942,14 @@ stat_summary <-
   data_srovnani |>
   dplyr::group_by(dataset) |>
   dplyr::summarise(
-    prumer = mean(vzorek_pocet_listku),
-    median = median(vzorek_pocet_listku)
+    prumer = mean(pocet_tucnaku),
+    median = median(pocet_tucnaku)
   ) |>
   dplyr::ungroup()
 
 ggplot2::ggplot(
   data = data_srovnani,
-  mapping = ggplot2::aes(x = pocet_listku)
+  mapping = ggplot2::aes(x = pocet_tucnaku)
 ) +
   ggplot2::geom_histogram(
     binwidth = 1,
@@ -977,14 +974,14 @@ ggplot2::ggplot(
   ) +
   ggplot2::facet_wrap(~dataset, scales = "free_x") +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
-    y = "Počet kopretin",
+    x = "Počet tučňáků (na průzkum)",
+    y = "Počet průzkumů",
     title = "Průměr je citlivý na odlehlé hodnoty, medián nikoli"
   ) +
   ggplot2::theme(legend.position = "bottom")
 ```
 
-Průměr se posunul z 7,5 na téměř 8 — jedna extrémní kopretina ho „přitáhla" ke své hodnotě. Medián se skoro nezměnil.
+Průměr se posunul — jeden extrémní průzkum ho „přitáhl" ke své hodnotě. Medián se skoro nezměnil.
 
 ::: {.callout-warning}
 ## Průměr může být zavádějící
@@ -995,7 +992,7 @@ Průměr je „přitahován" odlehlými hodnotami. V ekologii s nimi pracujeme n
 ::: {.callout-note collapse="true"}
 ## Kdy je průměr lepší volbou?
 
-Průměr je matematicky pohodlný a dobře se chová, když jsou data přibližně **symetricky rozložená** kolem středu (bez výrazných odlehlých hodnot). Právě takový tvar vidíme u počtu okvětních lístků — proto průměr a medián vychází velmi podobně.
+Průměr je matematicky pohodlný a dobře se chová, když jsou data přibližně **symetricky rozložená** kolem středu (bez výrazných odlehlých hodnot). Právě takový tvar vidíme u počtu tučňáků na průzkum — proto průměr a medián vychází velmi podobně.
 
 Průměr je také základní stavební kámen statistického modelování. Lineární model (`lm()`), který budeme používat po celý kurz, počítá průměry skupin a průměrné efekty prediktorů. Je tedy důležité chápat, kdy průměru věřit a kdy být obezřetní.
 :::
@@ -1006,7 +1003,7 @@ Víme, kde leží střed dat. Teď chceme vědět, jak moc jsou data **rozptýle
 
 Intuice: spočítejme, jak daleko je každá hodnota od průměru. Tuto vzdálenost nazýváme **odchylka** (residuum, chyba).
 
-**Číselný příklad.** Průměr malého příkladu = `r round(mean(maly_vzorek), 2)`. Pro první kopretinu (hodnota `r maly_vzorek[1]`): `r maly_vzorek[1]` − `r round(mean(maly_vzorek), 2)` = **`r round(maly_vzorek[1] - mean(maly_vzorek), 2)`**. Celý přehled pro všechny kopretiny:
+**Číselný příklad.** Průměr malého příkladu = `r round(mean(maly_vzorek), 2)`. Pro první průzkumový záznam (hodnota `r maly_vzorek[1]`): `r maly_vzorek[1]` − `r round(mean(maly_vzorek), 2)` = **`r round(maly_vzorek[1] - mean(maly_vzorek), 2)`**. Celý přehled pro všechny záznamy:
 
 ```{r}
 #| label: tabulka-odchylek
@@ -1015,8 +1012,8 @@ Intuice: spočítejme, jak daleko je každá hodnota od průměru. Tuto vzdálen
 #| warning: false
 data_odchylky <-
   tibble::tibble(
-    kopretina = seq_along(maly_vzorek),
-    pocet_listku = maly_vzorek,
+    pruzkum = seq_along(maly_vzorek),
+    pocet_tucnaku = maly_vzorek,
     prumer = round(mean(maly_vzorek), 2),
     odchylka = round(maly_vzorek - mean(maly_vzorek), 2),
     odchylka_sq = round((maly_vzorek - mean(maly_vzorek))^2, 2)
@@ -1024,12 +1021,12 @@ data_odchylky <-
 
 knitr::kable(
   data_odchylky,
-  col.names = c("Kopretina", "Počet lístků", "Průměr (x̄)", "Odchylka (xᵢ − x̄)", "Odchylka²"),
+  col.names = c("Průzkum", "Počet tučňáků", "Průměr (x̄)", "Odchylka (xᵢ − x̄)", "Odchylka²"),
   align = c("c", "c", "c", "r", "r")
 )
 ```
 
-**Čísla v rovnici** (příklad pro první kopretinu):
+**Čísla v rovnici** (příklad pro první průzkumový záznam):
 
 $$e_1 = `r maly_vzorek[1]` - `r round(mean(maly_vzorek), 2)` = `r round(maly_vzorek[1] - mean(maly_vzorek), 2)`$$
 
@@ -1042,7 +1039,7 @@ Součet všech odchylek = `r round(sum(maly_vzorek - mean(maly_vzorek)), 10)` �
 Jednoduché řešení by bylo vzít **absolutní hodnoty** odchylek (ignorovat znaménko) a ty sečíst. To skutečně dává smysluplné číslo zvané „průměrná absolutní odchylka". Nicméně statistika tradičně volí jiný postup: odchylky **umocníme**. Proč?
 
 1. **Zbavíme se znaménka**: $(-2{,}56)^2 = 6{,}55$ — záporné odchylky se stanou kladnými, stejně jako kladné.
-2. **Velké odchylky jsou penalizovány víc**: Kopretina vzdálená 3 lístky od průměru přispívá $3^2 = 9$ do součtu. Tři kopretiny každá o 1 lístek vzdálené přispívají $3 \times 1^2 = 3$. Díky tomu SD „cítí" outlery a silně asymetrická data — stejnou vlastnost, za kterou jsme kritizovali průměr, ale tentokrát ji využijeme záměrně.
+2. **Velké odchylky jsou penalizovány víc**: Průzkum vzdálený 3 tučňáky od průměru přispívá $3^2 = 9$ do součtu. Tři průzkumy každý o 1 tučňáka vzdálené přispívají $3 \times 1^2 = 3$. Díky tomu SD „cítí" outlery a silně asymetrická data — stejnou vlastnost, za kterou jsme kritizovali průměr, ale tentokrát ji využijeme záměrně.
 3. **Matematická pohodlnost**: Kvadrát je hladká funkce vhodná pro derivaci a optimalizaci — to se hodí v pokročilejší statistice.
 
 **Součet čtverců odchylek** (anglicky *sum of squares*, zkratka SS) je tedy součet hodnot ze sloupce Odchylka² v tabulce.
@@ -1071,9 +1068,9 @@ $$s^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2$$
 
 *(Dělíme n − 1 místo n, protože odhadujeme rozptyl celé populace z vzorku. K tomu se vrátíme v přednášce o inferenci.)*
 
-Ale rozptyl je v **kvadrátových jednotkách** — lístky², což je fyzikálně nesmyslné. Proto vezmeme odmocninu.
+Ale rozptyl je v **kvadrátových jednotkách** — tučňáci², což je fyzikálně nesmyslné. Proto vezmeme odmocninu.
 
-**Číselný příklad.** SD = √`r round(var(maly_vzorek), 2)` = **`r round(sd(maly_vzorek), 2)` lístku**.
+**Číselný příklad.** SD = √`r round(var(maly_vzorek), 2)` = **`r round(sd(maly_vzorek), 2)` tučňáka**.
 
 **Čísla v rovnici:**
 
@@ -1083,7 +1080,7 @@ $$s = \sqrt{\frac{`r round(sum((maly_vzorek - mean(maly_vzorek))^2), 2)`}{`r len
 
 $$s = \sqrt{s^2}$$
 
-To znamená: typická kopretina se od průměru odchyluje o přibližně `r round(sd(maly_vzorek), 1)` lístku.
+To znamená: typický průzkumový záznam se od průměru odchyluje o přibližně `r round(sd(maly_vzorek), 1)` tučňáka.
 
 ```{r}
 #| label: sd-demo
@@ -1100,12 +1097,12 @@ Na plných datech:
 #| label: sd-plna-data
 #| echo: true
 #| eval: true
-round(sd(vzorek_pocet_listku), digits = 2)
+round(sd(vzorek_poctu_tucnaku), digits = 2)
 ```
 
 Co toto číslo znamená **graficky**? Níže jsou dva pohledy:
 
-- **Levý graf** zobrazuje kopretiny jako body. Červená přerušovaná čára je průměr, červené pásmo je rozsah průměr ± 1 SD. Zhruba dvě třetiny kopretin leží uvnitř tohoto pásma — to je základní vlastnost dat blízkých normálnímu rozdělení.
+- **Levý graf** zobrazuje průzkumy jako body. Červená přerušovaná čára je průměr, červené pásmo je rozsah průměr ± 1 SD. Zhruba dvě třetiny průzkumů leží uvnitř tohoto pásma — to je základní vlastnost dat blízkých normálnímu rozdělení.
 - **Pravý graf** porovnává dvě skupiny se **stejným průměrem**, ale různou SD. Všimněte si, jak širší SD znamená roztáhlejší, plošší histogram.
 
 ::: {.panel-tabset}
@@ -1118,10 +1115,10 @@ Co toto číslo znamená **graficky**? Níže jsou dva pohledy:
 #| message: false
 #| warning: false
 val_prumer <-
-  mean(vzorek_pocet_listku)
+  mean(vzorek_poctu_tucnaku)
 
 val_sd <-
-  sd(vzorek_pocet_listku)
+  sd(vzorek_poctu_tucnaku)
 
 plot_base_beeswarm +
   ggplot2::annotate(
@@ -1173,7 +1170,7 @@ data_porovnani_sd <-
   tibble::tibble(
     hodnota = c(vec_mala_sd, vec_velka_sd),
     skupina = rep(
-      c("Malá SD (≈ 0,8 lístku)", "Velká SD (≈ 3 lístky)"),
+      c("Malá SD (≈ 0,8 tučňáka)", "Velká SD (≈ 3 tučňáci)"),
       each = 100
     )
   )
@@ -1199,8 +1196,8 @@ ggplot2::ggplot(
   ) +
   ggplot2::facet_wrap(~skupina) +
   ggplot2::labs(
-    x = "Počet lístků",
-    y = "Počet kopretin",
+    x = "Počet tučňáků",
+    y = "Počet průzkumů",
     title = "Obě skupiny mají průměr = 8 — liší se jen variabilitou"
   ) +
   ggplot2::theme(legend.position = "none")
@@ -1232,26 +1229,26 @@ Začneme s tím, co již umíme — narýsujeme svislou čáru na pozici medián
 #| message: false
 #| warning: false
 val_med <-
-  median(vzorek_pocet_listku)
+  median(vzorek_poctu_tucnaku)
 
 val_q1 <-
-  quantile(vzorek_pocet_listku, 0.25)
+  quantile(vzorek_poctu_tucnaku, 0.25)
 
 val_q3 <-
-  quantile(vzorek_pocet_listku, 0.75)
+  quantile(vzorek_poctu_tucnaku, 0.75)
 
 val_iqr <-
-  IQR(vzorek_pocet_listku)
+  IQR(vzorek_poctu_tucnaku)
 
 val_whisker_lo <-
   max(
-    min(vzorek_pocet_listku),
+    min(vzorek_poctu_tucnaku),
     val_q1 - 1.5 * val_iqr
   )
 
 val_whisker_hi <-
   min(
-    max(vzorek_pocet_listku),
+    max(vzorek_poctu_tucnaku),
     val_q3 + 1.5 * val_iqr
   )
 ```
@@ -1313,9 +1310,9 @@ Vousy sahají od hran krabice maximálně o **1,5× IQR** dál. Body mimo vousy 
 #| message: false
 #| warning: false
 data_boxplot_outliery <-
-  data_pocet_listku |>
+  data_poctu_tucnaku |>
   dplyr::filter(
-    pocet_listku < val_whisker_lo | pocet_listku > val_whisker_hi
+    pocet_tucnaku < val_whisker_lo | pocet_tucnaku > val_whisker_hi
   )
 
 plot_base_beeswarm +
@@ -1345,7 +1342,7 @@ plot_base_beeswarm +
   ) +
   ggplot2::geom_point(
     data = data_boxplot_outliery,
-    ggplot2::aes(y = pocet_listku, x = 1),
+    ggplot2::aes(y = pocet_tucnaku, x = 1),
     color = col_highlight,
     size = 2.5,
     shape = 1,
@@ -1370,8 +1367,8 @@ Takto vypadá výsledný boxplot, jak ho generuje R automaticky — tentýž tva
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_pocet_listku,
-  mapping = ggplot2::aes(y = pocet_listku, x = 1)
+  data = data_poctu_tucnaku,
+  mapping = ggplot2::aes(y = pocet_tucnaku, x = 1)
 ) +
   ggplot2::geom_boxplot(
     fill = col_data,
@@ -1381,9 +1378,9 @@ ggplot2::ggplot(
   ggplot2::coord_flip(
     xlim = c(0.5, 1.5)
   ) +
-  ggplot2::scale_y_continuous(breaks = seq(0, 15, by = 1)) +
+  ggplot2::scale_y_continuous(breaks = seq(0, 55, by = 5)) +
   ggplot2::labs(
-    y = "Počet okvětních lístků",
+    y = "Počet tučňáků (na průzkum)",
     x = "",
     title = "Krabicový graf"
   ) +
@@ -1400,10 +1397,10 @@ ggplot2::ggplot(
 #| echo: true
 #| eval: false
 boxplot(
-  x = vzorek_pocet_listku,
+  x = vzorek_poctu_tucnaku,
   horizontal = TRUE,
   col = "steelblue",
-  xlab = "Počet okvětních lístků",
+  xlab = "Počet tučňáků (na průzkum)",
   main = "Krabicový graf"
 )
 ```
@@ -1422,7 +1419,7 @@ boxplot(
 ::: {.callout-note}
 ## Boxplot je nejlepší graf pro srovnání skupin
 
-Zatímco histogramy a beeswarm grafy jsou skvělé pro zobrazení **jedné** distribuce, boxploty excelují, když chceme **porovnat více skupin** vedle sebe. Uvidíte to v dalších přednáškách — například když budeme srovnávat počty lístků na různých lokalitách nebo v různých letech.
+Zatímco histogramy a beeswarm grafy jsou skvělé pro zobrazení **jedné** distribuce, boxploty excelují, když chceme **porovnat více skupin** vedle sebe. Uvidíte to v dalších přednáškách — například když budeme srovnávat počty tučňáků na různých lokalitách nebo v různých letech.
 :::
 
 ---
@@ -1437,21 +1434,21 @@ Diskrétní proměnné nabývají pouze **celočíselných hodnot** — mezi nim
 
 **Biologické příklady:**
 
-- Počet okvětních lístků kopretiny (5, 6, 7, 8, ...)
+- Počet tučňáků (na průzkum): 10, 18, 16, 20, ...
 - Počet druhů ptáků na lokalitě
 - Počet vajec v hnízdě
 - Počet jedinců v populaci
 
-Nelze mít 7,3 lístku ani 4,7 vejce. Příroda „skáče" po celých číslech.
+Nelze mít 7,3 tučňáka ani 4,7 vejce. Příroda „skáče" po celých číslech.
 
 ```{r}
 #| label: diskretni-priklad
 #| echo: true
 #| eval: true
-pocet_listku_ukazka <-
-  c(8L, 6L, 7L, 8L)  # sufx L = celé číslo (integer)
+pocet_tucnaku_ukazka <-
+  c(10L, 18L, 16L, 20L)  # sufx L = celé číslo (integer)
 
-class(pocet_listku_ukazka)
+class(pocet_tucnaku_ukazka)
 ```
 
 ::: {.panel-tabset}
@@ -1464,18 +1461,18 @@ class(pocet_listku_ukazka)
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_pocet_listku,
-  mapping = ggplot2::aes(x = pocet_listku)
+  data = data_poctu_tucnaku,
+  mapping = ggplot2::aes(x = pocet_tucnaku)
 ) +
   ggplot2::geom_histogram(
     binwidth = 1,
     fill = col_data,
     color = "white"
   ) +
-  ggplot2::scale_x_continuous(breaks = seq(0, 15, by = 1)) +
+  ggplot2::scale_x_continuous(breaks = seq(0, 55, by = 5)) +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
-    y = "Počet kopretin",
+    x = "Počet tučňáků (na průzkum)",
+    y = "Počet průzkumů",
     title = "Diskrétní proměnná — histogram s binwidth = 1"
   )
 ```
@@ -1488,19 +1485,29 @@ Spojité proměnné mohou nabývat **jakékoli hodnoty** v intervalu. Přesnost 
 
 **Biologické příklady:**
 
-- Délka okvětního lístku v mm (24,5 mm, 25,1 mm, ...)
+- Délka zobáku v mm (39,1 mm, 40,3 mm, ...)
 - Teplota vzduchu
 - Hmotnost živočicha
 - Koncentrace chlorofylu v listu
 
 ```{r}
+#| label: zobrazit-schema-zobaku
+#| echo: false
+#| out-width: "50%"
+#| fig-cap: "Schéma měření zobáku (culmen) tučňáka. Zdroj: Allison Horst."
+knitr::include_graphics(
+  here::here("Learing_materials", "images", "culmen_depth.png")
+)
+```
+
+```{r}
 #| label: spojite-priklad
 #| echo: true
 #| eval: true
-delka_listku_ukazka <-
-  c(24.7, 25.1, 23.5, 26.8)  # desetinná čísla
+delka_zobaku_ukazka <-
+  c(39.1, 40.3, 36.7, 42.9)  # desetinná čísla
 
-class(delka_listku_ukazka)
+class(delka_zobaku_ukazka)
 ```
 
 Pro spojitá data máme více vizualizačních možností — každá odhalí trochu jiný aspekt:
@@ -1515,8 +1522,8 @@ Pro spojitá data máme více vizualizačních možností — každá odhalí tr
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_delka_listku,
-  mapping = ggplot2::aes(x = delka_listku, y = 1)
+  data = data_delka_zobaku,
+  mapping = ggplot2::aes(x = delka_zobaku, y = 1)
 ) +
   ggbeeswarm::geom_beeswarm(
     cex = 1.5,
@@ -1525,9 +1532,9 @@ ggplot2::ggplot(
     size = 3
   ) +
   ggplot2::labs(
-    x = "Délka lístku (mm)",
+    x = "Délka zobáku (mm)",
     y = "",
-    title = "Bodový graf — každý bod je jedna kopretina"
+    title = "Bodový graf — každý bod je jeden tučňák"
   ) +
   ggplot2::theme(
     axis.text.y = ggplot2::element_blank(),
@@ -1544,18 +1551,18 @@ ggplot2::ggplot(
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_delka_listku,
-  mapping = ggplot2::aes(x = delka_listku)
+  data = data_delka_zobaku,
+  mapping = ggplot2::aes(x = delka_zobaku)
 ) +
   ggplot2::geom_histogram(
-    binwidth = 2,
+    binwidth = 1,
     fill = col_data,
     color = "white"
   ) +
   ggplot2::labs(
-    x = "Délka lístku (mm)",
+    x = "Délka zobáku (mm)",
     y = "Počet",
-    title = "Histogram — koše po 2 mm"
+    title = "Histogram — koše po 1 mm"
   )
 ```
 
@@ -1567,8 +1574,8 @@ ggplot2::ggplot(
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_delka_listku,
-  mapping = ggplot2::aes(x = delka_listku)
+  data = data_delka_zobaku,
+  mapping = ggplot2::aes(x = delka_zobaku)
 ) +
   ggplot2::geom_density(
     fill = col_data,
@@ -1576,7 +1583,7 @@ ggplot2::ggplot(
     color = col_data
   ) +
   ggplot2::labs(
-    x = "Délka lístku (mm)",
+    x = "Délka zobáku (mm)",
     y = "Hustota",
     title = "Graf hustoty — vyhlazená distribuce"
   )
@@ -1590,7 +1597,7 @@ Nominální proměnné mají kategorie, **které nelze seřadit** — žádná n
 
 **Biologické příklady:**
 
-- Barva květu (bílá, žlutá, fialová)
+- Druh tučňáka (Adelie, Chinstrap, Gentoo)
 - Druh opylovače (včela, čmelák, motýl)
 - Typ stanoviště (les, louka, mokřad)
 - Krevní skupina (A, B, AB, 0)
@@ -1599,10 +1606,10 @@ Nominální proměnné mají kategorie, **které nelze seřadit** — žádná n
 #| label: nominalni-priklad
 #| echo: true
 #| eval: true
-barva_ukazka <-
-  c("šedá", "žlutá", "šedá", "fialová")
+druh_ukazka <-
+  c("Adelie", "Chinstrap", "Adelie", "Gentoo")
 
-class(barva_ukazka)
+class(druh_ukazka)
 ```
 
 Každá kategorie dostane vlastní barvu — vizuální kód, který odpovídá realitě:
@@ -1617,17 +1624,17 @@ Každá kategorie dostane vlastní barvu — vizuální kód, který odpovídá 
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_barva_kvetiny,
+  data = data_druh_tucnaku,
   mapping = ggplot2::aes(
-    x = barva_kvetiny,
-    fill = barva_kvetiny
+    x = druh_tucnaku,
+    fill = druh_tucnaku
   )
 ) +
   ggplot2::geom_bar(color = "gray40") +
-  ggplot2::scale_fill_manual(values = barvy_kvetin) +
+  ggplot2::scale_fill_manual(values = barvy_druhu) +
   ggplot2::labs(
-    x = "Barva květu",
-    y = "Počet kopretin",
+    x = "Druh tučňáka",
+    y = "Počet průzkumů",
     title = "Nominální proměnná — sloupcový graf"
   ) +
   ggplot2::theme(legend.position = "none")
@@ -1641,10 +1648,10 @@ ggplot2::ggplot(
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_barva_kvetiny,
+  data = data_druh_tucnaku,
   mapping = ggplot2::aes(
     x = "",
-    fill = barva_kvetiny
+    fill = druh_tucnaku
   )
 ) +
   ggplot2::geom_bar(
@@ -1652,8 +1659,8 @@ ggplot2::ggplot(
     color = "gray40"
   ) +
   ggplot2::scale_fill_manual(
-    values = barvy_kvetin,
-    name = "Barva květu"
+    values = barvy_druhu,
+    name = "Druh tučňáka"
   ) +
   ggplot2::scale_y_continuous(
     labels = scales::percent
@@ -1673,7 +1680,7 @@ Ordinální proměnné mají kategorie, **které jdou seřadit** — ale vzdále
 
 **Biologické příklady:**
 
-- Stupeň poškození listu (žádné, mírné, střední, silné)
+- Hmotnostní kategorie tučňáka (malý, střední, velký)
 - Školní klasifikace (1, 2, 3, 4, 5)
 - Souhlas s výrokem (zcela souhlasím → zcela nesouhlasím)
 - Pokryvnost vegetace (0–5 %, 5–25 %, 25–50 %, ...)
@@ -1683,17 +1690,17 @@ Ordinální proměnné mají kategorie, **které jdou seřadit** — ale vzdále
 #| echo: true
 #| eval: true
 # Klíčové: levels musí být seřazené!
-stupen_ukazka <-
+hmotnost_ukazka <-
   factor(
-    x = c("mírné", "silné", "žádné", "střední"),
-    levels = c("žádné", "mírné", "střední", "silné"),
+    x = c("střední", "velký", "malý", "velký"),
+    levels = c("malý", "střední", "velký"),
     ordered = TRUE
   )
 
-stupen_ukazka
+hmotnost_ukazka
 ```
 
-R hlásí `Levels: žádné < mírné < střední < silné` — znaménko `<` ukazuje pořadí.
+R hlásí `Levels: malý < střední < velký` — znaménko `<` ukazuje pořadí.
 
 ::: {.panel-tabset}
 
@@ -1705,13 +1712,13 @@ R hlásí `Levels: žádné < mírné < střední < silné` — znaménko `<` uk
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_stupen_poskozeni,
-  mapping = ggplot2::aes(x = stupen_poskozeni)
+  data = data_kategorie_hmotnosti,
+  mapping = ggplot2::aes(x = kategorie_hmotnosti)
 ) +
   ggplot2::geom_bar(fill = col_data) +
   ggplot2::labs(
-    x = "Stupeň poškození listu",
-    y = "Počet rostlin",
+    x = "Kategorie hmotnosti tučňáka",
+    y = "Počet tučňáků",
     title = "Ordinální proměnná — seřazená osa"
   )
 ```
@@ -1721,17 +1728,17 @@ ggplot2::ggplot(
 ::: {.callout-important}
 ## Ordinální data jako čísla — opatrně!
 
-Ordinální data jsou někdy zakódována jako čísla (1 = žádné, 2 = mírné, 3 = střední, 4 = silné). Může být lákavé spočítat průměr a říci „průměrné poškození = 1,7". Ale to předpokládá, že rozdíl mezi „žádným" a „mírným" poškozením je stejně velký jako mezi „mírným" a „středním" — a to nevíme. Pro ordinální data preferujte **medián a IQR**, nebo speciální ordinální modely.
+Ordinální data jsou někdy zakódována jako čísla (1 = malý, 2 = střední, 3 = velký). Může být lákavé spočítat průměr a říci „průměrná kategorie = 1,7". Ale to předpokládá, že rozdíl mezi „malým" a „středním" tučňákem je stejně velký jako mezi „středním" a „velkým" — a to nevíme. Pro ordinální data preferujte **medián a IQR**, nebo speciální ordinální modely.
 :::
 
 ### Přehled typů proměnných {#sec-prehled-typy}
 
 | Typ                   | Biologické příklady          | Střed         | Variabilita | Vhodný graf              |
 |-----------------------|------------------------------|:-------------:|:-----------:|--------------------------|
-| Kvant. diskrétní      | počet lístků, počet druhů    | průměr/medián | SD / IQR    | histogram, beeswarm      |
+| Kvant. diskrétní      | počet tučňáků, počet druhů   | průměr/medián | SD / IQR    | histogram, beeswarm      |
 | Kvant. spojité        | délka, teplota, hmotnost     | průměr/medián | SD / IQR    | histogram, boxplot, hustota |
 | Kategorická nominální | barva, druh, typ stanoviště  | modus         | četnosti    | sloupcový graf           |
-| Kategorická ordinální | stupeň poškození, škála      | medián        | IQR         | sloupcový graf (seřazený)|
+| Kategorická ordinální | hmotnostní kategorie, škála   | medián        | IQR         | sloupcový graf (seřazený)|
 
 ::: {.callout-tip}
 ## Proč typ proměnné tak záleží?

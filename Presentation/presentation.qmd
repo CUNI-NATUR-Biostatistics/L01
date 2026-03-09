@@ -34,6 +34,7 @@ if (!require("ggview")) install.packages("ggview")
 if (!require("magick")) install.packages("magick")
 if (!require("cowplot")) install.packages("cowplot")
 if (!require("waffle")) remotes::install_github("hrbrmstr/waffle")
+if (!require("palmerpenguins")) install.packages("palmerpenguins")
 
 library(tidyverse)
 library(ggbeeswarm)
@@ -41,6 +42,7 @@ library(ggview)
 library(magick)
 library(cowplot)
 library(waffle)
+library(palmerpenguins)
 
 
 # source(
@@ -109,82 +111,82 @@ Po absolvování této přednášky budete schopni:
 
 # Naše data
 
-## Kopretiny
+## Tučňáci z Palmer Station
 
 ```{r}
-include_local_figure("pexels-pixabay-67857.jpg")
+include_local_figure("lter_penguins.png")
 ```
 
 ::: {.footer}
-Photo by [Pixabay](https://www.pexels.com/photo/white-daisy-flower-67857/) 
+Artwork by [Allison Horst](https://allisonhorst.github.io/palmerpenguins/articles/art.html) 
 :::
 
-## Kopretiny
+## Palmer Penguins
 
-Vydáme se na louku a začneme sbírat kopretiny.
+Vědci z projektu Palmer Penguins každoročně prováděli průzkumy tučňáků na třech ostrovech u Antarktidy.
 
 ::: {.fragment}
 
-U každé kopretiny si zapíšeme **počet okvětních lístků**.
+U každého průzkumu si zapsali **počet tučňáků**.
 
 :::
 
 
 
-## Kopretiny
+## Palmer Penguins
 
-Zapisujeme si počet okvětních lístků u kopretiny. Můžeme mít 5, 6, 7, 8, ... lístků.
+Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
 
 ::: {.fragment}
-| Květina | Počet lístků |
+| Průzkum | Počet tučňáků |
 | --- | --- |
-| A | 8 |
+| 1 | 10 |
 
 :::
 
-## Kopretiny
+## Palmer Penguins
 
-Zapisujeme si počet okvětních lístků u kopretiny. Můžeme mít 5, 6, 7, 8, ... lístků.
+Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
 
-| Květina | Počet lístků |
+| Průzkum | Počet tučňáků |
 | --- | --- |
-| A | 8 |
-| B | 6 |
+| 1 | 10 |
+| 2 | 18 |
 
-## Kopretiny
+## Palmer Penguins
 
-Zapisujeme si počet okvětních lístků u kopretiny. Můžeme mít 5, 6, 7, 8, ... lístků.
+Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
 
-| Květina | Počet lístků |
+| Průzkum | Počet tučňáků |
 | --- | --- |
-| A | 8 |
-| B | 6 |
-| C | 7 |
+| 1 | 10 |
+| 2 | 18 |
+| 3 | 16 |
 
-## Kopretiny
+## Palmer Penguins
 
-Zapisujeme si počet okvětních lístků u kopretiny. Můžeme mít 5, 6, 7, 8, ... lístků.
+Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
 
-| Květina | Počet lístků |
+| Průzkum | Počet tučňáků |
 | --- | --- |
-| A | 8 |
-| B | 6 |
-| C | 7 |
-| D | 8 |
+| 1 | 10 |
+| 2 | 18 |
+| 3 | 16 |
+| 4 | 20 |
 
-## Kopretiny
+## Palmer Penguins
 
-Zapisujeme si počet okvětních lístků u kopretiny. Můžeme mít 5, 6, 7, 8, ... lístků.
+Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
 
-| Květina | Počet lístků |
+| Průzkum | Počet tučňáků |
 | --- | --- |
-| A | 8 |
-| B | 6 |
-| C | 7 |
-| D | 8 |
+| 1 | 10 |
+| 2 | 18 |
+| 3 | 16 |
+| 4 | 20 |
 | ... | ... |
 
-## Kopretiny
+## Palmer Penguins
 
 :::: {.columns}
 
@@ -195,17 +197,17 @@ Zapisujeme si počet okvětních lístků u kopretiny. Můžeme mít 5, 6, 7, 8,
 ```{r}
 #| echo: true
 #| eval: false
-pocet_listku <-
+pocet_tucnaku <-
   c(
-    8 # květina A
+    10L # průzkum 1
   )
 ```
 :::
 
 ::: {.column width="50%"}
-| Květina | Počet lístků |
+| Průzkum | Počet tučňáků |
 | --- | --- |
-| A | 8 |
+| 1 | 10 |
 
 :::
 
@@ -213,7 +215,7 @@ pocet_listku <-
 
 
 
-## Kopretiny
+## Palmer Penguins
 
 :::: {.columns}
 
@@ -224,24 +226,24 @@ pocet_listku <-
 ```{r}
 #| echo: true
 #| eval: false
-pocet_listku <-
+pocet_tucnaku <-
   c(
-    8, # květina A
-    6 # květina B
+    10L, # průzkum 1
+    18L  # průzkum 2
   )
 ```
 :::
 
 ::: {.column width="50%"}
-| Květina | Počet lístků |
+| Průzkum | Počet tučňáků |
 | --- | --- |
-| A | 8 |
-| B | 6 |
+| 1 | 10 |
+| 2 | 18 |
 :::
 
 ::::
 
-## Kopretiny
+## Palmer Penguins
 
 :::: {.columns}
 
@@ -252,33 +254,33 @@ pocet_listku <-
 ```{r}
 #| echo: true
 #| eval: false
-pocet_listku <-
+pocet_tucnaku <-
   c(
-    8, # květina A
-    6, # květina B
-    7, # květina C
-    8,  # květina D
-    ... # další květiny
+    10L, # průzkum 1
+    18L, # průzkum 2
+    16L, # průzkum 3
+    20L, # průzkum 4
+    ... # další průzkumy
   )
 ```
 :::
 
 ::: {.column width="50%"}
-| Květina | Počet lístků |
+| Průzkum | Počet tučňáků |
 | --- | --- |
-| A | 8 |
-| B | 6 |
-| C | 7 |
-| D | 8 |
+| 1 | 10 |
+| 2 | 18 |
+| 3 | 16 |
+| 4 | 20 |
 | ... | ... |
 
 :::
 
 ::::
 
-## Kopretiny
+## Naše data
 
-Nasbírali jsme 100 kopretin a zapsali počet lístků u každé z nich.
+Získali jsme 15 průzkumových záznamů a zapsali počet tučňáků u každého z nich.
 
 ```{r}
 #| label: udelat pracovni dataset
@@ -286,23 +288,17 @@ Nasbírali jsme 100 kopretin a zapsali počet lístků u každé z nich.
 #| eval: true
 #| message: false
 #| warning: false
-set.seed(900723)
+data_tucnaci_prez <-
+  palmerpenguins::penguins |>
+  tidyr::drop_na()
 
-pocet_listku <-
-  rnorm (
-    n = 100,
-    mean = 7.5,
-    sd = 1.5
-  ) |>
-  round() 
+data_poctu_tucnaku <-
+  data_tucnaci_prez |>
+  dplyr::count(species, island, year) |>
+  dplyr::rename(pocet_tucnaku = n)
 
-data_pocet_listku <-
-  tibble::tibble(
-    pocet_listku = pocet_listku
-  )  |>
-  dplyr::mutate(
-    pocet_nasbiranych_kopretin = dplyr::row_number()
-  ) 
+pocet_tucnaku <-
+  data_poctu_tucnaku[["pocet_tucnaku"]]
 ```
 
 ```{r}
@@ -321,11 +317,11 @@ col_median_line <- "darkgreen"
 #| eval: true
 #| message: false
 #| warning: false
-plot_pocet_listku_full <-
+plot_pocet_tucnaku_full <-
   ggplot2::ggplot(
-    data = data_pocet_listku,
+    data = data_poctu_tucnaku,
     mapping = ggplot2::aes(
-      y = pocet_listku,
+      y = pocet_tucnaku,
       x = 1
     )
   ) +
@@ -335,12 +331,12 @@ plot_pocet_listku_full <-
     color = col_data
   ) +
   ggplot2::labs(
-    y = "Počet okvětních lístků",
+    y = "Počet tučňáků (na průzkum)",
     x = ""
   ) +
   ggplot2::theme_minimal() +
   ggplot2::scale_y_continuous(
-    breaks = seq(0, 15, by = 1)
+    breaks = seq(0, 55, by = 5)
   ) +
   ggplot2::theme(
     axis.text.y = ggplot2::element_blank(),
@@ -358,28 +354,28 @@ plot_pocet_listku_full <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_full,
+  plot = plot_pocet_tucnaku_full,
   file = here::here(
     path_materials,
-    "pocet_listku.png"
+    "pocet_tucnaku.png"
   )
 )
 
-vec_range_pocet_listku <-
-  range(data_pocet_listku$pocet_listku)
+vec_range_pocet_tucnaku <-
+  range(data_poctu_tucnaku$pocet_tucnaku)
 
 vec_frame_files <-
   purrr::map_chr(
-    .x = seq_len(nrow(data_pocet_listku)),
+    .x = seq_len(nrow(data_poctu_tucnaku)),
     .f = function(i) {
       file_temp <-
         tempfile(fileext = ".png")
 
       plot_frame <-
         ggplot2::ggplot(
-          data = data_pocet_listku[seq_len(i), ],
+          data = data_poctu_tucnaku[seq_len(i), ],
           mapping = ggplot2::aes(
-            y = pocet_listku,
+            y = pocet_tucnaku,
             x = 1
           )
         ) +
@@ -389,14 +385,14 @@ vec_frame_files <-
           color = col_data
         ) +
         ggplot2::labs(
-          y = "Počet okvětních lístků",
+          y = "Počet tučňáků (na průzkum)",
           x = "",
-          title = stringr::str_glue("Počet nasbíraných kopretin: {i}")
+          title = stringr::str_glue("Průzkum č. {i} z 15")
         ) +
         ggplot2::theme_minimal() +
         ggplot2::scale_y_continuous(
-          breaks = seq(0, 15, by = 1),
-          limits = vec_range_pocet_listku
+          breaks = seq(0, 55, by = 5),
+          limits = vec_range_pocet_tucnaku
         ) +
         ggplot2::theme(
           axis.text.y = ggplot2::element_blank(),
@@ -427,7 +423,7 @@ magick::image_read(vec_frame_files) |>
   magick::image_write(
     path = here::here(
       path_materials,
-      "pocet_listku.gif"
+      "pocet_tucnaku.gif"
     )
   )
 
@@ -436,19 +432,19 @@ unlink(vec_frame_files)
 
 ```{r}
 #| label: zobrazit animaci
-include_local_figure("pocet_listku.gif")
+include_local_figure("pocet_tucnaku.gif")
 ```
 
 
 
-## Kopretiny
+## Naše data
 
 ```{r}
 #| label: zobrazit staticky graf
-include_local_figure("pocet_listku.png")
+include_local_figure("pocet_tucnaku.png")
 ```
 
-## Kopretiny
+## Naše data
 
 Nyní máme data. Jak je **vizualizovat**?
 
@@ -456,7 +452,7 @@ Nyní máme data. Jak je **vizualizovat**?
 
 ## Proč nejdřív vizualizovat?
 
-Mám dvě skupiny kopretin. Obě mají **průměrný počet lístků 7**:
+Mám dvě skupiny průzkumů. Obě mají **průměrný počet tučňáků 7**:
 
 ```{r}
 #| label: motivace statistiky
@@ -479,7 +475,7 @@ mean(c(4, 4, 5, 5, 7, 9, 9, 10, 10))
 #| warning: false
 data_motivace <-
   tibble::tibble(
-    pocet_listku = c(5, 6, 6, 7, 7, 7, 8, 8, 9, 4, 4, 5, 5, 7, 9, 9, 10, 10),
+    pocet_tucnaku = c(5, 6, 6, 7, 7, 7, 8, 8, 9, 4, 4, 5, 5, 7, 9, 9, 10, 10),
     skupina = rep(c("Skupina A", "Skupina B"), each = 9)
   )
 
@@ -487,7 +483,7 @@ plot_motivace <-
   ggplot2::ggplot(
     data = data_motivace,
     mapping = ggplot2::aes(
-      x = pocet_listku,
+      x = pocet_tucnaku,
       y = 1
     )
   ) +
@@ -499,7 +495,7 @@ plot_motivace <-
   ggplot2::facet_wrap(~skupina) +
   ggplot2::scale_x_continuous(breaks = 1:12) +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
+    x = "Počet tučňáků (na průzkum)",
     y = "",
     title = "Stejný průměr — ale úplně jiný tvar dat"
   ) +
@@ -544,12 +540,12 @@ Vždy nejdřív vizualizujte.
 
 ## Bodový graf (beeswarm)
 
-Každý bod = jedna kopretina. Vidíme **všechna data** najednou.
+Každý bod = jeden průzkum. Vidíme **všechna data** najednou.
 
 ```{r}
 #| label: zobrazit beeswarm znovu
 #| echo: false
-include_local_figure("pocet_listku.png")
+include_local_figure("pocet_tucnaku.png")
 ```
 
 ::: {.incremental}
@@ -560,7 +556,7 @@ include_local_figure("pocet_listku.png")
 
 ## Histogram
 
-Skupinujeme kopretiny do „košů“ podle počtu lístků. Výška sloupce = počet kopretin v daném koši.
+Skupinujeme průzkumy do „košů“ podle počtu tučňáků. Výška sloupce = počet průzkumů v daném koši.
 
 ```{r}
 #| label: vytvorit histogram
@@ -568,11 +564,11 @@ Skupinujeme kopretiny do „košů“ podle počtu lístků. Výška sloupce = p
 #| eval: true
 #| message: false
 #| warning: false
-plot_pocet_listku_histogram <-
+plot_pocet_tucnaku_histogram <-
   ggplot2::ggplot(
-    data = data_pocet_listku,
+    data = data_poctu_tucnaku,
     mapping = ggplot2::aes(
-      x = pocet_listku
+      x = pocet_tucnaku
     )
   ) +
   ggplot2::geom_histogram(
@@ -581,12 +577,12 @@ plot_pocet_listku_histogram <-
     color = "white"
   ) +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
-    y = "Počet kopretin"
+    x = "Počet tučňáků (na průzkum)",
+    y = "Počet průzkumů"
   ) +
   ggplot2::theme_minimal() +
   ggplot2::scale_x_continuous(
-    breaks = seq(0, 15, by = 1)
+    breaks = seq(0, 55, by = 5)
   ) +
   ggview::canvas(
     width = 1600,
@@ -595,17 +591,17 @@ plot_pocet_listku_histogram <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_histogram,
+  plot = plot_pocet_tucnaku_histogram,
   file = here::here(
     path_materials,
-    "pocet_listku_histogram.png"
+    "pocet_tucnaku_histogram.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit histogram
 #| echo: false
-include_local_figure("pocet_listku_histogram.png")
+include_local_figure("pocet_tucnaku_histogram.png")
 ```
 
 ::: {.incremental}
@@ -624,11 +620,11 @@ Graf hustoty (density plot) je „vyhlazený“ histogram – neukazuje počty, 
 #| eval: true
 #| message: false
 #| warning: false
-plot_pocet_listku_hustota <-
+plot_pocet_tucnaku_hustota <-
   ggplot2::ggplot(
-    data = data_pocet_listku,
+    data = data_poctu_tucnaku,
     mapping = ggplot2::aes(
-      x = pocet_listku
+      x = pocet_tucnaku
     )
   ) +
   ggplot2::geom_density(
@@ -637,12 +633,12 @@ plot_pocet_listku_hustota <-
     color = col_data
   ) +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
+    x = "Počet tučňáků (na průzkum)",
     y = "Hustota"
   ) +
   ggplot2::theme_minimal() +
   ggplot2::scale_x_continuous(
-    breaks = seq(0, 15, by = 1)
+    breaks = seq(0, 55, by = 5)
   ) +
   ggview::canvas(
     width = 1600,
@@ -651,17 +647,17 @@ plot_pocet_listku_hustota <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_hustota,
+  plot = plot_pocet_tucnaku_hustota,
   file = here::here(
     path_materials,
-    "pocet_listku_hustota.png"
+    "pocet_tucnaku_hustota.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit hustotu
 #| echo: false
-include_local_figure("pocet_listku_hustota.png")
+include_local_figure("pocet_tucnaku_hustota.png")
 ```
 
 ::: {.incremental}
@@ -676,7 +672,7 @@ include_local_figure("pocet_listku_hustota.png")
 
 ### Minimum 
 
-Minimum nám říká, kolik lístků měla ta kopretina s nejmenším počtem lístků.
+Minimum nám říká, kolik tučňáků měl průzkum s nejnižším počtem tučňáků.
 
 <br>
 
@@ -687,7 +683,7 @@ Minimum nám říká, kolik lístků měla ta kopretina s nejmenším počtem l�
 ```{r}
 #| label: minimum
 #| echo: true
-min(pocet_listku)
+min(pocet_tucnaku)
 ```
 
 :::
@@ -697,24 +693,24 @@ min(pocet_listku)
 ```{r}
 #| label: minimum v grafu
 #| echo: false
-plot_pocet_listku_minimum <-
-plot_pocet_listku_full +
+plot_pocet_tucnaku_minimum <-
+plot_pocet_tucnaku_full +
   ggplot2::geom_hline(
-    yintercept = min(pocet_listku),
+    yintercept = min(pocet_tucnaku),
     color = col_highlight,
     linetype = "dashed"
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Minimum lístků: {min(pocet_listku)}"
+      "Minimum: {min(pocet_tucnaku)} tučňáků"
     )
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_minimum,
+  plot = plot_pocet_tucnaku_minimum,
   file = here::here(
     path_materials,
-    "pocet_listku_minimum.png"
+    "pocet_tucnaku_minimum.png"
   ))
 ```
 
@@ -722,7 +718,7 @@ ggview::save_ggplot(
 ```{r}
 #| label: zobrazit minimum v grafu
 #| echo: false
-include_local_figure("pocet_listku_minimum.png")
+include_local_figure("pocet_tucnaku_minimum.png")
 ```
 :::
 
@@ -733,7 +729,7 @@ include_local_figure("pocet_listku_minimum.png")
 
 ### Maximum 
 
-Maximum nám říká, kolik lístků měla ta kopretina s největším počtem lístků.
+Maximum nám říká, kolik tučňáků měl průzkum s nejvyšším počtem tučňáků.
 
 <br>
 
@@ -743,7 +739,7 @@ Maximum nám říká, kolik lístků měla ta kopretina s největším počtem l
 ```{r}
 #| label: maximum
 #| echo: true
-max(pocet_listku)
+max(pocet_tucnaku)
 ```
 
 :::
@@ -753,24 +749,24 @@ max(pocet_listku)
 ```{r}
 #| label: maximum v grafu
 #| echo: false
-plot_pocet_listku_maximum <-
-  plot_pocet_listku_full +
+plot_pocet_tucnaku_maximum <-
+  plot_pocet_tucnaku_full +
   ggplot2::geom_hline(
-    yintercept = max(pocet_listku),
+    yintercept = max(pocet_tucnaku),
     color = col_highlight,
     linetype = "dashed"
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Maximum lístků: {max(pocet_listku)}"
+      "Maximum: {max(pocet_tucnaku)} tučňáků"
     )
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_maximum,
+  plot = plot_pocet_tucnaku_maximum,
   file = here::here(
     path_materials,
-    "pocet_listku_maximum.png"
+    "pocet_tucnaku_maximum.png"
   ))
 ```
 
@@ -778,7 +774,7 @@ ggview::save_ggplot(
 ```{r}
 #| label: zobrazit maximum v grafu
 #| echo: false
-include_local_figure("pocet_listku_maximum.png")
+include_local_figure("pocet_tucnaku_maximum.png")
 ```
 :::
 
@@ -791,7 +787,7 @@ Percentil říká, jakou hodnotu nepřesahuje dané procento dat.
 ::: {.incremental}
 
 - **0. percentil** = minimum
-- **50. percentil** = polovina kopretin má méně, polovina více
+- **50. percentil** = polovina průzkumů má méně, polovina více
 - **100. percentil** = maximum
 
 :::
@@ -801,7 +797,7 @@ Percentil říká, jakou hodnotu nepřesahuje dané procento dat.
 ```{r}
 #| label: percentily priklad
 #| echo: true
-quantile(pocet_listku, probs = c(0, 0.25, 0.50, 0.75, 1))
+quantile(pocet_tucnaku, probs = c(0, 0.25, 0.50, 0.75, 1))
 ```
 
 :::
@@ -818,7 +814,7 @@ Percentily rozdělují data na části – 25. a 75. percentil jsou zvláště d
 
 ### Medián
 
-Medián je **50. percentil** – polovina kopretin má méně lístků, polovina více.
+Medián je **50. percentil** – polovina průzkumů má méně tučňáků, polovina více.
 
 <br>
 
@@ -828,7 +824,7 @@ Medián je **50. percentil** – polovina kopretin má méně lístků, polovina
 ```{r}
 #| label: median
 #| echo: true
-median(pocet_listku)
+median(pocet_tucnaku)
 ```
 :::
 
@@ -837,31 +833,31 @@ median(pocet_listku)
 ```{r}
 #| label: median v grafu
 #| echo: false
-plot_pocet_listku_median <-
-  plot_pocet_listku_full +
+plot_pocet_tucnaku_median <-
+  plot_pocet_tucnaku_full +
   ggplot2::geom_hline(
-    yintercept = median(pocet_listku),
+    yintercept = median(pocet_tucnaku),
     color = col_median_line,
     linetype = "dashed"
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Medián lístků: {median(pocet_listku)}"
+      "Medián: {median(pocet_tucnaku)} tučňáků"
     )
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_median,
+  plot = plot_pocet_tucnaku_median,
   file = here::here(
     path_materials,
-    "pocet_listku_median.png"
+    "pocet_tucnaku_median.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit median v grafu
 #| echo: false
-include_local_figure("pocet_listku_median.png")
+include_local_figure("pocet_tucnaku_median.png")
 ```
 :::
 
@@ -882,9 +878,9 @@ IQR = Q3 - Q1 – rozpětí prostřední poloviny dat.
 ```{r}
 #| label: iqr priklad
 #| echo: true
-quantile(pocet_listku, 0.25) # Q1
-quantile(pocet_listku, 0.75) # Q3
-IQR(pocet_listku)             # Q3 - Q1
+quantile(pocet_tucnaku, 0.25) # Q1
+quantile(pocet_tucnaku, 0.75) # Q3
+IQR(pocet_tucnaku)             # Q3 - Q1
 ```
 
 :::
@@ -897,45 +893,45 @@ IQR(pocet_listku)             # Q3 - Q1
 #| eval: true
 #| message: false
 #| warning: false
-plot_pocet_listku_iqr <-
-  plot_pocet_listku_full +
+plot_pocet_tucnaku_iqr <-
+  plot_pocet_tucnaku_full +
   ggplot2::annotate(
     geom = "rect",
     xmin = -Inf,
     xmax = Inf,
-    ymin = quantile(pocet_listku, 0.25),
-    ymax = quantile(pocet_listku, 0.75),
+    ymin = quantile(pocet_tucnaku, 0.25),
+    ymax = quantile(pocet_tucnaku, 0.75),
     fill = col_data,
     alpha = 0.2
   ) +
   ggplot2::geom_hline(
-    yintercept = quantile(pocet_listku, 0.25),
+    yintercept = quantile(pocet_tucnaku, 0.25),
     color = col_data,
     linetype = "dashed"
   ) +
   ggplot2::geom_hline(
-    yintercept = quantile(pocet_listku, 0.75),
+    yintercept = quantile(pocet_tucnaku, 0.75),
     color = col_data,
     linetype = "dashed"
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Q1: {quantile(pocet_listku, 0.25)},  Q3: {quantile(pocet_listku, 0.75)},  IQR: {IQR(pocet_listku)}"
+      "Q1: {quantile(pocet_tucnaku, 0.25)},  Q3: {quantile(pocet_tucnaku, 0.75)},  IQR: {IQR(pocet_tucnaku)}"
     )
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_iqr,
+  plot = plot_pocet_tucnaku_iqr,
   file = here::here(
     path_materials,
-    "pocet_listku_iqr.png"
+    "pocet_tucnaku_iqr.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit iqr v grafu
 #| echo: false
-include_local_figure("pocet_listku_iqr.png")
+include_local_figure("pocet_tucnaku_iqr.png")
 ```
 
 :::
@@ -954,7 +950,7 @@ IQR je odolný vůči odlehlým hodnotám – popisuje **prostřední 50 %** dat
 
 ### Průměr
 
-Průměr (mean) nám říká, jaká je typická hodnota počtu lístků přes všechny kopretiny.
+Průměr (mean) nám říká, jaký je typický počet tučňáků přes všechny průzkumy.
 
 <br>
 
@@ -964,7 +960,7 @@ Průměr (mean) nám říká, jaká je typická hodnota počtu lístků přes v�
 ```{r}
 #| label: prumer
 #| echo: true
-mean(pocet_listku)
+mean(pocet_tucnaku)
 ```
 :::
 
@@ -973,31 +969,31 @@ mean(pocet_listku)
 ```{r}
 #| label: prumer v grafu
 #| echo: false
-plot_pocet_listku_prumer <-
-  plot_pocet_listku_full +
+plot_pocet_tucnaku_prumer <-
+  plot_pocet_tucnaku_full +
   ggplot2::geom_hline(
-    yintercept = mean(pocet_listku),
+    yintercept = mean(pocet_tucnaku),
     color = col_highlight,
     linetype = "dashed"
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Průměr lístků: {round(mean(pocet_listku), 1)}"
+      "Průměr: {round(mean(pocet_tucnaku), 1)} tučňáků"
     )
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_prumer,
+  plot = plot_pocet_tucnaku_prumer,
   file = here::here(
     path_materials,
-    "pocet_listku_prumer.png"
+    "pocet_tucnaku_prumer.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit prumer v grafu
 #| echo: false
-include_local_figure("pocet_listku_prumer.png")
+include_local_figure("pocet_tucnaku_prumer.png")
 ```
 :::
 
@@ -1009,7 +1005,7 @@ Průměr a medián mohou být velmi odlišné, pokud jsou v datech **odlehlé ho
 
 ::: {.fragment}
 
-Co kdybychom sebrali opravdu divnou kopretinu s 50 lístky?
+Co kdybychom přidali neobyčlý průzkum s 90 tučňáky?
 
 :::
 
@@ -1019,8 +1015,8 @@ Co kdybychom sebrali opravdu divnou kopretinu s 50 lístky?
 #| eval: true
 #| message: false
 #| warning: false
-pocet_listku_outlier <-
-  c(pocet_listku, 50)
+pocet_tucnaku_outlier <-
+  c(pocet_tucnaku, 90L)
 ```
 
 :::: {.columns .fragment}
@@ -1030,8 +1026,8 @@ pocet_listku_outlier <-
 ```{r}
 #| label: prumer vs median bez outlieru
 #| echo: true
-mean(pocet_listku)
-median(pocet_listku)
+mean(pocet_tucnaku)
+median(pocet_tucnaku)
 ```
 
 **Bez odlehlé hodnoty**
@@ -1042,8 +1038,8 @@ median(pocet_listku)
 ```{r}
 #| label: prumer vs median s outlierem
 #| echo: true
-mean(pocet_listku_outlier)
-median(pocet_listku_outlier)
+mean(pocet_tucnaku_outlier)
+median(pocet_tucnaku_outlier)
 ```
 
 **S odlehlou hodnotou**
@@ -1077,8 +1073,8 @@ Směrodatná odchylka (standard deviation) nám říká, jak daleko jsou typicky
 ```{r}
 #| label: sd a var
 #| echo: true
-sd(pocet_listku)
-var(pocet_listku)
+sd(pocet_tucnaku)
+var(pocet_tucnaku)
 ```
 
 ::: {.fragment}
@@ -1092,40 +1088,40 @@ Rozptyl (variance) = SD². V praxi se většinou používá SD – je ve stejný
 ```{r}
 #| label: sd v grafu
 #| echo: false
-plot_pocet_listku_sd <-
-  plot_pocet_listku_full +
+plot_pocet_tucnaku_sd <-
+  plot_pocet_tucnaku_full +
   ggplot2::annotate(
     geom = "rect",
     xmin = -Inf,
     xmax = Inf,
-    ymin = mean(pocet_listku) - sd(pocet_listku),
-    ymax = mean(pocet_listku) + sd(pocet_listku),
+    ymin = mean(pocet_tucnaku) - sd(pocet_tucnaku),
+    ymax = mean(pocet_tucnaku) + sd(pocet_tucnaku),
     fill = col_highlight,
     alpha = 0.15
   ) +
   ggplot2::geom_hline(
-    yintercept = mean(pocet_listku),
+    yintercept = mean(pocet_tucnaku),
     color = col_highlight,
     linetype = "dashed"
   ) +
   ggplot2::labs(
     title = stringr::str_glue(
-      "Průměr: {round(mean(pocet_listku), 1)},  SD: {round(sd(pocet_listku), 1)}"
+      "Průměr: {round(mean(pocet_tucnaku), 1)},  SD: {round(sd(pocet_tucnaku), 1)}"
     )
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_sd,
+  plot = plot_pocet_tucnaku_sd,
   file = here::here(
     path_materials,
-    "pocet_listku_sd.png"
+    "pocet_tucnaku_sd.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit sd v grafu
 #| echo: false
-include_local_figure("pocet_listku_sd.png")
+include_local_figure("pocet_tucnaku_sd.png")
 ```
 
 :::
@@ -1134,7 +1130,7 @@ include_local_figure("pocet_listku_sd.png")
 
 ## Proč je SD důležité?
 
-Dvě skupiny kopretin mohou mít **stejný průměr**, ale velmi **různě rozptýlená** data.
+Dvě skupiny průzkumů mohou mít **stejný průměr**, ale velmi **různě rozptýlená** data.
 
 ```{r}
 #| label: data porovnani sd
@@ -1156,13 +1152,13 @@ sim_velka_sd <- sim_velka_sd - mean(sim_velka_sd) + mean_val
 
 data_mala_sd <-
   tibble::tibble(
-    pocet_listku_sim = sim_mala_sd,
+    pocet_tucnaku_sim = sim_mala_sd,
     skupina = "Malé SD"
   )
 
 data_velka_sd <-
   tibble::tibble(
-    pocet_listku_sim = sim_velka_sd,
+    pocet_tucnaku_sim = sim_velka_sd,
     skupina = "Velké SD"
   )
 
@@ -1183,7 +1179,7 @@ plot_porovnani_sd <-
   ggplot2::ggplot(
     data = data_porovnani_sd,
     mapping = ggplot2::aes(
-      x = pocet_listku_sim,
+      x = pocet_tucnaku_sim,
       fill = skupina
     )
   ) +
@@ -1199,15 +1195,15 @@ plot_porovnani_sd <-
   ggplot2::geom_vline(
     data = data_porovnani_sd |>
       dplyr::group_by(skupina) |>
-      dplyr::summarise(prumer = mean(pocet_listku_sim)),
+      dplyr::summarise(prumer = mean(pocet_tucnaku_sim)),
     mapping = ggplot2::aes(xintercept = prumer),
     color = col_highlight,
     linetype = "dashed",
     linewidth = 1
   ) +
   ggplot2::labs(
-    x = "Počet okvětních lístků",
-    y = "Počet kopretin",
+    x = "Počet tučňáků (na průzkum)",
+    y = "Počet průzkumů",
     title = stringr::str_glue(
       "Průměr je stejný, SD se liší"
     )
@@ -1262,18 +1258,18 @@ Průměr – SD jsme viděli jako čísla a jako pásmo na grafu.
 #| echo: false
 #| 
 
-sd_pocet_listku <- sd(pocet_listku)
-mean_pocet_listku <- mean(pocet_listku)
-range_pocet_listku <- range(pocet_listku)
+sd_pocet_tucnaku <- sd(pocet_tucnaku)
+mean_pocet_tucnaku <- mean(pocet_tucnaku)
+range_pocet_tucnaku <- range(pocet_tucnaku)
 
-plot_pocet_listku_prumer_vizualizace <-
+plot_pocet_tucnaku_prumer_vizualizace <-
   ggplot2::ggplot() +
   ggplot2::geom_pointrange(
     data = tibble::tibble(
       x = 1,
-      y = mean_pocet_listku,
-      ymin = mean_pocet_listku - sd_pocet_listku,
-      ymax = mean_pocet_listku + sd_pocet_listku
+      y = mean_pocet_tucnaku,
+      ymin = mean_pocet_tucnaku - sd_pocet_tucnaku,
+      ymax = mean_pocet_tucnaku + sd_pocet_tucnaku
     ),
     mapping = ggplot2::aes(x = x, y = y, ymin = ymin, ymax = ymax),
     fill = col_highlight,
@@ -1284,22 +1280,22 @@ plot_pocet_listku_prumer_vizualizace <-
   ggplot2::geom_point(
     data = tibble::tibble(
       x = 1,
-      y = mean_pocet_listku,
+      y = mean_pocet_tucnaku,
     ),
     mapping = ggplot2::aes(x = x, y = y),
     color = col_highlight,
     size = 5
   ) +
   ggplot2::labs(
-    y = "Počet okvětních lístků",
+    y = "Počet tučňáků (na průzkum)",
     x = ""
   ) +
   ggplot2::theme_minimal() +
   ggplot2::scale_y_continuous(
-    breaks = seq(0, 15, by = 1),
+    breaks = seq(0, 55, by = 5),
   ) +
   ggplot2::scale_x_continuous(
-    breaks = seq(0, 15, by = 1)
+    breaks = seq(0, 55, by = 5)
   ) +
   ggplot2::theme(
     axis.text.y = ggplot2::element_blank(),
@@ -1318,10 +1314,10 @@ plot_pocet_listku_prumer_vizualizace <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_prumer_vizualizace,
+  plot = plot_pocet_tucnaku_prumer_vizualizace,
   file = here::here(
     path_materials,
-    "plot_pocet_listku_prumer_vizualizace.png"
+    "plot_pocet_tucnaku_prumer_vizualizace.png"
   )
 )
 ```
@@ -1330,7 +1326,7 @@ ggview::save_ggplot(
 ```{r}
 #| label: zobrazit prumer jako vizualizace
 #| echo: false
-include_local_figure("plot_pocet_listku_prumer_vizualizace.png")
+include_local_figure("plot_pocet_tucnaku_prumer_vizualizace.png")
 ```
 
 :::
@@ -1356,14 +1352,14 @@ Začneme s tím, co už známe: **medián**.
 #| eval: true
 #| message: false
 #| warning: false
-med_val <- median(pocet_listku)
-q1_val <- quantile(pocet_listku, 0.25)
-q3_val <- quantile(pocet_listku, 0.75)
-whisker_lo <- max(min(pocet_listku), q1_val - 1.5 * (q3_val - q1_val))
-whisker_hi <- min(max(pocet_listku), q3_val + 1.5 * (q3_val - q1_val))
+med_val <- median(pocet_tucnaku)
+q1_val <- quantile(pocet_tucnaku, 0.25)
+q3_val <- quantile(pocet_tucnaku, 0.75)
+whisker_lo <- max(min(pocet_tucnaku), q1_val - 1.5 * (q3_val - q1_val))
+whisker_hi <- min(max(pocet_tucnaku), q3_val + 1.5 * (q3_val - q1_val))
 
 plot_boxplot_krok1 <-
-  plot_pocet_listku_full +
+  plot_pocet_tucnaku_full +
   ggplot2::geom_segment(
     ggplot2::aes(x = 0.8, xend = 1.2, y = med_val, yend = med_val),
     color = col_median_line,
@@ -1398,7 +1394,7 @@ Přidáme **mezikvartilové rozpětí** (IQR): od 25. do 75. percentilu.
 #| message: false
 #| warning: false
 plot_boxplot_krok2 <-
-  plot_pocet_listku_full +
+  plot_pocet_tucnaku_full +
   ggplot2::annotate(
     geom = "rect",
     xmin = 0.8,
@@ -1445,13 +1441,13 @@ Přidáme **vousy** (1,5× IQR od krabice) a **odlehlé hodnoty** (body mimo vou
 #| message: false
 #| warning: false
 outlier_data <-
-  data_pocet_listku |>
+  data_poctu_tucnaku |>
   dplyr::filter(
-    pocet_listku < whisker_lo | pocet_listku > whisker_hi
+    pocet_tucnaku < whisker_lo | pocet_tucnaku > whisker_hi
   )
 
 plot_boxplot_krok3 <-
-  plot_pocet_listku_full +
+  plot_pocet_tucnaku_full +
   ggplot2::annotate(
     geom = "rect",
     xmin = 0.8,
@@ -1479,7 +1475,7 @@ plot_boxplot_krok3 <-
   ) +
   ggplot2::geom_point(
     data = outlier_data,
-    ggplot2::aes(y = pocet_listku, x = 1),
+    ggplot2::aes(y = pocet_tucnaku, x = 1),
     color = col_highlight,
     size = 2,
     shape = 1
@@ -1502,8 +1498,8 @@ ggview::save_ggplot(
 #| eval: true
 #| message: false
 #| warning: false
-plot_pocet_listku_boxplot <-
-  plot_pocet_listku_full +
+plot_pocet_tucnaku_boxplot <-
+  plot_pocet_tucnaku_full +
   ggplot2::geom_boxplot(
     fill = col_data,
     alpha = 0.5,
@@ -1512,10 +1508,10 @@ plot_pocet_listku_boxplot <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_boxplot,
+  plot = plot_pocet_tucnaku_boxplot,
   file = here::here(
     path_materials,
-    "pocet_listku_boxplot.png"
+    "pocet_tucnaku_boxplot.png"
   ))
 ```
 
@@ -1554,8 +1550,8 @@ Boxplot + beeswarm dohromady: vidíme statistiky i každý jednotlivý bod.
 #| eval: true
 #| message: false
 #| warning: false
-plot_pocet_listku_boxplot_beeswarm <-
-  plot_pocet_listku_full +
+plot_pocet_tucnaku_boxplot_beeswarm <-
+  plot_pocet_tucnaku_full +
   ggplot2::geom_boxplot(
     fill = col_data,
     alpha = 0.3,
@@ -1564,17 +1560,17 @@ plot_pocet_listku_boxplot_beeswarm <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_listku_boxplot_beeswarm,
+  plot = plot_pocet_tucnaku_boxplot_beeswarm,
   file = here::here(
     path_materials,
-    "pocet_listku_boxplot_beeswarm.png"
+    "pocet_tucnaku_boxplot_beeswarm.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit boxplot s beeswarm
 #| echo: false
-include_local_figure("pocet_listku_boxplot_beeswarm.png")
+include_local_figure("pocet_tucnaku_boxplot_beeswarm.png")
 ```
 
 ::: {.blockquote}
@@ -1589,52 +1585,46 @@ Boxplot není nový koncept – je to jen statistiky, které znáte, nakreslený
 #| eval: true
 #| message: false
 #| warning: false
-set.seed(900723)
+# Spojitá: délka zobáku v mm (reálná data)
+delka_zobaku <-
+  data_tucnaci_prez[["bill_length_mm"]] |>
+  as.numeric()
 
-# Spojitá: délka okvětního lístku v mm
-delka_listku <-
-  rnorm(
-    n = 100,
-    mean = 25,
-    sd = 5
-  ) |>
-  round(digits = 1)
-
-data_delka_listku <-
+data_delka_zobaku <-
   tibble::tibble(
-    delka_listku = delka_listku
+    delka_zobaku = delka_zobaku
   )
 
-# Nominální: barva květu
-barva_kvetiny <-
-  sample(
-    c("šedá", "žlutá", "fialová"),
-    size = 100,
-    replace = TRUE,
-    prob = c(0.5, 0.3, 0.2)
-  )
+# Nominální: druh tučňáka
+druh_tucnaku <-
+  as.character(data_tucnaci_prez[["species"]])
 
-data_barva_kvetiny <-
+data_druh_tucnaku <-
   tibble::tibble(
-    barva_kvetiny = barva_kvetiny
+    druh_tucnaku = druh_tucnaku
   )
 
-# Ordinální: stupeň poškození listu
-stupen_poskozeni <-
-  sample(
-    c("0 - žádné", "1 - mírné", "2 - střední", "3 - silné"),
-    size = 100,
-    replace = TRUE,
-    prob = c(0.3, 0.35, 0.25, 0.1)
+# Ordinální: hmotnostní kategorie
+vec_thresholds <-
+  quantile(
+    data_tucnaci_prez[["body_mass_g"]],
+    probs = c(1 / 3, 2 / 3)
+  )
+
+kategorie_hmotnosti <-
+  dplyr::case_when(
+    data_tucnaci_prez[["body_mass_g"]] <= vec_thresholds[[1]] ~ "malý",
+    data_tucnaci_prez[["body_mass_g"]] <= vec_thresholds[[2]] ~ "střední",
+    TRUE ~ "velký"
   ) |>
   factor(
-    levels = c("0 - žádné", "1 - mírné", "2 - střední", "3 - silné"),
+    levels = c("malý", "střední", "velký"),
     ordered = TRUE
   )
 
-data_stupen_poskozeni <-
+data_kategorie_hmotnosti <-
   tibble::tibble(
-    stupen_poskozeni = stupen_poskozeni
+    kategorie_hmotnosti = kategorie_hmotnosti
   )
 ```
 
@@ -1644,7 +1634,7 @@ Typ proměnné určuje:
 
 ::: {.incremental}
 
-- jaké **statistiky** dávají smysl (průměr lístků ano; průměr barvy květu ne)
+- jaké **statistiky** dávají smysl (průměr počtu tučňáků ano; průměr druhu tučňáka ne)
 - jakou **vizualizaci** zvolíme (beeswarm pro čísla, sloupcový graf pro kategorie)
 - jak data správně **interpretujeme**
 
@@ -1654,7 +1644,7 @@ Typ proměnné určuje:
 
 ::: {.incremental}
 
-- počet okvětních lístků u kopretiny
+- počet tučňáků na průzkum
 - počet stromů v lese
 - počet druhů ptáků na lokalitě
 - počet planet ve Sluneční soustavě
@@ -1674,8 +1664,8 @@ Proměnná nabývající pouze **celočíselných** hodnot – nelze mít 7,3 st
 ```{r}
 #| label: diskretni priklad
 #| echo: true
-pocet_listku <-
-  c(8L, 6L, 7L, 8L) # celá čísla
+pocet_tucnaku <-
+  c(10L, 18L, 16L, 20L) # celá čísla
 ```
 
 ::: {.fragment}
@@ -1685,16 +1675,20 @@ Vizualizace: beeswarm nebo histogram.
 ```{r}
 #| label: zobrazit diskretni histogram
 #| echo: false
-include_local_figure("pocet_listku_histogram.png")
+include_local_figure("pocet_tucnaku_histogram.png")
 ```
 
 :::
 
 ## Kvantitativní – spojitá
 
+:::: {.columns}
+
+::: {.column width="50%"}
+
 ::: {.incremental}
 
-- délka okvětního lístku v mm
+- délka zobáku tučňáka v mm
 - teplota vzduchu
 - množství srážek
 - hmotnost zvířete
@@ -1704,9 +1698,27 @@ include_local_figure("pocet_listku_histogram.png")
 ::: {.fragment}
 
 ::: {.blockquote}
-Proměnná nabývající **jakékoli hodnoty** v intervalu – délka může být 24,7 mm nebo 25,13 mm.
+Proměnná nabývající **jakékoli hodnoty** v intervalu – délka může být 39,1 mm nebo 40,34 mm.
 :::
 
+:::
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| label: zobrazit schema zobaku
+#| echo: false
+include_local_figure("culmen_depth.png")
+```
+
+:::
+
+::::
+
+::: {.footer}
+Artwork by [Allison Horst](https://allisonhorst.github.io/palmerpenguins/articles/art.html)
 :::
 
 ## Kvantitativní – spojitá
@@ -1714,8 +1726,8 @@ Proměnná nabývající **jakékoli hodnoty** v intervalu – délka může bý
 ```{r}
 #| label: spojite priklad
 #| echo: true
-delka_listku <-
-  c(24.7, 25.1, 23.5, 26.8) # desetinná čísla
+delka_zobaku <-
+  c(39.1, 40.3, 36.7, 42.9) # desetinná čísla
 ```
 
 ::: {.fragment}
@@ -1730,9 +1742,9 @@ Různé vizualizace odhalují různé vlastnosti dat.
 #| warning: false
 plot_delka_beeswarm <-
   ggplot2::ggplot(
-    data = data_delka_listku,
+    data = data_delka_zobaku,
     mapping = ggplot2::aes(
-      x = delka_listku,
+      x = delka_zobaku,
       y = 1
     )
   ) +
@@ -1742,7 +1754,7 @@ plot_delka_beeswarm <-
     alpha = 0.7
   ) +
   ggplot2::labs(
-    x = "Délka lístku (mm)",
+    x = "Délka zobáku (mm)",
     y = "",
     title = "Bodový graf"
   ) +
@@ -1754,18 +1766,18 @@ plot_delka_beeswarm <-
 
 plot_delka_histogram <-
   ggplot2::ggplot(
-    data = data_delka_listku,
+    data = data_delka_zobaku,
     mapping = ggplot2::aes(
-      x = delka_listku
+      x = delka_zobaku
     )
   ) +
   ggplot2::geom_histogram(
-    binwidth = 2,
+    binwidth = 1,
     fill = col_data,
     color = "white"
   ) +
   ggplot2::labs(
-    x = "Délka lístku (mm)",
+    x = "Délka zobáku (mm)",
     y = "Počet",
     title = "Histogram"
   ) +
@@ -1773,9 +1785,9 @@ plot_delka_histogram <-
 
 plot_delka_hustota <-
   ggplot2::ggplot(
-    data = data_delka_listku,
+    data = data_delka_zobaku,
     mapping = ggplot2::aes(
-      x = delka_listku
+      x = delka_zobaku
     )
   ) +
   ggplot2::geom_density(
@@ -1784,13 +1796,13 @@ plot_delka_hustota <-
     color = col_data
   ) +
   ggplot2::labs(
-    x = "Délka lístku (mm)",
+    x = "Délka zobáku (mm)",
     y = "Hustota",
     title = "Graf hustoty"
   ) +
   ggplot2::theme_minimal()
 
-plot_delka_listku_tri <-
+plot_delka_zobaku_tri <-
   cowplot::plot_grid(
     plot_delka_beeswarm,
     plot_delka_histogram,
@@ -1804,17 +1816,17 @@ plot_delka_listku_tri <-
   )
 
 ggview::save_ggplot(
-  plot = plot_delka_listku_tri,
+  plot = plot_delka_zobaku_tri,
   file = here::here(
     path_materials,
-    "delka_listku_tri.png"
+    "delka_zobaku_tri.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit tri grafy spojite
 #| echo: false
-include_local_figure("delka_listku_tri.png")
+include_local_figure("delka_zobaku_tri.png")
 ```
 
 :::
@@ -1823,7 +1835,7 @@ include_local_figure("delka_listku_tri.png")
 
 ::: {.incremental}
 
-- barva květu (bílá, žlutá, fialová)
+- druh tučňáka (Adelie, Chinstrap, Gentoo)
 - druh hmyzu (včela, čmelák, motýl)
 - typ stanoviště (les, louka, mokřad)
 - krevní skupina (A, B, AB, 0)
@@ -1833,7 +1845,7 @@ include_local_figure("delka_listku_tri.png")
 ::: {.fragment}
 
 ::: {.blockquote}
-Proměnná, jejíž hodnoty **nelze seřadit** – „šedá“ není víc ani méně než „žlutá“.
+Proměnná, jejíž hodnoty **nelze seřadit** – „Adelie“ není více ani méně než „Chinstrap“.
 :::
 
 :::
@@ -1843,8 +1855,8 @@ Proměnná, jejíž hodnoty **nelze seřadit** – „šedá“ není víc ani m
 ```{r}
 #| label: nominalni priklad
 #| echo: true
-barva_kvetiny <-
-  c("šedá", "žlutá", "šedá", "fialová")
+druh_tucnaku <-
+  c("Adelie", "Chinstrap", "Adelie", "Gentoo")
 ```
 
 ::: {.fragment}
@@ -1855,11 +1867,11 @@ Každá kategorie dostane vlastní barvu – vizuální kód odpovídá realitě
 #| label: definovat barvy kvetin
 #| echo: false
 #| eval: true
-barvy_kvetin <-
+barvy_druhu <-
   c(
-    "šedá" = "gray70",
-    "žlutá" = "gold",
-    "fialová" = "mediumpurple"
+    "Adelie" = "darkorange",
+    "Chinstrap" = "mediumpurple",
+    "Gentoo" = "cyan4"
   )
 ```
 
@@ -1869,23 +1881,23 @@ barvy_kvetin <-
 #| eval: true
 #| message: false
 #| warning: false
-plot_barva_kvetiny <-
+plot_druh_tucnaku <-
   ggplot2::ggplot(
-    data = data_barva_kvetiny,
+    data = data_druh_tucnaku,
     mapping = ggplot2::aes(
-      x = barva_kvetiny,
-      fill = barva_kvetiny
+      x = druh_tucnaku,
+      fill = druh_tucnaku
     )
   ) +
   ggplot2::geom_bar(
     color = "gray40"
   ) +
   ggplot2::scale_fill_manual(
-    values = barvy_kvetin
+    values = barvy_druhu
   ) +
   ggplot2::labs(
-    x = "Barva květu",
-    y = "Počet kopretin"
+    x = "Druh tučňáka",
+    y = "Počet průzkumů"
   ) +
   ggplot2::theme_minimal() +
   ggplot2::theme(
@@ -1898,17 +1910,17 @@ plot_barva_kvetiny <-
   )
 
 ggview::save_ggplot(
-  plot = plot_barva_kvetiny,
+  plot = plot_druh_tucnaku,
   file = here::here(
     path_materials,
-    "barva_kvetiny.png"
+    "druh_tucnaku.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit bar nominalni
 #| echo: false
-include_local_figure("barva_kvetiny.png")
+include_local_figure("druh_tucnaku.png")
 ```
 
 :::
@@ -1925,10 +1937,10 @@ Chceme ukázat **proporce** (ne počty)? Použijeme složený sloupcový graf ne
 #| warning: false
 plot_barva_stacked <-
   ggplot2::ggplot(
-    data = data_barva_kvetiny,
+    data = data_druh_tucnaku,
     mapping = ggplot2::aes(
       x = "",
-      fill = barva_kvetiny
+      fill = druh_tucnaku
     )
   ) +
   ggplot2::geom_bar(
@@ -1936,8 +1948,8 @@ plot_barva_stacked <-
     color = "gray40"
   ) +
   ggplot2::scale_fill_manual(
-    values = barvy_kvetin,
-    name = "Barva květu"
+    values = barvy_druhu,
+    name = "Druh tučňáka"
   ) +
   ggplot2::scale_y_continuous(
     labels = scales::percent
@@ -1950,14 +1962,14 @@ plot_barva_stacked <-
   ggplot2::theme_minimal()
 
 pocty_barev <-
-  table(data_barva_kvetiny[["barva_kvetiny"]])
+  table(data_druh_tucnaku[["druh_tucnaku"]])
 
 plot_barva_waffle <-
   waffle::waffle(
     parts = pocty_barev,
     rows = 10,
-    color = barvy_kvetin[names(pocty_barev)],
-    title = "Waffle graf (1 čtverec = 1 kopretina)"
+    color = barvy_druhu[names(pocty_barev)],
+    title = "Waffle graf (1 čtverec = 1 tučňák)"
   ) +
   ggplot2::theme(
     legend.position = "bottom"
@@ -1980,21 +1992,21 @@ ggview::save_ggplot(
   plot = plot_proporce_combined,
   file = here::here(
     path_materials,
-    "barva_kvetiny_proporce.png"
+    "druh_tucnaku_proporce.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit proporce nominalni
 #| echo: false
-include_local_figure("barva_kvetiny_proporce.png")
+include_local_figure("druh_tucnaku_proporce.png")
 ```
 
 ## Kategorická – ordinální
 
 ::: {.incremental}
 
-- stupeň poškození listu (žádné, mírné, střední, silné)
+- hmotnostní kategorie tučňáka (malý, střední, velký)
 - školní klasifikace (1, 2, 3, 4, 5)
 - souhlas s výrokem (zcela souhlasím – zcela nesouhlasím)
 - fáze měsíce (nový – úplněk)
@@ -2004,7 +2016,7 @@ include_local_figure("barva_kvetiny_proporce.png")
 ::: {.fragment}
 
 ::: {.blockquote}
-Proměnná s **pořadím**, ale vzdálenost mezi stupni **není nutně stejná** – „střední“ poškození není přesně dvakrát větší než „mírné“.
+Proměnná s **pořadím**, ale vzdálenost mezi stupni **není nutně stejná** – „velký“ není přesně dvakrát víc než „malý“.
 :::
 
 :::
@@ -2014,10 +2026,10 @@ Proměnná s **pořadím**, ale vzdálenost mezi stupni **není nutně stejná**
 ```{r}
 #| label: ordinalni priklad
 #| echo: true
-stupen_poskozeni <-
+kategorie_hmotnosti <-
   factor(
-    c("mírné", "silné", "žádné", "střední"),
-    levels = c("žádné", "mírné", "střední", "silné"),
+    c("střední", "velký", "malý", "velký"),
+    levels = c("malý", "střední", "velký"),
     ordered = TRUE
   )
 ```
@@ -2032,19 +2044,19 @@ Vizualizace: sloupcový graf s **seřazenou** osou.
 #| eval: true
 #| message: false
 #| warning: false
-plot_stupen_poskozeni <-
+plot_kategorie_hmotnosti <-
   ggplot2::ggplot(
-    data = data_stupen_poskozeni,
+    data = data_kategorie_hmotnosti,
     mapping = ggplot2::aes(
-      x = stupen_poskozeni
+      x = kategorie_hmotnosti
     )
   ) +
   ggplot2::geom_bar(
     fill = col_data
   ) +
   ggplot2::labs(
-    x = "Stupeň poškození listu",
-    y = "Počet rostlin"
+    x = "Kategorie hmotnosti tučňáka",
+    y = "Počet tučňáků"
   ) +
   ggplot2::theme_minimal() +
   ggview::canvas(
@@ -2054,17 +2066,17 @@ plot_stupen_poskozeni <-
   )
 
 ggview::save_ggplot(
-  plot = plot_stupen_poskozeni,
+  plot = plot_kategorie_hmotnosti,
   file = here::here(
     path_materials,
-    "stupen_poskozeni.png"
+    "kategorie_hmotnosti.png"
   ))
 ```
 
 ```{r}
 #| label: zobrazit bar ordinalni
 #| echo: false
-include_local_figure("stupen_poskozeni.png")
+include_local_figure("kategorie_hmotnosti.png")
 ```
 
 :::
