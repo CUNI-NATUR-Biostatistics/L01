@@ -105,9 +105,17 @@ slides_url <-
 
 Po absolvování této přednášky budete schopni:
 
-- Rozlišit typy proměnných 
+- Rozlišit typy proměnných
 - Zvolit odpovídající popis dat (deskriptivní statistiky)
 - Zvolit vhodnou vizualizaci dat (grafy)
+- Popsat variabilitu dat (rozptyl, směrodatná odchylka)
+- Rozlišit typy proměnných a vybrat odpovídající graf
+
+## Naše biologická otázka
+
+Chceme vědět: **Jak velké jsou kolonie tučňáků na různých ostrovech Antarktidy?**
+
+Jsou kolonie přibližně stejně velké, nebo se výrazně liší?
 
 # Naše data
 
@@ -185,6 +193,14 @@ Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... 
 | 3 | 16 |
 | 4 | 20 |
 | ... | ... |
+
+## Otázka k zamyšlení
+
+Víme, že máme 15 průzkumů s různými počty tučňáků. Jak bychom tato data uložili v R?
+
+- A) 15 samostatných proměnných (`pruzkum_1 <- 10`, `pruzkum_2 <- 18`, …)
+- B) Jeden vektor: `c(10, 18, 16, …)`
+- C) Tabulku se dvěma sloupci
 
 ## Palmer Penguins
 
@@ -345,7 +361,8 @@ plot_pocet_tucnaku_full <-
     panel.grid.minor.y = ggplot2::element_blank()
   ) +
   ggplot2::coord_flip(
-    xlim = c(0.8, 1.2)
+    xlim = c(0.8, 1.2),
+    ylim = c(10, 45)
   ) +
   ggview::canvas(
     width = 1600,
@@ -401,7 +418,8 @@ vec_frame_files <-
           panel.grid.minor.y = ggplot2::element_blank()
         ) +
         ggplot2::coord_flip(
-          xlim = c(0.8, 1.2)
+          xlim = c(0.8, 1.2),
+          ylim = c(10, 45)
         ) +
         ggview::canvas(
           width = 1600,
@@ -436,7 +454,6 @@ include_local_figure("pocet_tucnaku.gif")
 ```
 
 
-
 ## Naše data
 
 ```{r}
@@ -447,9 +464,8 @@ include_local_figure("pocet_tucnaku.png")
 ## Co vidíme v datech?
 
 ```{r}
-#| label: co-vidime-otazka
+#| ref.label: "zobrazit staticky graf"
 #| echo: false
-include_local_figure("pocet_tucnaku.png")
 ```
 
 *Než pokračujeme — zapište si jednu věc, co z grafu vidíte.*
@@ -468,16 +484,16 @@ Nyní máme data. Jak je **vizualizovat**?
 
 ## Proč nejdřív vizualizovat?
 
-Mám dvě skupiny průzkumů. Obě mají **průměrný počet tučňáků 7**:
+Dva vědci zkoumají kolonie tučňáků na dvou různých ostrovech. **Oba naměřili průměrný počet 7 tučňáků na průzkum. Jsou ostrovy biologicky stejné?**
 
 ```{r}
 #| label: motivace statistiky
 #| echo: true
 #| eval: true
-# Průměr skupiny A
+# Průměr – ostrov A
 mean(c(5, 6, 6, 7, 7, 7, 8, 8, 9))
 
-# Průměr skupiny B
+# Průměr – ostrov B
 mean(c(4, 4, 5, 5, 7, 9, 9, 10, 10))
 ```
 
@@ -492,7 +508,7 @@ mean(c(4, 4, 5, 5, 7, 9, 9, 10, 10))
 data_motivace <-
   tibble::tibble(
     pocet_tucnaku = c(5, 6, 6, 7, 7, 7, 8, 8, 9, 4, 4, 5, 5, 7, 9, 9, 10, 10),
-    skupina = rep(c("Skupina A", "Skupina B"), each = 9)
+    skupina = rep(c("Ostrov A", "Ostrov B"), each = 9)
   )
 
 plot_motivace <-
@@ -545,7 +561,7 @@ include_local_figure("motivace.png")
 ```
 
 ::: {.fragment}
-Skupina A má hodnoty soustředěné kolem 7 – symetrická, kompaktní. Skupina B má hodnoty spíše na okrajích – buď malá, nebo velká, málokdy průměrná. **Stejné číslo, zásadně odlišná biologie.**
+Ostrov A má průzkumy soustředěné kolem 7 – symetrická, stabilní kolonie. Ostrov B má průzkumy buď velmi malé, nebo velmi velké – to může signalizovat sezónní rozdíly nebo nestabilitu kolonie. **Stejné číslo, zásadně odlišná biologie.**
 :::
 
 ## Proč nejdřív vizualizovat?
@@ -559,9 +575,8 @@ Vždy nejdřív vizualizujte.
 Každý bod = jeden průzkum. Vidíme **všechna data** najednou.
 
 ```{r}
-#| label: zobrazit beeswarm znovu
+#| ref.label: "zobrazit staticky graf"
 #| echo: false
-include_local_figure("pocet_tucnaku.png")
 ```
 
 ::: {.incremental}
@@ -569,6 +584,15 @@ include_local_figure("pocet_tucnaku.png")
 - odhaluje **tvar distribuce** (kde jsou hodnoty nahloučené)
 - snadno odhalí **odlehlé hodnoty**
 :::
+
+## Otázka k zamyšlení
+
+Bodový graf ukazuje každý průzkum zvlášť.
+Kdybychom průzkumy seskupili do „košů" po 5 tučňácích, co by znázorňovala výška sloupce?
+
+- A) Průměrný počet tučňáků v daném koši
+- B) Počet průzkumů, které spadají do daného koše
+- C) Celkový počet tučňáků v daném koši
 
 ## Histogram
 
@@ -699,6 +723,10 @@ include_local_figure("pocet_tucnaku_histogram.png")
 :::
 
 # Deskriptivní statistiky
+
+## Čísla místo obrázků
+
+Grafy jsou skvělé — ale v publikaci nebo při srovnání desítek skupin potřebujeme data popsat **jedním číslem**. Jaké číslo zvolit?
 
 ## Deskriptivní statistiky
 
@@ -912,7 +940,7 @@ IQR = Q3 - Q1 – rozpětí prostřední poloviny dat.
 #| echo: true
 quantile(pocet_tucnaku, 0.25) # Q1
 quantile(pocet_tucnaku, 0.75) # Q3
-IQR(pocet_tucnaku)             # Q3 - Q1
+IQR(pocet_tucnaku) # Q3 - Q1
 ```
 
 :::
@@ -1296,7 +1324,7 @@ Průměr – SD jsme viděli jako čísla a jako pásmo na grafu.
 ```{r}
 #| label: prumer jako vizualizace
 #| echo: false
-#| 
+#|
 
 sd_pocet_tucnaku <- sd(pocet_tucnaku)
 mean_pocet_tucnaku <- mean(pocet_tucnaku)
@@ -1311,7 +1339,12 @@ plot_pocet_tucnaku_prumer_vizualizace <-
       ymin = mean_pocet_tucnaku - sd_pocet_tucnaku,
       ymax = mean_pocet_tucnaku + sd_pocet_tucnaku
     ),
-    mapping = ggplot2::aes(x = x, y = y, ymin = ymin, ymax = ymax),
+    mapping = ggplot2::aes(
+      x = x,
+      y = y,
+      ymin = ymin,
+      ymax = ymax
+    ),
     fill = col_highlight,
     alpha = 0.15,
     linewidth = 1,
@@ -1345,7 +1378,7 @@ plot_pocet_tucnaku_prumer_vizualizace <-
   ) +
   ggplot2::coord_flip(
     xlim = c(0.8, 1.2),
-    ylim = c(3, 12)
+    ylim = c(10, 45)
   ) +
   ggview::canvas(
     width = 1600,
@@ -1580,37 +1613,64 @@ include_local_figure("boxplot_krok3.png")
 
 ::::
 
-## Krabicový graf + surová data
-
-Boxplot + beeswarm dohromady: vidíme statistiky i každý jednotlivý bod.
-
+## Krabicový graf 
 ```{r}
 #| label: vytvorit boxplot s beeswarm
 #| echo: false
 #| eval: true
 #| message: false
 #| warning: false
-plot_pocet_tucnaku_boxplot_beeswarm <-
-  plot_pocet_tucnaku_full +
+plot_pocet_tucnaku_boxplot <-
+  ggplot2::ggplot(
+    data = data_poctu_tucnaku,
+    mapping = ggplot2::aes(
+      y = pocet_tucnaku,
+      x = 1
+    )
+  ) +
   ggplot2::geom_boxplot(
     fill = col_data,
     alpha = 0.3,
-    width = 0.3,
-    outlier.shape = NA
+    width = 0.3
+  ) +
+  ggplot2::theme_minimal() +
+  ggplot2::scale_y_continuous(
+    breaks = seq(0, 55, by = 5)
+  ) +
+  ggplot2::theme(
+    axis.text.y = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    panel.grid.major.y = ggplot2::element_blank(),
+    panel.grid.minor.y = ggplot2::element_blank()
+  ) +
+  ggplot2::labs(
+    y = "Počet tučňáků (na průzkum)",
+    x = ""
+  ) +
+  ggplot2::coord_flip(
+    xlim = c(0.8, 1.2),
+    ylim = c(10, 45)
+  ) +
+  ggview::canvas(
+    width = 1600,
+    height = 800,
+    units = "px"
   )
 
+
 ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_boxplot_beeswarm,
+  plot = plot_pocet_tucnaku_boxplot,
   file = here::here(
     path_materials,
-    "pocet_tucnaku_boxplot_beeswarm.png"
-  ))
+    "pocet_tucnaku_boxplot.png"
+  )
+)
 ```
 
 ```{r}
 #| label: zobrazit boxplot s beeswarm
 #| echo: false
-include_local_figure("pocet_tucnaku_boxplot_beeswarm.png")
+include_local_figure("pocet_tucnaku_boxplot.png")
 ```
 
 ::: {.blockquote}
@@ -1654,7 +1714,7 @@ data_druh_tucnaku <-
 vec_thresholds <-
   quantile(
     data_tucnaci_prez[["body_mass_g"]],
-    probs = c(1 / 3, 2 / 3)
+    probs = c(0.25, 0.8)
   )
 
 kategorie_hmotnosti <-
@@ -1877,6 +1937,23 @@ include_local_figure("delka_zobaku_tri.png")
 
 :::
 
+## Otázka k zamyšlení
+
+Vědci zapsali **druh tučňáka** u každého jedince: *Adelie*, *Chinstrap*, *Gentoo*.
+Má smysl spočítat **průměrný druh tučňáka**?
+
+- A) Ano — průměr funguje pro jakákoliv data
+- B) Ne — druh tučňáka je kategorie, průměr nedává smysl
+- C) Záleží na tom, kolik druhů máme
+
+::: {.fragment}
+
+::: {.blockquote}
+Průměr lze spočítat jen pro **kvantitativní** proměnné. Pro kategorické proměnné používáme četnosti, podíly nebo modus.
+:::
+
+:::
+
 ## Kategorická – nominální
 
 ::: {.incremental}
@@ -2005,7 +2082,10 @@ plot_barva_stacked <-
     y = "Podíl",
     title = "Složený sloupcový graf"
   ) +
-  ggplot2::theme_minimal()
+  ggplot2::theme_minimal()+
+  ggplot2::theme(
+    legend.position = "left"
+  ) 
 
 pocty_barev <-
   table(data_druh_tucnaku[["druh_tucnaku"]])
@@ -2015,18 +2095,21 @@ plot_barva_waffle <-
     parts = pocty_barev,
     rows = 10,
     color = barvy_druhu[names(pocty_barev)],
-    title = "Waffle graf (1 čtverec = 1 tučňák)"
   ) +
   ggplot2::theme(
-    legend.position = "bottom"
+    legend.position = "none"
+  ) +
+  ggplot2::labs(
+    subtitle = "(1 čtverec = 1 tučňák)"
   )
 
 plot_proporce_combined <-
   cowplot::plot_grid(
     plot_barva_stacked,
-    plot_barva_waffle,
-    ncol = 2,
-    rel_widths = c(0.4, 0.6)
+    NULL,
+    plot_barva_waffle, 
+    ncol = 3,
+    rel_widths = c(0.4, 0.1, 0.5)
   ) +
   ggview::canvas(
     width = 1600,
@@ -2039,7 +2122,8 @@ ggview::save_ggplot(
   file = here::here(
     path_materials,
     "druh_tucnaku_proporce.png"
-  ))
+  )
+)
 ```
 
 ```{r}
@@ -2107,7 +2191,7 @@ plot_kategorie_hmotnosti <-
   ggplot2::theme_minimal() +
   ggview::canvas(
     width = 1600,
-    height = 800,
+    height = 600,
     units = "px"
   )
 
@@ -2132,6 +2216,7 @@ include_local_figure("kategorie_hmotnosti.png")
 ## Shrnutí
 
 ::: {.incremental}
+- **Na tučňácích jsme viděli**: stejný průměr může skrývat zásadně odlišnou biologii — proto vždy nejdřív vizualizujeme
 - **Vždy nejdřív vizualizujte** — grafy odhalují, co čísla skrývají
 - **Průměr je citlivý na odlehlé hodnoty** — medián je odolnější
 - **Boxplot** shrnuje medián, IQR, vousy a odlehlé hodnoty najednou
@@ -2141,7 +2226,7 @@ include_local_figure("kategorie_hmotnosti.png")
 
 ## Závěrečná otázka
 
-Kdy byste **nepoužili průměr** jako míru polohy?
+Kdy byste **nepoužili průměr**?
 
 ::: {.incremental}
 - Kdy data obsahují odlehlé hodnoty
