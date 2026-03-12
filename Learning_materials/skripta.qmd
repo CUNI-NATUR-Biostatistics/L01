@@ -27,7 +27,7 @@ date-modified: last-modified
 #| include: false
 if (!require("here")) install.packages("here")
 
-here::i_am("Learing_materials/skripta.qmd")
+here::i_am("Learning_materials/skripta.qmd")
 
 if (!require("tidyverse")) install.packages("tidyverse")
 if (!require("ggbeeswarm")) install.packages("ggbeeswarm")
@@ -1496,7 +1496,7 @@ Spojité proměnné mohou nabývat **jakékoli hodnoty** v intervalu. Přesnost 
 #| out-width: "50%"
 #| fig-cap: "Schéma měření zobáku (culmen) tučňáka. Zdroj: Allison Horst."
 knitr::include_graphics(
-  here::here("Learing_materials", "images", "culmen_depth.png")
+  here::here("Learning_materials", "images", "culmen_depth.png")
 )
 ```
 
