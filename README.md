@@ -73,11 +73,3 @@ Studenti materiály **přímo k repozitáři nepřistupují**. Výstupy se distr
 Podrobnosti viz [`_internal/obecne/nove/strategie_releases.md`](https://github.com/CUNI-NATUR-Biostatistics/_internal/blob/main/obecne/nove/strategie_releases.md).
 
 ---
-
-## Poznámky pro vývojáře
-
-- Soubory `.html` a `.pdf` v repozitáři jsou renderované výstupy – neslouží jako zdroj; editujeme vždy `.qmd`.
-- Při editaci `.qmd` souborů používejte **výhradně file-edit nástroje** (nikoli PowerShell inline přiřazení), aby nedošlo ke korrupci UTF-8 (diakritiky). Viz instrukce v `.github/instructions/file-editing-safety.instructions.md`.
-- `fix_presentation.ps1` je záchranný skript pro ruční opravu UTF-8 korrupce; za normálního workflow by neměl být potřeba.
-- **Typst (PDF) a cesty k obrázkům:** Typst sandboxuje přístup k souborům jen v rámci svého projektového adresáře. Obrázky používané v `skripta.qmd` **musí být uloženy uvnitř `Learning_materials/`** (např. `Learning_materials/images/`). Cesty s `../` (např. do `Presentation/Materials/`) způsobí chybu „access denied" při renderování do PDF.
-- Po jakékoli změně souboru mimo editor ověřte, že soubor nezahínal BOM (`EF BB BF`) – který znemožňuje parsování YAML. Postup viz `.github/instructions/file-editing-safety.instructions.md`.
