@@ -43,3 +43,9 @@ system2(
     here::here("Presentation/presentation_raw.pdf")
   )
 )
+
+# compress the PDF to make it small enough to uplot to GH
+qpdf::pdf_compress(
+  input = here::here("Presentation/presentation_raw.pdf"),
+  output = here::here("Presentation/presentation.pdf")
+)
