@@ -1,0 +1,87 @@
+// This file is auto-generated from theme/colors.json. Do not edit directly.
+// Run R/generate_theme.R to regenerate.
+
+// ===========================================================================
+// PRIMARY COLOR VARIABLES
+// ===========================================================================
+$parchment: #F4F1EC;
+$graphite: #2E2E2E;
+$grey_olive: #8A8A8A;
+$indigo_velvet: #5D2890;
+$amethyst: #86579E;
+$orange: #F3A712;
+$white: #FFFFFF;
+$light_gray: #F0EDE8;
+
+// ===========================================================================
+// SEMANTIC COLOR VARIABLES
+// ===========================================================================
+$textColor: $graphite;
+$bodyColor: $graphite;
+$backgroundColor: $parchment;
+$headingColor: $indigo_velvet;
+$linkColor: $indigo_velvet;
+$accentColor: $amethyst;
+$codeColor: $graphite;
+$codeBackgroundColor: $light_gray;
+$tableHeaderBackground: $indigo_velvet;
+$tableHeaderColor: $parchment;
+$tableBorderColor: $grey_olive;
+$tableStripeBackground: $light_gray;
+$blockquoteBackground: $light_gray;
+$blockquoteBorderColor: $indigo_velvet;
+$blockquoteTextColor: $graphite;
+
+// Contrast helpers (used in utility classes)
+$contrastColorDark: $graphite;
+$contrastColorLight: $white;
+
+// ===========================================================================
+// UTILITY CLASSES
+// ===========================================================================
+// --- parchment ---
+.bg-parchment { background-color: #F4F1EC; }
+.text-color-parchment { color: #F4F1EC !important; }
+.text-highlight-parchment { background-color: #F4F1EC; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+
+// --- graphite ---
+.bg-graphite { background-color: #2E2E2E; }
+.text-color-graphite { color: #2E2E2E !important; }
+.text-highlight-graphite { background-color: #2E2E2E; color: #FFFFFF; padding: 2px 4px; border-radius: 3px; }
+
+// --- grey_olive ---
+.bg-grey_olive { background-color: #8A8A8A; }
+.text-color-grey_olive { color: #8A8A8A !important; }
+.text-highlight-grey_olive { background-color: #8A8A8A; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+
+// --- indigo_velvet ---
+.bg-indigo_velvet { background-color: #5D2890; }
+.text-color-indigo_velvet { color: #5D2890 !important; }
+.text-highlight-indigo_velvet { background-color: #5D2890; color: #FFFFFF; padding: 2px 4px; border-radius: 3px; }
+
+// --- amethyst ---
+.bg-amethyst { background-color: #86579E; }
+.text-color-amethyst { color: #86579E !important; }
+.text-highlight-amethyst { background-color: #86579E; color: #FFFFFF; padding: 2px 4px; border-radius: 3px; }
+
+// --- orange ---
+.bg-orange { background-color: #F3A712; }
+.text-color-orange { color: #F3A712 !important; }
+.text-highlight-orange { background-color: #F3A712; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+
+// --- white ---
+.bg-white { background-color: #FFFFFF; }
+.text-color-white { color: #FFFFFF !important; }
+.text-highlight-white { background-color: #FFFFFF; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+
+// --- light_gray ---
+.bg-light_gray { background-color: #F0EDE8; }
+.text-color-light_gray { color: #F0EDE8 !important; }
+.text-highlight-light_gray { background-color: #F0EDE8; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+
+// Semantic shorthands
+.text-color-body    { color: $bodyColor    !important; }
+.text-color-heading { color: $headingColor !important; }
+.text-color-link    { color: $linkColor    !important; }
+.text-color-accent  { color: $accentColor  !important; }
+

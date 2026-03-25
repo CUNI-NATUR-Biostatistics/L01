@@ -1,0 +1,35 @@
+{
+  "presentation": {
+    "smallMargin": "5px",
+    "blockMargin": "10px",
+    "largeMargin": "20px",
+    "slidePadding": "0 5px",
+    "headingMargin": "0 0 10px 0",
+    "headingTextTransform": "none",
+    "headingTextShadow": "none"
+  },
+  "html": {
+    "smallMargin": "0.5rem",
+    "blockMargin": "1.5rem",
+    "largeMargin": "2rem",
+    "headingTextTransform": "none"
+  },
+  "code": {
+    "codeBorderRadius": "6px",
+    "codeLineHeight": "1.4",
+    "inlineCodePadding": "0.1rem 0.3rem"
+  },
+  "blockquote": {
+    "blockquotePadding": "12px 20px",
+    "blockquoteBorderRadius": "0 8px 8px 0",
+    "blockquoteBorderWidth": "5px",
+    "blockquoteMargin": "1rem 0"
+  },
+  "table": {
+    "tableCellPadding": "0.6rem",
+    "tableBorderOpacity": "0.25"
+  },
+  "shadows": {
+    "blockquoteShadow": "0 2px 8px rgba(0, 0, 0, 0.08)"
+  }
+}

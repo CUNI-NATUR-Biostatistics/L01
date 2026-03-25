@@ -1,0 +1,158 @@
+// This file is auto-generated. Do not edit directly.
+// Generated from theme/fonts.json and theme/custom_theme.json.
+// Run R/generate_theme.R to regenerate.
+
+/*-- scss:defaults --*/
+
+// Shared colour variables (generated from theme/colors.json)
+@import "colors";
+
+// ---------------------------------------------------------------------------
+// Font families
+// ---------------------------------------------------------------------------
+$mainFont:       "Inter", "Helvetica Neue", "Arial", "sans-serif" !default;
+$headingFont:    "Source Sans 3", "Arial Narrow", "Arial", "sans-serif" !default;
+$monospaceFont:  "JetBrains Mono", "Fira Code", monospace !default;
+
+// ---------------------------------------------------------------------------
+// Font sizes  (large — optimised for projection)
+// ---------------------------------------------------------------------------
+$mainFontSize:   30px !default;
+$heading1Size:   2.5em !default;
+$heading2Size:   1.9em !default;
+$heading3Size:   1.4em !default;
+$heading4Size:   1em !default;
+
+// ---------------------------------------------------------------------------
+// Line heights, weights, spacing
+// ---------------------------------------------------------------------------
+$body-line-height:       1.5 !default;
+$headingLineHeight:      1.2 !default;
+$headingFontWeight:      600 !default;
+$bodyFontWeight:         400 !default;
+$headingLetterSpacing:   -0.02em !default;
+
+// ---------------------------------------------------------------------------
+// Slide spacing & heading style
+// ---------------------------------------------------------------------------
+$smallMargin:            5px !default;
+$blockMargin:            10px !default;
+$largeMargin:            20px !default;
+$headingTextTransform:   none !default;
+$headingTextShadow:      none  !default;
+$headingMargin:          0 0 10px 0 !default;
+
+
+/*-- scss:rules --*/
+
+// ---------------------------------------------------------------------------
+// Body
+// ---------------------------------------------------------------------------
+.reveal {
+  color: $textColor;
+  background-color: $backgroundColor;
+}
+
+// ---------------------------------------------------------------------------
+// Headings
+// ---------------------------------------------------------------------------
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+  font-family: $headingFont;
+  font-weight: $headingFontWeight;
+  color: $headingColor;
+  letter-spacing: $headingLetterSpacing;
+  text-transform: $headingTextTransform;
+  text-shadow: $headingTextShadow;
+}
+
+// ---------------------------------------------------------------------------
+// Links
+// ---------------------------------------------------------------------------
+.reveal a {
+  color: $linkColor;
+}
+
+// ---------------------------------------------------------------------------
+// Inline code
+// ---------------------------------------------------------------------------
+.reveal code {
+  color: $codeColor;
+  background-color: $codeBackgroundColor;
+  padding: 0.1rem 0.3rem;
+  border-radius: 6px;
+  font-family: $monospaceFont;
+}
+
+// ---------------------------------------------------------------------------
+// Code blocks
+// ---------------------------------------------------------------------------
+.reveal pre {
+  box-shadow: none;
+}
+
+.reveal pre code {
+  background-color: $codeBackgroundColor;
+  border-radius: 6px;
+  line-height: 1.4;
+  max-height: none;
+  overflow: visible !important;
+  white-space: pre-wrap;
+}
+
+// Hide scrollbars inside code blocks
+.reveal pre code::-webkit-scrollbar { display: none; }
+
+// ---------------------------------------------------------------------------
+// Tables
+// ---------------------------------------------------------------------------
+.reveal table th {
+  background-color: $tableHeaderBackground !important;
+  color: $tableHeaderColor !important;
+}
+
+.reveal table tr:nth-child(even) td {
+  background-color: $tableStripeBackground;
+}
+
+// ---------------------------------------------------------------------------
+// Blockquotes
+// ---------------------------------------------------------------------------
+.reveal blockquote {
+  background-color: $blockquoteBackground;
+  border-left: 5px solid $blockquoteBorderColor;
+  padding: 12px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 90%;
+  font-style: normal;
+}
+
+.reveal blockquote p {
+  color: $blockquoteTextColor;
+}
+
+// ---------------------------------------------------------------------------
+// Utility — typography
+// ---------------------------------------------------------------------------
+.text-font-body      { font-family: $mainFont; }
+.text-font-heading   { font-family: $headingFont; }
+.text-font-monospace { font-family: $monospaceFont; }
+.text-smaller { font-size: calc($mainFontSize * 0.7) !important; }
+.text-tiny    { font-size: calc($mainFontSize * 0.5) !important; }
+.text-larger  { font-size: calc($mainFontSize * 1.3) !important; }
+.text-bold    { font-weight: bold; }
+.text-center  { text-align: center; }
+.text-right   { text-align: right; }
+
+// ---------------------------------------------------------------------------
+// Utility — layout
+// ---------------------------------------------------------------------------
+.slide-margin-top-15 { margin-top: 15%; }
+.slide-margin-top-25 { margin-top: 25%; }
+.center-vertical {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+

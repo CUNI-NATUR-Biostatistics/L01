@@ -1,0 +1,73 @@
+{
+  "body": "Inter",
+  "heading": "Source Sans 3",
+  "monospace": "JetBrains Mono",
+  "presentationSizes": {
+    "mainFontSize": "30px",
+    "heading1Size": "2.5em",
+    "heading2Size": "1.9em",
+    "heading3Size": "1.4em",
+    "heading4Size": "1em",
+    "textSizeSmall": "0.7",
+    "textSizeTiny": "0.5",
+    "textSizeLarge": "1.3",
+    "bodyLineHeight": "1.5",
+    "headingLineHeight": "1.2"
+  },
+  "htmlSizes": {
+    "mainFontSize": "1rem",
+    "heading1Size": "2.2rem",
+    "heading2Size": "1.8rem",
+    "heading3Size": "1.4rem",
+    "heading4Size": "1.1rem",
+    "heading5Size": "1rem",
+    "heading6Size": "0.9rem",
+    "bodyLineHeight": "1.6",
+    "headingLineHeight": "1.3"
+  },
+  "typstSizes": {
+    "bodyPt": "11pt",
+    "heading1Pt": "18pt",
+    "heading2Pt": "15pt",
+    "heading3Pt": "13pt",
+    "heading4Pt": "11pt"
+  },
+  "weights": {
+    "headingFontWeight": "600",
+    "bodyFontWeight": "400",
+    "boldFontWeight": "700"
+  },
+  "spacing": {
+    "headingLetterSpacing": "-0.02em",
+    "bodyLetterSpacing": "0em"
+  },
+  "ggplot": {
+    "plotTitleFace": "bold",
+    "plotTitleSize": 1.4,
+    "plotSubtitleSize": 1.1,
+    "axisTitleSize": 1.0,
+    "axisTextSize": 0.9,
+    "legendTitleSize": 1.0,
+    "legendTextSize": 0.9,
+    "stripTextFace": "bold"
+  },
+  "googleFonts": {
+    "bodyWeights": "400;500;700",
+    "headingWeights": "400;600;700",
+    "monospaceWeights": "400;600"
+  },
+  "system": {
+    "bodyFallbacks": ["Helvetica Neue", "Arial", "sans-serif"],
+    "headingFallbacks": ["Arial Narrow", "Arial", "sans-serif"],
+    "monospaceFallback": "Fira Code",
+    "internalBodyName": "biostat_body",
+    "internalHeadingName": "biostat_heading",
+    "internalMonoName": "biostat_mono",
+    "imageUnits": "cm"
+  },
+  "typst": {
+    "body": "",
+    "heading": "",
+    "monospace": ""
+  }
+}
