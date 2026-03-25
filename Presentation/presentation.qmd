@@ -2,12 +2,13 @@
 format: 
   revealjs:
     slide-number: true
-    theme: [default]
+    theme: [default, ../theme/presentation_theme.scss]
     embed-resources: true
     preview-links: false
     output-file: "presentation"
     output-ext: "html"
     highlight-style: github-light
+    include-in-header: "../theme/fonts-include.html"
 ---
 
 
@@ -91,7 +92,7 @@ slides_url <-
 
 <br>
 
-::: {.text-color-white .text-font-heading .text-size-heading1 .text-bold}
+::: {.text-color-orange .text-font-heading .text-size-heading1 .text-bold}
 `r display_name`
 :::
 
@@ -321,9 +322,9 @@ pocet_tucnaku <-
 #| label: definovat barvy
 #| echo: false
 #| eval: true
-col_data <- "steelblue"
-col_highlight <- "firebrick"
-col_median_line <- "darkgreen"
+col_data <- "#8A8A8A"
+col_highlight <- "#F3A712"
+col_median_line <- "#5D2890"
 ```
 
 
@@ -526,6 +527,9 @@ plot_motivace <-
   ) +
   ggplot2::facet_wrap(~skupina) +
   ggplot2::scale_x_continuous(breaks = 1:12) +
+  ggplot2::scale_color_manual(
+    values = c("Ostrov A" = col_median_line, "Ostrov B" = col_highlight)
+  ) +
   ggplot2::labs(
     x = "Počet tučňáků (na průzkum)",
     y = "",
@@ -1255,6 +1259,9 @@ plot_porovnani_sd <-
     binwidth = 1,
     color = "white",
     alpha = 0.8
+  ) +
+  ggplot2::scale_fill_manual(
+    values = c("Malé SD" = col_median_line, "Velké SD" = col_highlight)
   ) +
   ggplot2::facet_wrap(
     ~skupina,
@@ -1992,9 +1999,9 @@ Každá kategorie dostane vlastní barvu – vizuální kód odpovídá realitě
 #| eval: true
 barvy_druhu <-
   c(
-    "Adelie" = "darkorange",
-    "Chinstrap" = "mediumpurple",
-    "Gentoo" = "cyan4"
+    "Adelie" = "#8A8A8A",
+    "Chinstrap" = "#86579E",
+    "Gentoo" = "#F3A712"
   )
 ```
 
@@ -2013,7 +2020,7 @@ plot_druh_tucnaku <-
     )
   ) +
   ggplot2::geom_bar(
-    color = "gray40"
+    color = "#2E2E2E"
   ) +
   ggplot2::scale_fill_manual(
     values = barvy_druhu
@@ -2068,7 +2075,7 @@ plot_barva_stacked <-
   ) +
   ggplot2::geom_bar(
     position = "fill",
-    color = "gray40"
+    color = "#2E2E2E"
   ) +
   ggplot2::scale_fill_manual(
     values = barvy_druhu,

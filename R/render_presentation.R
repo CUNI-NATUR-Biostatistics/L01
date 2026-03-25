@@ -1,7 +1,7 @@
 #----------------------------------------------------------#
 #
 #
-#                     L - example
+#                       L-example
 #
 #                  Render presentation
 #
@@ -37,14 +37,14 @@ fs::file_copy(
 system2(
   command = "decktape.cmd",
   args = c(
-    "reveal", "--fragments=false", # make --fragments=true will make the PDF look weird
+    "reveal", "--fragments=false",
     "--size 1050x700",
     here::here("Presentation/presentation.html"),
     here::here("Presentation/presentation_raw.pdf")
   )
 )
 
-# compress the PDF to make it small enough to uplot to GH
+# compress the PDF to make it small enough to upload to GH
 qpdf::pdf_compress(
   input = here::here("Presentation/presentation_raw.pdf"),
   output = here::here("Presentation/presentation.pdf")

@@ -24,6 +24,6 @@ quarto::quarto_render(
 
 # compress the PDF to make it small enough to uplot to GH
 qpdf::pdf_compress(
-  input = here::here("Learning_materials/skripta.pdf"),
+  input = here::here("Learning_materials/skripta_raw.pdf"),
   output = here::here("Learning_materials/skripta_compressed.pdf")
 )

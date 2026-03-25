@@ -1,0 +1,29 @@
+{
+  "primary": {
+    "parchment": "#F4F1EC",
+    "graphite": "#2E2E2E",
+    "grey_olive": "#8A8A8A",
+    "indigo_velvet": "#5D2890",
+    "amethyst": "#86579E",
+    "orange": "#F3A712",
+    "white": "#FFFFFF",
+    "light_gray": "#F0EDE8"
+  },
+  "semantic": {
+    "textColor": "graphite",
+    "bodyColor": "graphite",
+    "backgroundColor": "parchment",
+    "headingColor": "indigo_velvet",
+    "linkColor": "indigo_velvet",
+    "accentColor": "amethyst",
+    "codeColor": "graphite",
+    "codeBackgroundColor": "light_gray",
+    "tableHeaderBackground": "indigo_velvet",
+    "tableHeaderColor": "parchment",
+    "tableBorderColor": "grey_olive",
+    "tableStripeBackground": "light_gray",
+    "blockquoteBackground": "light_gray",
+    "blockquoteBorderColor": "indigo_velvet",
+    "blockquoteTextColor": "graphite"
+  }
+}

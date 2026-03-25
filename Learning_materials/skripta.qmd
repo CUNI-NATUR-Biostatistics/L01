@@ -11,12 +11,15 @@ format:
     code-fold: false
     code-summary: "Zobrazit kód v R"
     embed-resources: true
-    theme: flatly
+    theme: [flatly, ../theme/skripta_theme.scss]
     highlight-style: github
+    include-in-header: "../theme/fonts-include.html"
   typst:
     toc: true
     toc-depth: 3
     number-sections: true
+    output-file: "skripta_raw.pdf"
+    include-in-header: "skripta_theme.typ"
 date: 2026/02/26
 date-format: long
 date-modified: last-modified
@@ -82,9 +85,9 @@ data_druh_tucnaku <-
 
 barvy_druhu <-
   c(
-    "Adelie"    = "darkorange",
-    "Chinstrap" = "mediumpurple",
-    "Gentoo"    = "cyan4"
+    "Adelie"    = "#8A8A8A",
+    "Chinstrap" = "#86579E",
+    "Gentoo"    = "#F3A712"
   )
 
 # Ordinální: kategorie tělesné hmotnosti (tercilement z reálných dat)
@@ -122,16 +125,24 @@ vec_kategorie_hmotnosti <-
 
 # Jednotný vzhled pro všechny grafy v dokumentu
 ggplot2::theme_set(
-  ggplot2::theme_grey() +
+  ggplot2::theme_bw() +
     ggplot2::theme(
-      panel.grid.minor = ggplot2::element_blank()
+      panel.grid.minor = ggplot2::element_blank(),
+      strip.background = ggplot2::element_rect(
+        fill  = "#F0EDE8",
+        color = "#8A8A8A"
+      ),
+      strip.text = ggplot2::element_text(
+        face   = "bold",
+        colour = "#5D2890"
+      )
     )
 )
 
 # Sdílená barevná paleta
-col_data <- "steelblue"
-col_highlight <- "firebrick"
-col_median_line <- "darkgreen"
+col_data <- "#8A8A8A"
+col_highlight <- "#F3A712"
+col_median_line <- "#5D2890"
 
 # Sdílený základ pro beeswarm grafy s počtem tučňáků (horizontální)
 plot_base_beeswarm <-
@@ -281,6 +292,9 @@ ggplot2::ggplot(
   ) +
   ggplot2::facet_wrap(~skupina) +
   ggplot2::scale_x_continuous(breaks = 1:12) +
+  ggplot2::scale_color_manual(
+    values = c("Skupina A" = col_median_line, "Skupina B" = col_highlight)
+  ) +
   ggplot2::labs(
     x = "Počet tučňáků (na průzkum)",
     y = "Počet průzkumů",
@@ -356,7 +370,7 @@ stripchart(
   x = vzorek_poctu_tucnaku,
   method = "jitter",
   pch = 19,
-  col = "steelblue",
+  col = "#8A8A8A",
   xlab = "Počet tučňáků (na průzkum)",
   main = "Bodový graf"
 )
@@ -407,7 +421,7 @@ ggplot2::ggplot(
 hist(
   x = vzorek_poctu_tucnaku,
   breaks = seq(4.5, 49.5, by = 5),
-  col = "steelblue",
+  col = "#8A8A8A",
   border = "white",
   xlab = "Počet tučňáků (na průzkum)",
   ylab = "Počet průzkumů",
@@ -1194,6 +1208,12 @@ ggplot2::ggplot(
     linetype = "dashed",
     linewidth = 1
   ) +
+  ggplot2::scale_fill_manual(
+    values = c(
+      "Malá SD (≈ 0,8 tučňáka)" = col_median_line,
+      "Velká SD (≈ 3 tučňáci)" = col_highlight
+    )
+  ) +
   ggplot2::facet_wrap(~skupina) +
   ggplot2::labs(
     x = "Počet tučňáků",
@@ -1399,7 +1419,7 @@ ggplot2::ggplot(
 boxplot(
   x = vzorek_poctu_tucnaku,
   horizontal = TRUE,
-  col = "steelblue",
+  col = "#8A8A8A",
   xlab = "Počet tučňáků (na průzkum)",
   main = "Krabicový graf"
 )
@@ -1630,7 +1650,7 @@ ggplot2::ggplot(
     fill = druh_tucnaku
   )
 ) +
-  ggplot2::geom_bar(color = "gray40") +
+  ggplot2::geom_bar(color = "#2E2E2E") +
   ggplot2::scale_fill_manual(values = barvy_druhu) +
   ggplot2::labs(
     x = "Druh tučňáka",
@@ -1656,7 +1676,7 @@ ggplot2::ggplot(
 ) +
   ggplot2::geom_bar(
     position = "fill",
-    color = "gray40"
+    color = "#2E2E2E"
   ) +
   ggplot2::scale_fill_manual(
     values = barvy_druhu,
