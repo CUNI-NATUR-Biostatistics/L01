@@ -1,0 +1,3 @@
+# Ignore the raw presentation PDF, which is large and not needed in the repository
+Presentation\presentation_raw.pdf
+.Rproj.user

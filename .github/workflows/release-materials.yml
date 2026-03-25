@@ -1,0 +1,89 @@
+name: Release materials
+
+on:
+  push:
+    tags:
+      - "L*-v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate tag format and detect Moodle mode
+        id: tag_meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+
+          # Valid examples:
+          # L00-v0.1.0-20260309
+          # L00-v1.0.0-20260309-moodle
+          REGEX='^L[0-9]{2}-v[0-9]+\.[0-9]+\.[0-9]+-[0-9]{8}(-moodle)?$'
+
+          if [[ ! "$TAG" =~ $REGEX ]]; then
+            echo "ERROR: Neplatný formát tagu: $TAG"
+            echo "Očekávaný tvar: LWW-vMAJOR.MINOR.PATCH-YYYYMMDD[-moodle]"
+            exit 1
+          fi
+
+          if [[ "$TAG" =~ -moodle$ ]]; then
+            echo "moodle_mode=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "moodle_mode=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Moodle ZIP from rendered outputs
+        id: package
+        if: steps.tag_meta.outputs.moodle_mode == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Rendered files distributed to students via Moodle.
+          # All four must be present as committed files; rendering is done locally before tagging.
+          REQUIRED_FILES=(
+            "Presentation/presentation.html"
+            "Presentation/presentation.pdf"
+            "Learning_materials/skripta.html"
+            "Learning_materials/skripta_compressed.pdf"
+          )
+
+          mkdir -p dist
+
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "ERROR: Chybí povinný soubor: $file"
+              exit 1
+            fi
+            cp --parents "$file" dist/
+          done
+
+          if [ -z "$(find dist -type f -print -quit)" ]; then
+            echo "ERROR: dist/ je prázdné."
+            exit 1
+          fi
+
+          ZIP_NAME="materialy-${GITHUB_REF_NAME}.zip"
+          (cd dist && zip -r "../${ZIP_NAME}" .)
+
+          echo "zip_name=${ZIP_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Create release (no Moodle asset)
+        if: steps.tag_meta.outputs.moodle_mode != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+
+      - name: Create release and upload Moodle ZIP asset
+        if: steps.tag_meta.outputs.moodle_mode == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.package.outputs.zip_name }}
+          fail_on_unmatched_files: true
+          generate_release_notes: true
