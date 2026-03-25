@@ -84,11 +84,11 @@
   body_background_color: white
 ) = {
   let accent = if background_color == rgb("#ccf1e3") {
-    rgb("#86579E")  // tip → amethyst
+    rgb("#86579E")  // tip <U+2192> amethyst
   } else if (background_color == rgb("#fcefdc") or background_color == rgb("#ffe5d0") or background_color == rgb("#f7dddc")) {
-    rgb("#F3A712")  // warning / caution / important → orange
+    rgb("#F3A712")  // warning / caution / important <U+2192> orange
   } else {
-    rgb("#5D2890")  // note + fallback → indigo_velvet
+    rgb("#5D2890")  // note + fallback <U+2192> indigo_velvet
   }
   block(
     breakable: false,
