@@ -1,9 +1,13 @@
 #----------------------------------------------------------#
 #
-#                     _L-template
+#
+#                        _brand
 #
 #        Generate R/set_r_theme.R from
 #       theme/colors.json and theme/fonts.json
+#
+#        Canonical source — lecture repos download
+#        this file from _brand at render time.
 #
 #                       O. Mottl
 #                         2026

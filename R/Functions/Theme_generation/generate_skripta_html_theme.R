@@ -1,10 +1,14 @@
 #----------------------------------------------------------#
 #
-#                     _L-template
+#
+#                        _brand
 #
 #    Generate Learning_materials/skripta_theme.scss
 #       from theme/colors.json, theme/fonts.json
 #       and theme/custom_theme.json
+#
+#        Canonical source — lecture repos download
+#        this file from _brand at render time.
 #
 #                       O. Mottl
 #                         2026
@@ -12,12 +16,16 @@
 #----------------------------------------------------------#
 
 generate_skripta_html_theme <- function(
+  colors_file = here::here("theme/colors.json"),
   fonts_file = here::here("theme/fonts.json"),
   custom_theme_file = here::here("theme/custom_theme.json"),
   output_file = here::here("theme/skripta_theme.scss")
 ) {
   message("Generating theme/skripta_theme.scss...\n")
 
+  if (!file.exists(colors_file)) {
+    stop("colors.json not found at: ", colors_file)
+  }
   if (!file.exists(fonts_file)) {
     stop("fonts.json not found at: ", fonts_file)
   }
@@ -56,12 +64,6 @@ generate_skripta_html_theme <- function(
     )
 
   # Read colors so we can inline them (avoids @import ordering issues with Bootstrap)
-  colors_file <-
-    here::here("theme/colors.json")
-  if (!file.exists(colors_file)) {
-    stop("colors.json not found at: ", colors_file)
-  }
-
   colors_data <-
     jsonlite::fromJSON(colors_file)
   primary <- colors_data$primary

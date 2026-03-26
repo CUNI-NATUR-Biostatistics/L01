@@ -1,11 +1,15 @@
 #----------------------------------------------------------#
 #
-#                     _L-template
+#
+#                        _brand
 #
 #      Generate Presentation/presentation_theme.scss
 #         from theme/fonts.json and
 #              theme/custom_theme.json
 #       (imports theme/_colors.scss for colors)
+#
+#        Canonical source — lecture repos download
+#        this file from _brand at render time.
 #
 #                       O. Mottl
 #                         2026
