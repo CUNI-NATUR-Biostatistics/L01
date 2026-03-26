@@ -1,9 +1,13 @@
 #----------------------------------------------------------#
 #
-#                     _L-template
+#
+#                        _brand
 #
 #         Generate theme/fonts-include.html from
 #                    theme/fonts.json
+#
+#        Canonical source — lecture repos download
+#        this file from _brand at render time.
 #
 #                       O. Mottl
 #                         2026

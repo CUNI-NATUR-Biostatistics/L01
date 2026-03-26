@@ -1,9 +1,13 @@
 #----------------------------------------------------------#
 #
-#                     _L-template
+#
+#                        _brand
 #
 #           Generate theme/_colors.scss from
 #                   theme/colors.json
+#
+#        Canonical source — lecture repos download
+#        this file from _brand at render time.
 #
 #                       O. Mottl
 #                         2026
