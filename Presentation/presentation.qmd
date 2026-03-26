@@ -45,11 +45,6 @@ library(cowplot)
 library(waffle)
 library(palmerpenguins)
 
-
-# source(
-#  here::here("R/00_Config_file.R")
-# )
-
 path_materials <-
   "Presentation/Materials"
 
