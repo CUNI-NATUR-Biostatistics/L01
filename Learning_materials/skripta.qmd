@@ -35,10 +35,81 @@ here::i_am("Learning_materials/skripta.qmd")
 if (!require("tidyverse")) install.packages("tidyverse")
 if (!require("ggbeeswarm")) install.packages("ggbeeswarm")
 if (!require("palmerpenguins")) install.packages("palmerpenguins")
+if (!require("glossary")) install.packages("glossary")
 
 library(tidyverse)
 library(ggbeeswarm)
 library(palmerpenguins)
+library(glossary)
+
+# Glossary: point to the canonical slovnik pojmy.yaml hosted on GitHub.
+# Terms are looked up by slug ID (e.g. "histogram", "median", "boxplot").
+# Usage in text: `r render_glossary_term("slug", display = "Czech term")`
+# The glossary_style() call applies brand colours to the hover tooltip (HTML only).
+local_pojmy <- tempfile(fileext = ".yaml")
+tryCatch(
+  {
+    download.file(
+      url = "https://raw.githubusercontent.com/CUNI-NATUR-Biostatistics/slovnik/main/pojmy.yaml",
+      destfile = local_pojmy,
+      quiet = TRUE
+    )
+    glossary::glossary_path(local_pojmy)
+  },
+  error = function(e) {
+    message("Glossary YAML unavailable: ", conditionMessage(e))
+  }
+)
+tryCatch(
+  {
+    source(
+      paste0(
+        "https://raw.githubusercontent.com/",
+        "CUNI-NATUR-Biostatistics/slovnik/main/",
+        "R/Functions/render_glossary_term.R"
+      )
+    )
+  },
+  error = function(e) {
+    source(here::here("R/Functions/render_glossary_term.R"))
+  }
+)
+```
+
+```{r}
+#| label: nastaveni-slovnik
+#| echo: false
+#| message: false
+#| results: asis
+if (knitr::is_html_output()) {
+  glossary::glossary_style(
+    color = "#5D2890",
+    text_decoration = "underline",
+    def_bg = "#FFFFFF",
+    def_color = "#2E2E2E"
+  )
+  # Override: show tooltip on hover (not :active) and suppress the arrow on active.
+  cat(
+    "<style>",
+    "a.glossary:hover .def { display: inline-block; }",
+    "a.glossary:hover .def::after {",
+    "  content: ' '; position: absolute; top: 100%; left: 50%;",
+    "  margin-left: -5px; border-width: 5px; border-style: solid;",
+    "  border-color: #FFFFFF transparent transparent transparent;",
+    "}",
+    "a.glossary:active .def { display: none; }",
+    "a.glossary:active .def::after { display: none; }",
+    "</style>",
+    "<script>",
+    "document.addEventListener('DOMContentLoaded', function() {",
+    "  document.querySelectorAll('a.glossary').forEach(function(a) {",
+    "    a.addEventListener('click', function(e) { e.preventDefault(); });",
+    "  });",
+    "});",
+    "</script>",
+    sep = "\n"
+  )
+}
 ```
 
 ```{r}
@@ -177,8 +248,8 @@ Po prostudování těchto materiálů budete schopni:
 
 - Uložit naměřená data do vektoru v R a základně se v nich zorientovat.
 - Zvolit vhodný graf pro jeden typ proměnné a vysvětlit, co graf ukazuje.
-- Vypočítat a interpretovat základní deskriptivní statistiky (minimum, maximum, průměr, medián, kvartily, IQR, SD).
-- Sestavit a přečíst krabicový graf (boxplot).
+- Vypočítat a interpretovat základní deskriptivní statistiky (minimum, maximum, `r render_glossary_term("prumer", display = "průměr")`, `r render_glossary_term("median", display = "medián")`, kvartily, `r render_glossary_term("iqr", display = "IQR")`, SD).
+- Sestavit a přečíst `r render_glossary_term("boxplot", display = "krabicový graf (boxplot)")`.
 - Rozlišit typy proměnných a vybrat pro ně odpovídající popis i vizualizaci.
 
 ::: {.callout-note}
@@ -259,7 +330,7 @@ mean(c(5, 6, 6, 7, 7, 7, 8, 8, 9))
 mean(c(4, 4, 5, 5, 7, 9, 9, 10, 10))
 ```
 
-Průměry jsou stejné. Ale podívejme se na distribuci hodnot:
+Obě skupiny mají stejný `r render_glossary_term("prumer", display = "průměr")`. Ale podívejme se na `r render_glossary_term("rozdeleni", display = "rozdělení")` hodnot:
 
 ```{r}
 #| label: motivace-data
@@ -314,14 +385,14 @@ Skupina A má hodnoty soustředěné kolem 7 — data jsou symetrická, „hezk�
 ::: {.callout-warning}
 ## Nikdy nepracujte jen s čísly bez grafu
 
-Čísla mohou klamat. Velmi odlišná data mohou mít stejný průměr i stejnou směrodatnou odchylku. Graf odhalí to, co čísla skrývají. Vždy nejdřív vizualizujte.
+Čísla mohou klamat. Velmi odlišná data mohou mít stejný `r render_glossary_term("prumer", display = "průměr")` i stejnou `r render_glossary_term("smerodatna-odchylka", display = "směrodatnou odchylku")`. Graf odhalí to, co čísla skrývají. Vždy nejdřív vizualizujte.
 :::
 
 ### Bodový graf (beeswarm)
 
 Nejpřímočařejší vizualizace: **každý bod = jeden průzkum**. Body jsou mírně rozptýleny do stran — technika se nazývá *beeswarm* (roj včel) — aby se vzájemně nepřekrývaly a zůstaly čitelné.
 
-Co bodový graf ukazuje: vidíme **každou jednotlivou hodnotu**, tvar distribuce i případné odlehlé hodnoty.
+Co bodový graf ukazuje: vidíme **každou jednotlivou hodnotu**, tvar rozdělení i případná `r render_glossary_term("odlehla-pozorovani", display = "odlehlá pozorování")`.
 
 ::: {.panel-tabset}
 
@@ -382,7 +453,7 @@ stripchart(
 
 ### Histogram
 
-Histogram **seskupuje hodnoty do košů** (binů) a výška každého sloupce říká, kolik průzkumů do daného koše spadlo. Šířku koše (binwidth) si volíme sami.
+`r render_glossary_term("histogram", display = "Histogram")` **seskupuje hodnoty do košů** (binů) a výška každého sloupce udává `r render_glossary_term("cetnost", display = "četnost")` průzkumů v daném koši. Šířku koše (binwidth) si volíme sami.
 
 Oproti bodovému grafu histogram nezobrazuje každý bod zvlášť — vidíme tvar distribuce, ale ztratíme přesné hodnoty jednotlivých průzkumů.
 
@@ -434,7 +505,7 @@ hist(
 ::: {.callout-tip collapse="true"}
 ## Jak volit šířku koše?
 
-**Koš** (bin) je interval hodnot — například „od 14,5 do 19,5 tučňáků". Každý průzkum spadne do právě jednoho koše a histogram zobrazí výšku sloupce rovnou počtu průzkumů v tom koši.
+**Koš** (bin) je interval hodnot — například „od 14,5 do 19,5 tučňáků". Každý průzkum spadne do právě jednoho koše a `r render_glossary_term("histogram", display = "histogram")` zobrazí výšku sloupce rovnou `r render_glossary_term("cetnost", display = "četnosti")` průzkumů v tom koši.
 
 Šířka koše (`binwidth`) tedy říká, jak velký kus osy *x* jeden sloupec pokrývá. Volba šířky zásadně mění, co vidíte:
 
@@ -557,7 +628,7 @@ Všechny tři grafy — bodový, histogram i hustotní — ukazují tutéž věc
 
 ## Deskriptivní statistiky
 
-Grafy jsou skvělé pro pochopení dat, ale někdy potřebujeme jedno **číslo** — srovnatelné napříč skupinami, reportovatelné v tabulce. Deskriptivní statistiky nám říkají dvě věci: *kde leží střed dat* a *jak moc jsou data rozptýlená*.
+Grafy jsou skvělé pro pochopení dat, ale někdy potřebujeme jedno **číslo** — srovnatelné napříč skupinami, reportovatelné v tabulce. Deskriptivní statistiky nám říkají dvě věci: *kde leží střed dat* a *jaká je jejich `r render_glossary_term("variabilita", display = "variabilita")`*.
 
 Nejdřív si ukážeme výpočty **ručně na malém příkladu**. Použijeme devět průzkumných záznamů:
 
@@ -679,7 +750,7 @@ Ukažme si to na malém příkladu (`r paste(sort(c(5L, 6L, 7L, 7L, 8L, 8L, 8L, 
 
 - **0. percentil (minimum):** `r min(maly_vzorek)` — pod touto hodnotou neleží žádný průzkumový záznam.
 - **25. percentil (Q1, dolní kvartil):** R interpoluje a vrátí **`r quantile(maly_vzorek, 0.25)`**.
-- **50. percentil (medián):** Polovina dat leží pod, polovina nad. R vrátí **`r median(maly_vzorek)`**.
+- **50. percentil (`r render_glossary_term("median", display = "medián")`):** Polovina dat leží pod, polovina nad. R vrátí **`r median(maly_vzorek)`**.
 - **75. percentil (Q3, horní kvartil):** Tři čtvrtiny dat leží pod. R vrátí **`r quantile(maly_vzorek, 0.75)`**.
 - **100. percentil (maximum):** `r max(maly_vzorek)`.
 
@@ -762,7 +833,7 @@ plot_base_beeswarm +
 
 Teď víme, kde leží **střed** dat. Ale jak moc jsou data **rozptýlená**?
 
-Jednou z odpovědí je **mezikvartilové rozpětí** (IQR = interquartile range). Je to vzdálenost mezi horním a dolním kvartilem.
+Jednou z odpovědí je **mezikvartilové rozpětí** (`r render_glossary_term("iqr", display = "IQR")` = interquartile range). Je to vzdálenost mezi horním a dolním kvartilem.
 
 **Číselný příklad.** Z malého příkladu R vrátí Q1 = `r quantile(maly_vzorek, 0.25)` a Q3 = `r quantile(maly_vzorek, 0.75)`. Vzdálenost = `r quantile(maly_vzorek, 0.75)` − `r quantile(maly_vzorek, 0.25)` = **`r IQR(maly_vzorek)` průzkumných záznamů**.
 
@@ -842,12 +913,12 @@ plot_base_beeswarm +
 ::: {.callout-tip}
 ## Kdy použít IQR místo SD?
 
-IQR je **odolné vůči odlehlým hodnotám** (outliers). Pokud máte data s extrémními hodnotami, nebo pokud jsou data výrazně asymetrická, IQR je bezpečnější volbou než směrodatná odchylka. Pro ordinální data (stupně poškození, škály souhlasu) je IQR prakticky jedinou smysluplnou mírou variability.
+`r render_glossary_term("iqr", display = "IQR")` je **odolné vůči `r render_glossary_term("odlehla-pozorovani", display = "odlehlým hodnotám")`**. Pokud máte data s extrémními hodnotami, nebo pokud jsou data výrazně asymetrická, IQR je bezpečnější volbou než `r render_glossary_term("smerodatna-odchylka", display = "směrodatná odchylka")`. Pro ordinální data (stupně poškození, škály souhlasu) je IQR prakticky jedinou smysluplnou mírou `r render_glossary_term("variabilita", display = "variability")`.
 :::
 
 ### Průměr
 
-Průměr (mean) je nejznámější statistika. Mechanicky: sečteme všechny hodnoty a vydělíme jejich počtem.
+`r render_glossary_term("prumer", display = "Průměr")` (mean) je nejznámější statistika. Mechanicky: sečteme všechny hodnoty a vydělíme jejich počtem.
 
 **Číselný příklad.** Sečteme všech `r length(maly_vzorek)` hodnot a vydělíme jejich počtem.
 
@@ -1000,22 +1071,22 @@ Průměr se posunul — jeden extrémní průzkum ho „přitáhl" ke své hodno
 ::: {.callout-warning}
 ## Průměr může být zavádějící
 
-Průměr je „přitahován" odlehlými hodnotami. V ekologii s nimi pracujeme neustále: počty druhů na lokalitách (jedna lokalita může být extrémně bohatá), velikosti těl v populaci, nebo množství srážek (jedno extrémní sucho nebo povodeň). Pokud máte podezření na odlehlé hodnoty nebo asymetrická data, preferujte **medián** jako míru středu.
+`r render_glossary_term("prumer", display = "Průměr")` je „přitahován" `r render_glossary_term("odlehla-pozorovani", display = "odlehlými hodnotami")`. V ekologii s nimi pracujeme neustále: počty druhů na lokalitách (jedna lokalita může být extrémně bohatá), velikosti těl v populaci, nebo množství srážek (jedno extrémní sucho nebo povodeň). Pokud máte podezření na odlehlé hodnoty nebo asymetrická data, preferujte **`r render_glossary_term("median", display = "medián")`** jako míru středu.
 :::
 
 ::: {.callout-note collapse="true"}
 ## Kdy je průměr lepší volbou?
 
-Průměr je matematicky pohodlný a dobře se chová, když jsou data přibližně **symetricky rozložená** kolem středu (bez výrazných odlehlých hodnot). Právě takový tvar vidíme u počtu tučňáků na průzkum — proto průměr a medián vychází velmi podobně.
+`r render_glossary_term("prumer", display = "Průměr")` je matematicky pohodlný a dobře se chová, když jsou data přibližně **symetricky rozložená** kolem středu (bez výrazných `r render_glossary_term("odlehla-pozorovani", display = "odlehlých hodnot")`). Právě takový tvar vidíme u počtu tučňáků na průzkum — proto průměr a medián vychází velmi podobně.
 
-Průměr je také základní stavební kámen statistického modelování. Lineární model (`lm()`), který budeme používat po celý kurz, počítá průměry skupin a průměrné efekty prediktorů. Je tedy důležité chápat, kdy průměru věřit a kdy být obezřetní.
+Průměr je také základní stavební kámen statistického modelování. `r render_glossary_term("linearni-model", display = "Lineární model")` (`lm()`), který budeme používat po celý kurz, počítá průměry skupin a průměrné efekty `r render_glossary_term("prediktor", display = "prediktorů")`. Je tedy důležité chápat, kdy průměru věřit a kdy být obezřetní.
 :::
 
 ### Rozptyl a směrodatná odchylka
 
-Víme, kde leží střed dat. Teď chceme vědět, jak moc jsou data **rozptýlená kolem středu**.
+Víme, kde leží střed dat. Teď chceme vědět, jak moc jsou data **rozptýlená kolem středu**. K tomu používáme `r render_glossary_term("rozptyl", display = "rozptyl")` a `r render_glossary_term("smerodatna-odchylka", display = "směrodatnou odchylku")`.
 
-Intuice: spočítejme, jak daleko je každá hodnota od průměru. Tuto vzdálenost nazýváme **odchylka** (residuum, chyba).
+Intuice: spočítejme, jak daleko je každá hodnota od průměru. Tuto vzdálenost nazýváme **odchylka** (`r render_glossary_term("residuum", display = "residuum")`, chyba).
 
 **Číselný příklad.** Průměr malého příkladu = `r round(mean(maly_vzorek), 2)`. Pro první průzkumový záznam (hodnota `r maly_vzorek[1]`): `r maly_vzorek[1]` − `r round(mean(maly_vzorek), 2)` = **`r round(maly_vzorek[1] - mean(maly_vzorek), 2)`**. Celý přehled pro všechny záznamy:
 
@@ -1116,7 +1187,7 @@ round(sd(vzorek_poctu_tucnaku), digits = 2)
 
 Co toto číslo znamená **graficky**? Níže jsou dva pohledy:
 
-- **Levý graf** zobrazuje průzkumy jako body. Červená přerušovaná čára je průměr, červené pásmo je rozsah průměr ± 1 SD. Zhruba dvě třetiny průzkumů leží uvnitř tohoto pásma — to je základní vlastnost dat blízkých normálnímu rozdělení.
+- **Levý graf** zobrazuje průzkumy jako body. Červená přerušovaná čára je průměr, červené pásmo je rozsah průměr ± 1 SD. Zhruba dvě třetiny průzkumů leží uvnitř tohoto pásma — to je základní vlastnost dat blízkých normálnímu `r render_glossary_term("rozdeleni", display = "rozdělení")`.
 - **Pravý graf** porovnává dvě skupiny se **stejným průměrem**, ale různou SD. Všimněte si, jak širší SD znamená roztáhlejší, plošší histogram.
 
 ::: {.panel-tabset}
@@ -1230,14 +1301,14 @@ ggplot2::ggplot(
 
 Představte si dvě populace ptáků se stejnou průměrnou délkou křídla 20 cm. První populace má SD = 0,5 cm, druhá SD = 3 cm. První populace je velmi uniformní — možná žijí v homogenním prostředí pod silnou stabilizující selekcí. Druhá populace je variabilnější — možná jde o smíšenou populaci, nebo zažívají různorodé selekční tlaky.
 
-SD tedy není jen „chyba měření" — obsahuje **biologickou informaci o variabilitě v populaci**. Menší SD neznamená „lepší data", jen uniformnější populaci.
+SD tedy není jen „chyba měření" — obsahuje **biologickou informaci o `r render_glossary_term("variabilita", display = "variabilitě")` v populaci**. Menší SD neznamená „lepší data", jen uniformnější populaci.
 :::
 
 ---
 
 ## Statistiky jako vizualizace — krabicový graf
 
-Všechny statistiky, které jsme spočítali (min, max, percentily, medián, IQR), lze nakreslit jako jeden přehledný graf: **krabicový graf** (boxplot). Pojďme ho sestavit krok za krokem, aby bylo jasné, co každý prvek znamená.
+Všechny statistiky, které jsme spočítali (min, max, percentily, `r render_glossary_term("median", display = "medián")`, `r render_glossary_term("iqr", display = "IQR")`), lze nakreslit jako jeden přehledný graf: `r render_glossary_term("boxplot", display = "krabicový graf (boxplot)")`. Pojďme ho sestavit krok za krokem, aby bylo jasné, co každý prvek znamená.
 
 ### Krok 1: Medián
 
@@ -1322,7 +1393,7 @@ plot_base_beeswarm +
 
 ### Krok 3: Vousy a odlehlé hodnoty
 
-Vousy sahají od hran krabice maximálně o **1,5× IQR** dál. Body mimo vousy jsou **odlehlé hodnoty** — kreslí se jako separátní body:
+Vousy sahají od hran krabice maximálně o **1,5× IQR** dál. Body mimo vousy jsou `r render_glossary_term("odlehla-pozorovani", display = "odlehlá pozorování")` — kreslí se jako separátní body:
 
 ```{r}
 #| label: boxplot-krok3
@@ -1439,7 +1510,7 @@ boxplot(
 ::: {.callout-note}
 ## Boxplot je nejlepší graf pro srovnání skupin
 
-Zatímco histogramy a beeswarm grafy jsou skvělé pro zobrazení **jedné** distribuce, boxploty excelují, když chceme **porovnat více skupin** vedle sebe. Uvidíte to v dalších přednáškách — například když budeme srovnávat počty tučňáků na různých lokalitách nebo v různých letech.
+Zatímco `r render_glossary_term("histogram", display = "histogramy")` a beeswarm grafy jsou skvělé pro zobrazení **jednoho** `r render_glossary_term("rozdeleni", display = "rozdělení")`, `r render_glossary_term("boxplot", display = "boxploty")` excelují, když chceme **porovnat více skupin** vedle sebe. Uvidíte to v dalších přednáškách — například když budeme srovnávat počty tučňáků na různých lokalitách nebo v různých letech.
 :::
 
 ---
@@ -1447,6 +1518,8 @@ Zatímco histogramy a beeswarm grafy jsou skvělé pro zobrazení **jedné** dis
 ## Typy proměnných
 
 Ne všechna data jsou čísla. A ne všechna čísla jsou si rovna. Typ proměnné určuje, jaký graf zvolíme, jakou statistiku spočítáme a jaký model použijeme.
+
+Budeme rozlišovat `r render_glossary_term("numericka-promenna", display = "numerické proměnné")` a `r render_glossary_term("kategoricka-promenna", display = "kategoriální proměnné")`; každá z nich vyžaduje jiný popis i jiný graf.
 
 ### Kvantitativní — diskrétní
 
@@ -1748,7 +1821,7 @@ ggplot2::ggplot(
 ::: {.callout-important}
 ## Ordinální data jako čísla — opatrně!
 
-Ordinální data jsou někdy zakódována jako čísla (1 = malý, 2 = střední, 3 = velký). Může být lákavé spočítat průměr a říci „průměrná kategorie = 1,7". Ale to předpokládá, že rozdíl mezi „malým" a „středním" tučňákem je stejně velký jako mezi „středním" a „velkým" — a to nevíme. Pro ordinální data preferujte **medián a IQR**, nebo speciální ordinální modely.
+Ordinální data jsou někdy zakódována jako čísla (1 = malý, 2 = střední, 3 = velký). Může být lákavé spočítat `r render_glossary_term("prumer", display = "průměr")` a říci „průměrná kategorie = 1,7". Ale to předpokládá, že rozdíl mezi „malým" a „středním" tučňákem je stejně velký jako mezi „středním" a „velkým" — a to nevíme. Pro ordinální data preferujte **`r render_glossary_term("median", display = "medián")` a `r render_glossary_term("iqr", display = "IQR")`**, nebo speciální ordinální modely.
 :::
 
 ### Přehled typů proměnných {#sec-prehled-typy}
@@ -1766,8 +1839,8 @@ Ordinální data jsou někdy zakódována jako čísla (1 = malý, 2 = střední
 Typ proměnné určuje:
 
 1. **Jaký graf** zvolíme — histogram pro čísla, sloupcový pro kategorie.
-2. **Jakou statistiku** počítáme — průměr pro symetrická čísla, medián nebo modus pro ostatní.
-3. **Jaký statistický model** použijeme — lineární model pro číselné odezvy, logistická regrese pro dichotomické kategorie, ordinální model pro seřazené kategorie.
+2. **Jakou statistiku** počítáme — `r render_glossary_term("prumer", display = "průměr")` pro symetrická čísla, `r render_glossary_term("median", display = "medián")` nebo modus pro ostatní.
+3. **Jaký statistický model** použijeme — `r render_glossary_term("linearni-model", display = "lineární model")` pro číselné `r render_glossary_term("odezva", display = "odezvy")`, `r render_glossary_term("logisticka-regrese", display = "logistická regrese")` pro dichotomické kategorie, ordinální model pro seřazené kategorie.
 
 Záměna typů proměnných je jedním z nejčastějších zdrojů chyb v analýze dat. Vždy si nejdřív ujasněte, co vlastně měříte.
 :::
@@ -1775,4 +1848,18 @@ Záměna typů proměnných je jedním z nejčastějších zdrojů chyb v analý
 ---
 
 *Materiály jsou průběžně aktualizovány. Datum poslední úpravy viz záhlaví.*
+
+---
+
+## Slovníček pojmů {.unnumbered}
+
+Pojmy použité v těchto materiálech a jejich definice:
+
+```{r}
+#| label: slovnicek
+#| echo: false
+if (knitr::is_html_output()) {
+  glossary::glossary_table()
+}
+```
 
