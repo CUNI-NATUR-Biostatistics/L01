@@ -1,3 +1,5 @@
 # Ignore the raw presentation PDF, which is large and not needed in the repository
 Presentation\presentation_raw.pdf
 .Rproj.user
+# Theme generation R functions — downloaded from _brand at render time (see R/generate_theme.R)
+R/Functions/Theme_generation/
