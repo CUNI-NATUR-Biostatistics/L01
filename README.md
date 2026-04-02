@@ -10,6 +10,11 @@ Téma ukázkového týdne: **vizualizace dat a deskriptivní statistika**. Repoz
 
 Repozitář slouží jako reference při vývoji `_L-template` a budoucích repozitářů `L01` až `L12`.
 
+Používá stejnou infrastrukturu jako budoucí týdenní repozitáře:
+
+- veřejný repozitář [`_brand`](https://github.com/CUNI-NATUR-Biostatistics/_brand) jako zdroj vizuální identity
+- veřejný repozitář [`slovnik`](https://github.com/CUNI-NATUR-Biostatistics/slovnik) jako zdroj terminologie a tooltipových definic
+
 ---
 
 ## Struktura repozitáře
@@ -59,7 +64,7 @@ Poznámka: aktivně používané theme soubory načítají `presentation.qmd` a 
 
 ## Systém vizuálního tématu
 
-Barvy, písma a další stylové volby se udržují v jediném místě: v JSON souborech ve složce `theme/`. Z nich se automaticky generují soubory pro:
+Barvy, písma a další stylové volby se udržují centrálně v repozitáři [`_brand`](https://github.com/CUNI-NATUR-Biostatistics/_brand) a lokálně se cachují ve složce `theme/`. Z nich se automaticky generují soubory pro:
 
 - RevealJS prezentaci,
 - HTML verzi skript,
@@ -69,7 +74,7 @@ Barvy, písma a další stylové volby se udržují v jediném místě: v JSON s
 ### Zdrojové soubory
 
 | Soubor | Co řídí |
-|---|---|
+| --- | --- |
 | `theme/colors.json` | Barvy a jejich sémantické role |
 | `theme/fonts.json` | Písma, velikosti a typografické volby |
 | `theme/custom_theme.json` | Okraje, bloky kódu, tabulky, stíny a další detaily |
@@ -77,7 +82,7 @@ Barvy, písma a další stylové volby se udržují v jediném místě: v JSON s
 ### Generované soubory
 
 | Soubor | Účel |
-|---|---|
+| --- | --- |
 | `theme/_colors.scss` | Sdílené SCSS proměnné |
 | `theme/fonts-include.html` | Načtení webových písem pro HTML výstupy |
 | `theme/presentation_theme.scss` | RevealJS téma prezentace |
@@ -96,6 +101,26 @@ source("R/generate_theme.R")
 ### Písma v PDF
 
 HTML výstupy mohou používat Google Fonts, ale Typst pracuje jen s lokálně nainstalovanými písmy. Pokud má PDF používat konkrétní písmo, musí být dostupné v systému a správně nastavené v `theme/fonts.json`.
+
+---
+
+## Slovníček pojmů ve skriptech
+
+`Learning_materials/skripta.qmd` je napojené na centrální repozitář [`slovnik`](https://github.com/CUNI-NATUR-Biostatistics/slovnik).
+
+Renderovací setup:
+
+- stáhne aktuální `pojmy.yaml` z raw URL repozitáře `slovnik`
+- nastaví `glossary::glossary_path()` na dočasnou lokální kopii
+- načte `render_glossary_term.R` z GitHubu nebo použije lokální fallback
+
+Pro první výskyt známého termínu v dané sekci použijte ve skriptech tuto podobu:
+
+```markdown
+`r render_glossary_term("median", display = "medián")`
+```
+
+Tooltip styly pro HTML používají brand barvy převzaté z aktuálního tématu.
 
 ---
 
