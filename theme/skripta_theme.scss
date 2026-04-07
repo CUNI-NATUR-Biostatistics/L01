@@ -135,3 +135,36 @@ blockquote p {
 .text-tiny    { font-size: 0.75em; }
 .text-larger  { font-size: 1.15em; }
 
+// ---------------------------------------------------------------------------
+// Tabsets (.panel-tabset)
+// ---------------------------------------------------------------------------
+.panel-tabset .nav-tabs .nav-link {
+  background-color: $light_gray;
+  color: $graphite;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.panel-tabset .nav-tabs .nav-link:hover {
+  background-color: $amethyst;
+  color: $white;
+  border-color: $amethyst;
+}
+
+.panel-tabset .nav-tabs .nav-link.active {
+  background-color: $indigo_velvet;
+  color: $white;
+  border-color: $indigo_velvet;
+}
+
+// ---------------------------------------------------------------------------
+// Glossary tooltips
+// ---------------------------------------------------------------------------
+a.glossary .def {
+  border: 1px solid rgba(93, 40, 144, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+

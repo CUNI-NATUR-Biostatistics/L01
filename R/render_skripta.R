@@ -1,7 +1,7 @@
 #----------------------------------------------------------#
 #
 #
-#                     L - example
+#                         _brand
 #
 #                   Render Skripta
 #
@@ -19,11 +19,11 @@ library(fs)
 
 # Render -----
 quarto::quarto_render(
-  input = here::here("Learning_materials/skripta.qmd")
+  input = here::here("Learning_materials", "skripta.qmd")
 )
 
-# compress the PDF to make it small enough to uplot to GH
+# compress the PDF to make it small enough to upload to GH
 qpdf::pdf_compress(
-  input = here::here("Learning_materials/skripta_raw.pdf"),
-  output = here::here("Learning_materials/skripta_compressed.pdf")
+  input = here::here("Learning_materials", "skripta_raw.pdf"),
+  output = here::here("Learning_materials", "skripta.pdf")
 )

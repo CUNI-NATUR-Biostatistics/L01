@@ -1,7 +1,7 @@
 #----------------------------------------------------------#
 #
 #
-#                     L - example
+#                         _brand
 #
 #                  Render all files
 #
@@ -19,13 +19,13 @@ library(here)
 # Edit theme/colors.json, theme/fonts.json, or theme/custom_theme.json,
 # then rerun render_all.R — everything updates automatically.
 source(
-  here::here("R/generate_theme.R")
+  here::here("R", "generate_theme.R")
 )
 
 source(
-  here::here("R/render_presentation.R")
+  here::here("R", "render_presentation.R")
 )
 
 source(
-  here::here("R/render_skripta.R")
+  here::here("R", "render_skripta.R")
 )

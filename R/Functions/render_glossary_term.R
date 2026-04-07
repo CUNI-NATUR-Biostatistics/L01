@@ -1,7 +1,7 @@
 #----------------------------------------------------------#
 #
 #
-#                     L - example
+#                         _brand
 #
 #           Render glossary term with plain-text
 #                fallback for non-HTML formats
@@ -20,7 +20,8 @@
 #' renders to typst.
 #'
 #' @param slug Character scalar. The glossary entry slug (key) used by
-#'   \code{glossary::glossary()}, e.g. \code{"median"} or \code{"boxplot"}.
+#'   \code{glossary::glossary()}, e.g. \code{"median"} or
+#'   \code{"boxplot"}.
 #' @param display Character scalar. The human-readable label shown in the
 #'   rendered text. Defaults to \code{slug} when not supplied.
 #'
@@ -33,5 +34,6 @@ render_glossary_term <- function(slug, display = slug) {
   } else {
     res_term <- display
   }
+
   return(res_term)
 }
