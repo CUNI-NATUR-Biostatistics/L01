@@ -156,9 +156,9 @@ data_druh_tucnaku <-
 
 barvy_druhu <-
   c(
-    "Adelie"    = "#8A8A8A",
-    "Chinstrap" = "#86579E",
-    "Gentoo"    = "#F3A712"
+    "Adelie"    = "darkorange",
+    "Chinstrap" = "mediumpurple",
+    "Gentoo"    = "cyan4"
   )
 
 # Ordinální: kategorie tělesné hmotnosti (tercilement z reálných dat)

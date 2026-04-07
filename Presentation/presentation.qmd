@@ -87,7 +87,7 @@ slides_url <-
 
 <br>
 
-::: {.text-color-orange .text-font-heading .text-size-heading1 .text-bold}
+::: {.text-color-white .text-font-heading .text-size-heading1 .text-bold}
 `r display_name`
 :::
 
@@ -1994,9 +1994,9 @@ Každá kategorie dostane vlastní barvu – vizuální kód odpovídá realitě
 #| eval: true
 barvy_druhu <-
   c(
-    "Adelie" = "#8A8A8A",
-    "Chinstrap" = "#86579E",
-    "Gentoo" = "#F3A712"
+    "Adelie" = "darkorange",
+    "Chinstrap" = "mediumpurple",
+    "Gentoo" = "cyan4"
   )
 ```
 
