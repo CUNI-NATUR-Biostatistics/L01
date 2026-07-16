@@ -10,6 +10,10 @@ Téma ukázkového týdne: **vizualizace dat a deskriptivní statistika**. Repoz
 
 Repozitář slouží jako reference při vývoji `_L-template` a budoucích repozitářů `L01` až `L12`.
 
+## Doporučený pracovní prostor
+
+Tento repozitář je určený pro práci v multi-root workspace `CUNI-NATUR-Biostatistics`. Sdílený kontext kurzu a kanonické instrukce pro AI asistenty spravuje soukromý repozitář `_internal`; doporučené nastavení je popsané v `_internal/workspace-setup.md`. Při samostatném otevření tohoto repozitáře nemusí mít AI asistent k dispozici úplný kontext kurzu.
+
 Používá stejnou infrastrukturu jako budoucí týdenní repozitáře:
 
 - veřejný repozitář [`_brand`](https://github.com/CUNI-NATUR-Biostatistics/_brand) jako zdroj vizuální identity
