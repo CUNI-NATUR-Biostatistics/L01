@@ -10,7 +10,7 @@
 #         _brand so every lesson repo stays in sync.
 #
 #         This is the single source of truth for all
-#         lesson repos (L00-L12, L-example, _L-template).
+#         lesson repos (L00-L12, _L-template).
 #         Each repo bootstraps this script at render time.
 #
 #
