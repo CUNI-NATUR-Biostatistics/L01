@@ -8,6 +8,7 @@
 - Reviewer: Ondřej Mottl
 - Branch: `lesson/l01-scope-data`
 - Base: `main` at `8927f7b`
+- Planning PR: draft #4
 - Status: broad search complete; awaiting human selection
 
 ## Dataset requirements

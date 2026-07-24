@@ -15,7 +15,7 @@
 - Original repository identity: private `CUNI-NATUR-Biostatistics/L-example`
 - Current repository identity: private `CUNI-NATUR-Biostatistics/L01`
 - Previous-stage PR merged: N/A
-- Planned PR: draft planning PR
+- Planning PR: draft #4
 
 ## Lesson purpose
 
