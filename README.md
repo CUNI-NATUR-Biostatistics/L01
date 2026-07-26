@@ -12,8 +12,8 @@ orientaci v kurzu s těmito statistickými cíli:
 - vhodné grafy pro jednu proměnnou;
 - princip, že typ proměnné omezuje smysluplné otázky a pozdější modely.
 
-Palmer Penguins zůstávají hlavním datasetem L02. Dataset L01 bude odlišný a
-čeká na lidské schválení v
+Palmer Penguins zůstávají hlavním datasetem L02. Pro L01 byl schválen dataset
+`ggplot2::msleep`; rozhodnutí a transparentní odvozené proměnné popisuje
 [`Workflow/records/2026-07-24-stage-1-dataset.md`](Workflow/records/2026-07-24-stage-1-dataset.md).
 Stávající skripta, prezentace a rendery jsou historický pilot, nikoli materiál
 připravený k vydání jako L01.
@@ -22,7 +22,7 @@ připravený k vydání jako L01.
 
 | Skupina | Větev | Stav |
 |---|---|---|
-| Stage 0–1: scope a data | `lesson/l01-scope-data` | čeká na schválení datasetu |
+| Stage 0–1: scope a data | `lesson/l01-scope-data` | scope a dataset schváleny; čeká na merge PR |
 | Stage 2–3: skripta | `lesson/l01-skripta` | nezačato; až po merge plánovacího PR |
 | Stage 4–5: prezentace | `lesson/l01-presentation` | nezačato; až po merge PR se skripty |
 

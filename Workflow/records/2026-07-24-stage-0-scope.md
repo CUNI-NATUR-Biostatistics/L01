@@ -4,6 +4,7 @@
 
 - Week: L01
 - Date: 2026-07-24
+- Decision date: 2026-07-26
 - Author: Codex with course-owner direction
 - Reviewer: Ondřej Mottl
 
@@ -84,8 +85,13 @@ concise orientation. Unknown facts must be marked
 ## Risks and dependencies
 
 - The dataset must differ from Palmer Penguins, which remains L02's anchor.
-- The selected dataset must support all four variable-type decisions without
-  inventing an artificial category.
+- The selected `ggplot2::msleep` plan uses natural continuous and nominal
+  variables, a derived count of species represented by taxonomic order, and
+  one explicitly artificial ordered body-mass category based on the observed
+  data. The human reviewer approved this exception on 2026-07-26.
+- Every derived variable must state its observational unit and scope. The
+  artificial body-mass category must be described as a teaching scaffold, not
+  as a biological classification.
 - Missing course-policy facts block release but do not block drafting.
 - Dataset approval is a human gate before any Stage 2–3 authoring.
 
@@ -93,5 +99,5 @@ concise orientation. Unknown facts must be marked
 
 - [x] Scope is bounded and ready for human review.
 - [x] Continue Stage 1 on this planning branch.
-- [ ] Scope approved by the human reviewer.
-- [ ] Dataset approved and locked.
+- [x] Scope approved by the human reviewer on 2026-07-26.
+- [x] Dataset approved and locked: `ggplot2::msleep`.

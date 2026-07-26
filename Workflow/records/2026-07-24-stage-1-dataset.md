@@ -6,10 +6,11 @@
 - Date: 2026-07-24
 - Author: Codex with course-owner direction
 - Reviewer: Ondřej Mottl
+- Decision date: 2026-07-26
 - Branch: `lesson/l01-scope-data`
 - Base: `main` at `8927f7b`
 - Planning PR: draft #4
-- Status: broad search complete; awaiting human selection
+- Status: `ggplot2::msleep` selected and locked; awaiting planning PR merge
 
 ## Dataset requirements
 
@@ -19,6 +20,15 @@ hook plus observational units, all four variable types, frequencies,
 mean/median, SD/IQR, and one-variable graph choice. Provenance and acquisition
 must be reproducible, and a prepared teaching extract must not hide its source
 or cleaning decisions.
+
+Human-approved exception: for `msleep`, one ordered body-mass category may be
+constructed from the observed data as an explicitly artificial teaching
+scaffold. This mirrors the transparent derived-variable pattern in the pilot
+lesson. It must not be presented as a biological classification. A discrete
+count may likewise be derived by counting the species represented in each
+taxonomic order, provided the materials clearly change the observational unit
+from species to order and describe the count as coverage of this table rather
+than total mammalian diversity.
 
 ## Broad discovery
 
@@ -52,7 +62,7 @@ independent sources.
 
 | Finalist | Outcome fit | Immediate hook | Interpretability | Buildability | Practical feasibility | Main risk | Rank |
 |---|---|---|---|---|---|---|---:|
-| Mammalian sleep (`msleep`) | Very high for centre/spread and nominal categories; adequate ordinal status | “The average mammal weighs 166 kg; the median weighs 1.67 kg. Which describes a typical mammal?” | Excellent | Excellent: 83 rows, 11 variables | Excellent; shipped in `ggplot2` with stable documentation | Conservation provenance/missingness must be explicit; species are not a random sample of all mammals | 1 |
+| Mammalian sleep (`msleep`) | Very high for centre/spread; natural continuous and nominal variables plus approved transparent derivations for discrete and ordinal examples | Two fictional news headlines claim that a typical mammal weighs either 166 kg or 1.67 kg; students vote before the calculations are named | Excellent | Excellent: 83 rows, 11 variables | Excellent; shipped in `ggplot2` with stable documentation | Derived variables and the species-level observational unit must be explicit; species are not a random sample of all mammals | 1 |
 | NYC street trees | Excellent across discrete, continuous, nominal, and ordinal variables | “A typical living street tree is 10 inches wide, but the mean is 11.7—and one record says 425. Which display should we trust?” | High | High after a carefully documented extract | Moderate; stable official CSV/API but very large | Extract and citizen-science quality story may consume orientation time | 2 |
 | London animal rescues | High except for ordinal type | “Most rescues cost £352, while the mean is £404; what does ‘typical rescue’ mean?” | High | High after cleaning | Moderate; official OGL spreadsheet, updated over time | Schema drift, sensitive location fields, and weak ordinal variable | 3 |
 
@@ -72,9 +82,21 @@ independent sources.
 - `vore`: herbivore 32, omnivore 20, carnivore 19, insectivore 5,
   missing 7.
 - Hook feasibility: the body-mass mean/median contrast is genuine and large,
-  and a dot/histogram view immediately explains it. Conservation can teach
-  ordered categories and missingness, but must not be framed as a complete
-  current conservation assessment.
+  and a dot/histogram view immediately explains it. Conservation remains useful
+  for discussing provenance and missingness, but is not sufficiently complete
+  or current to serve as the main ordinal example.
+- Approved variable plan:
+  - observational unit for the main table and hook: one represented mammal
+    species;
+  - continuous: `bodywt` and `sleep_total`;
+  - nominal: `vore` or `order`;
+  - discrete: number of represented species per `order`, explicitly changing
+    the observational unit to taxonomic order and describing only this table;
+  - ordinal: an artificial small/medium/large body-mass category based on
+    terciles of the observed `bodywt` values, labelled as a didactic
+    classification rather than a biological standard.
+- The incomplete conservation field is retained as a provenance and
+  missing-data caveat, not as the main ordinal example.
 
 ### Finalist 2 — NYC 2015 Street Tree Census
 
@@ -110,18 +132,24 @@ independent sources.
   find an honest ordinal variable or accept that this finalist does not fully
   cover the intended type taxonomy.
 
-## Recommendation and human decision
+## Human decision
 
-Recommended dataset: **Mammalian sleep (`msleep`)**.
+Selected and locked dataset: **Mammalian sleep (`msleep`)**.
+
+Ondřej Mottl approved the lesson scope, selected `msleep`, and approved the
+transparent derived-variable approach on 2026-07-26.
 
 It produces the cleanest first-lesson detective challenge with the least
-tooling burden. The two true statements—mean mammal body mass 166 kg versus
-median 1.67 kg—force students to ask what a row represents, inspect the
-distribution, compare centre/spread, and choose a graph before trusting
-“typical.” The same compact table supports nominal diet/order and an explicitly
-caveated ordered conservation field.
+tooling burden. Two fictional news headlines give radically different answers
+to the ordinary-language question of how much a “typical” mammal weighs.
+Students vote before the calculations are named. The later reveal that both
+numbers were computed correctly forces them to ask what a row represents,
+inspect the distribution, compare centre/spread, and choose a graph before
+trusting “typical.” The same compact table supports natural nominal diet/order,
+a derived discrete count, and an explicitly artificial ordinal body-mass
+category.
 
-Alternative choices:
+Rejected alternatives after the human decision:
 
 1. **NYC trees** if natural coverage of all four types and open-data provenance
    outweigh the cost of a large, noisy source and prepared extract.
@@ -130,14 +158,26 @@ Alternative choices:
 
 ### Proposed minimal story for `msleep`
 
-- Opening vote: “A typical mammal weighs 166 kg” versus “a typical mammal
-  weighs 1.67 kg.” Both calculations are correct; which claim is useful?
+- Opening setup: the table contains body-mass measurements for 83 different
+  mammal species, from very small species to elephants. Ask in ordinary
+  language: how can we determine how much a “typical” mammal weighs?
+- Show two explicitly fictional news cards without statistical terminology:
+  - **Titulek A:** “Vědci spočítali: ‚Průměrný savec váží 166 kg.‘”
+  - **Titulek B:** “Jiná analýza stejných dat tvrdí: ‚Běžný savec váží jen
+    1,67 kg.‘”
+- Vote before explanation: A is correct; B is correct; both can be correct; or
+  there is not enough information.
+- Reveal only after the vote: both numbers were calculated correctly from the
+  same 83 rows. Introduce 166 kg as the **průměr (mean)** and 1.67 kg as the
+  **medián (median)**.
 - Evidence path: identify one row as a mammal species, classify variables,
   inspect the mass distribution, compare mean/SD with median/IQR, and choose
   a graph that reveals the influential species.
-- Resolution: neither number is universally “the” typical mammal; the
-  defensible summary depends on the distribution, the question, and what the
-  dataset represents.
+- Resolution: both headlines use a defensible calculation but overstate what
+  it means. Neither number is universally “the” typical mammal species; the
+  answer depends on the distribution, the question, and what this non-random
+  table represents. The table describes represented species, not the body
+  weight of a randomly selected individual mammal.
 - L02 bridge: after describing one variable honestly, ask whether sleep time
   changes with body mass or feeding group.
 
@@ -149,8 +189,8 @@ Alternative choices:
   practical complications were inspected.
 - [x] Three finalists were compared and numerically probed.
 - [x] Rejection reasons and transferable patterns were recorded.
-- [ ] Human reviewer approved the dataset.
-- [ ] Dataset locked for implementation.
+- [x] Human reviewer approved `ggplot2::msleep` on 2026-07-26.
+- [x] Dataset locked with the approved derived-variable plan.
 - [ ] Planning PR merged.
 
 No Stage 2–3 source authoring may begin until the final three boxes are
