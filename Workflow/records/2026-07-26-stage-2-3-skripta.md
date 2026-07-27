@@ -5,11 +5,11 @@
 - Week: L01
 - Date: 2026-07-26
 - Author: Codex with course-owner direction
-- Reviewer: pending
+- Reviewer: Ondřej Mottl
 - Branch: `lesson/l01-skripta`
 - Base: `main` at `59968f9`
 - Planning dependency: PR #4 merged
-- Status: review-ready written-materials draft; awaiting human review
+- Status: approved by the course owner on 2026-07-27; ready for the written-materials pull request
 
 ## Authoring outcome
 
