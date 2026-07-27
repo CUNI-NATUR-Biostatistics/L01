@@ -1,0 +1,407 @@
+// This file is auto-generated. Do not edit directly.
+// Run R/generate_theme.R to regenerate.
+
+@import "colors";
+
+/*-- scss:rules --*/
+
+// ---------------------------------------------------------------------------
+// Slide spacing — after h2 and between sibling elements
+// ---------------------------------------------------------------------------
+
+.reveal .slides section:not(.center) > h2 {
+  margin-bottom: 0.58em;
+}
+
+.reveal .slides section:not(.center) > h2 + p,
+.reveal .slides section:not(.center) > h2 + .columns,
+.reveal .slides section:not(.center) > h2 + .cell,
+.reveal .slides section:not(.center) > h2 + [class^='card-'],
+.reveal .slides section:not(.center) > h2 + [class^='panel-'],
+.reveal .slides section:not(.center) > h2 + [class^='box-'],
+.reveal .slides section:not(.center) > h2 + [class^='strip-'],
+.reveal .slides section:not(.center) > h2 + .blockquote {
+  margin-top: 0.55rem;
+}
+
+.reveal .slides section:not(.center) > p + .columns,
+.reveal .slides section:not(.center) > p + .cell,
+.reveal .slides section:not(.center) > p + [class^='card-'],
+.reveal .slides section:not(.center) > p + [class^='panel-'],
+.reveal .slides section:not(.center) > p + [class^='box-'],
+.reveal .slides section:not(.center) > p + [class^='strip-'],
+.reveal .slides section:not(.center) > p + .blockquote {
+  margin-top: 1.2rem;
+}
+
+.reveal .slides section:not(.center) > .cell + .columns,
+.reveal .slides section:not(.center) > .cell + [class^='panel-'],
+.reveal .slides section:not(.center) > .cell + [class^='box-'],
+.reveal .slides section:not(.center) > .cell + [class^='strip-'],
+.reveal .slides section:not(.center) > .columns + [class^='strip-'],
+.reveal .slides section:not(.center) > [class^='panel-'] + [class^='strip-'],
+.reveal .slides section:not(.center) > [class^='box-'] + [class^='strip-'],
+.reveal .slides section:not(.center) > .blockquote + [class^='strip-'] {
+  margin-top: 1.28rem;
+}
+
+.reveal .slides section:not(.center) > .cell + .strip-compact,
+.reveal .slides section:not(.center) > .columns + .strip-compact,
+.reveal .slides section:not(.center) > .blockquote + .strip-compact,
+.reveal .slides section:not(.center) > p + .strip-compact {
+  margin-top: 0.72rem;
+}
+
+// ---------------------------------------------------------------------------
+// Component color aliases (presentation-only; not in _colors.scss)
+// ---------------------------------------------------------------------------
+
+$c-indigo:   $indigo_velvet;
+$c-orange:   $orange;
+$c-amethyst: $amethyst;
+$c-olive:    $grey_olive;
+$c-red:      #C94C4C;
+
+// Tint backgrounds (very light fills for cards / panels)
+$bg-indigo-tint:   #F7F1FF;
+$bg-orange-tint:   #FFFAF1;
+$bg-amethyst-tint: #F2EAF8;
+$bg-olive-tint:    #F5F5F4;
+$bg-red-tint:      #FFF1F1;
+
+// ---------------------------------------------------------------------------
+// Spacing — after h2 and between sibling components
+// ---------------------------------------------------------------------------
+
+// Apply to ALL single-class card / panel / strip / box variants via [class^=]
+.reveal .slides section:not(.center) > h2 + [class^='card-'],
+.reveal .slides section:not(.center) > h2 + [class^='panel-'],
+.reveal .slides section:not(.center) > h2 + [class^='box-'],
+.reveal .slides section:not(.center) > h2 + [class^='strip-'],
+.reveal .slides section:not(.center) > h2 + .blockquote {
+  margin-top: 0.55rem;
+}
+
+[class^='card-'] + [class^='card-'],
+[class^='panel-'] + [class^='panel-'],
+[class^='box-'] + [class^='box-'] {
+  margin-top: 0.8rem;
+}
+
+// ---------------------------------------------------------------------------
+// Cards
+// ---------------------------------------------------------------------------
+
+// Base shared rule — applied to ALL card variants (single-class syntax)
+.reveal .card-indigo,
+.reveal .card-orange,
+.reveal .card-amethyst,
+.reveal .card-olive,
+.reveal .card-red,
+.reveal .card-question,
+.reveal .card-insight,
+.reveal .card-warning,
+.reveal .card-data,
+.reveal .card-result,
+.reveal .card-rule,
+.reveal .box-rule,
+.reveal .box-warning {
+  border-radius: 16px;
+  padding: 0.7rem 1rem 0.85rem 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+  text-align: left;
+}
+
+// .card-compact — reduces padding for tight layouts
+.reveal .card-compact {
+  padding: 0.45rem 0.75rem 0.55rem 0.75rem;
+}
+
+// Inner typography (shared across all card variants)
+.reveal [class^='card-'] h3,
+.reveal .box-rule h3,
+.reveal .box-warning h3 {
+  margin: 0 0 0.3rem 0;
+  color: $graphite;
+}
+
+.reveal [class^='card-'] p,
+.reveal [class^='card-'] ul,
+.reveal .box-rule p,
+.reveal .box-rule ul,
+.reveal .box-warning p,
+.reveal .box-warning ul {
+  margin: 0;
+  font-size: 0.82em;
+  line-height: 1.32;
+}
+.reveal [class^='card-'] ul,
+.reveal [class^='card-'] ol,
+.reveal .box-rule ul,
+.reveal .box-rule ol,
+.reveal .box-warning ul,
+.reveal .box-warning ol { padding-left: 1.2em; }
+
+// Per-color variants
+.reveal .card-indigo   { background: $bg-indigo-tint; }
+.reveal .card-orange   { background: $bg-orange-tint; }
+.reveal .card-amethyst { background: $bg-amethyst-tint; }
+.reveal .card-olive    { background: $bg-olive-tint; }
+.reveal .card-red      { background: $bg-red-tint; }
+
+// Semantic predefined cards
+.reveal .card-question { background: $bg-orange-tint; }
+.reveal .card-insight  { background: $bg-indigo-tint; }
+.reveal .card-warning  { background: $bg-red-tint; }
+.reveal .card-data     { background: $bg-olive-tint; }
+.reveal .card-result   { background: $bg-indigo-tint; }
+
+// Additional semantic card
+.reveal .card-rule { background: $bg-amethyst-tint; }
+// .box-* shorthand aliases — card type
+.reveal .box-rule    { background: $bg-amethyst-tint; }
+.reveal .box-warning { background: $bg-red-tint; }
+
+// ---------------------------------------------------------------------------
+// Card title — full-width coloured band at the top of any card (.card-title)
+// ---------------------------------------------------------------------------
+
+.reveal [class^='card-'] .card-title,
+.reveal .box-rule .card-title,
+.reveal .box-warning .card-title {
+  display: block;
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: -0.7rem -1rem 0.45rem -1rem;
+  padding: 0.3em 0.75em;
+  border-radius: 14px 14px 0 0;
+}
+
+// Compact variant — negate the smaller padding instead
+.reveal .card-compact .card-title {
+  margin: -0.45rem -0.75rem 0.35rem -0.75rem;
+}
+
+// Per-card-color title bands
+.reveal .card-indigo   .card-title,
+.reveal .card-insight  .card-title,
+.reveal .card-result   .card-title { background: $c-indigo;   color: $white; }
+.reveal .card-amethyst .card-title,
+.reveal .card-rule     .card-title,
+.reveal .box-rule      .card-title { background: $c-amethyst; color: $white; }
+.reveal .card-olive    .card-title,
+.reveal .card-data     .card-title { background: $c-olive;    color: $white; }
+.reveal .card-red     .card-title,
+.reveal .card-warning .card-title,
+.reveal .box-warning  .card-title { background: $c-red;      color: $white; }
+.reveal .card-orange   .card-title,
+.reveal .card-question .card-title { background: $c-orange;   color: $graphite; }
+
+// ---------------------------------------------------------------------------
+// Panels
+// ---------------------------------------------------------------------------
+
+// Base shared rule — applied to ALL panel variants
+.reveal .panel-indigo,
+.reveal .panel-orange,
+.reveal .panel-amethyst,
+.reveal .panel-olive,
+.reveal .panel-red,
+.reveal .panel-question,
+.reveal .panel-result,
+.reveal .panel-note,
+.reveal .panel-warning,
+.reveal .panel-data,
+.reveal .box-question,
+.reveal .box-result,
+.reveal .box-data {
+  border-radius: 12px;
+  padding: 0.55rem 0.85rem;
+  text-align: left;
+  border-left: 5px solid transparent;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+// Inner typography
+.reveal [class^='panel-'] p,
+.reveal [class^='panel-'] ul,
+.reveal .box-question p,
+.reveal .box-question ul,
+.reveal .box-result p,
+.reveal .box-result ul,
+.reveal .box-data p,
+.reveal .box-data ul {
+  font-size: 0.82em;
+  line-height: 1.32;
+  margin: 0;
+}
+.reveal [class^='panel-'] ul,
+.reveal [class^='panel-'] ol,
+.reveal .box-question ul,
+.reveal .box-question ol,
+.reveal .box-result ul,
+.reveal .box-result ol,
+.reveal .box-data ul,
+.reveal .box-data ol { padding-left: 1.2em; }
+
+// Per-color variants
+.reveal .panel-indigo   { background: $bg-indigo-tint;   border-left-color: $c-indigo; }
+.reveal .panel-orange   { background: $bg-orange-tint;   border-left-color: $c-orange; }
+.reveal .panel-amethyst { background: $bg-amethyst-tint; border-left-color: $c-amethyst; }
+.reveal .panel-olive    { background: $bg-olive-tint;    border-left-color: $c-olive; }
+.reveal .panel-red      { background: $bg-red-tint;      border-left-color: $c-red; }
+
+// Semantic predefined panels
+.reveal .panel-question { background: $bg-orange-tint;   border-left-color: $c-orange; }
+.reveal .panel-result   { background: $bg-indigo-tint;   border-left-color: $c-indigo; }
+.reveal .panel-note     { background: $bg-olive-tint;    border-left-color: $c-olive; }
+.reveal .panel-warning  { background: $bg-red-tint;      border-left-color: $c-red; }
+
+// Additional panel alias
+.reveal .panel-data     { background: $bg-olive-tint;    border-left-color: $c-olive; }
+// .box-* shorthand aliases — panel type
+.reveal .box-question   { background: $bg-orange-tint;   border-left-color: $c-orange; }
+.reveal .box-result     { background: $bg-indigo-tint;   border-left-color: $c-indigo; }
+.reveal .box-data       { background: $bg-olive-tint;    border-left-color: $c-olive; }
+
+// .panel-title — block-level label inside a panel
+.reveal [class^='panel-'] .panel-title,
+.reveal .box-question .panel-title,
+.reveal .box-result .panel-title,
+.reveal .box-data .panel-title {
+  display: block;
+  font-weight: 700;
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.3em;
+}
+
+// .panel-lead — large display heading inside a panel (replaces .answer-title)
+.reveal [class^='panel-'] .panel-lead,
+.reveal .box-question .panel-lead,
+.reveal .box-result .panel-lead,
+.reveal .box-data .panel-lead {
+  display: block;
+  font-size: 1.15em;
+  font-weight: 700;
+  margin-bottom: 0.2em;
+}
+
+// ---------------------------------------------------------------------------
+// Strips
+// ---------------------------------------------------------------------------
+
+// Base — ALL strip variants
+.reveal .strip-indigo,
+.reveal .strip-orange,
+.reveal .strip-amethyst,
+.reveal .strip-olive,
+.reveal .strip-red,
+.reveal .takeaway-strip {
+  border-radius: 0 8px 8px 0;
+  padding: 0.55rem 1rem;
+  border-left: 6px solid transparent;
+  text-align: left;
+  margin-top: 0.9rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+// Inner typography
+.reveal [class^='strip-'] p,
+.reveal .takeaway-strip p,
+.reveal [class^='strip-'] ul,
+.reveal .takeaway-strip ul {
+  font-size: 0.84em;
+  line-height: 1.3;
+  margin: 0;
+}
+.reveal [class^='strip-'] ul,
+.reveal [class^='strip-'] ol,
+.reveal .takeaway-strip ul,
+.reveal .takeaway-strip ol { padding-left: 1.2em; }
+
+// Per-color variants
+.reveal .strip-indigo   { background: $bg-indigo-tint;   border-left-color: $c-indigo; }
+.reveal .strip-orange   { background: $bg-orange-tint;   border-left-color: $c-orange; }
+.reveal .strip-amethyst { background: $bg-amethyst-tint; border-left-color: $c-amethyst; }
+.reveal .strip-olive    { background: $bg-olive-tint;    border-left-color: $c-olive; }
+.reveal .strip-red      { background: $bg-red-tint;      border-left-color: $c-red; }
+
+// .takeaway-strip — gradient semantic strip (brand accent)
+.reveal .takeaway-strip {
+  background: linear-gradient(90deg, rgba(93, 40, 144, 0.12), rgba(243, 167, 18, 0.16));
+  border-left-color: $c-indigo;
+}
+
+// .strip-compact — reduces top margin
+.reveal .strip-compact { margin-top: 0.3rem; }
+
+// ---------------------------------------------------------------------------
+// Blockquote
+// ---------------------------------------------------------------------------
+
+.reveal .blockquote {
+  padding: 0.8rem 1rem;
+  border-radius: 0 12px 12px 0;
+  background: #F7F1FF;
+  border-left: 6px solid $c-indigo;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+  text-align: left;
+}
+
+.reveal .blockquote p {
+  margin: 0;
+}
+
+.reveal .blockquote ul {
+  margin: 0.35rem 0 0 1.15rem;
+}
+
+.reveal .blockquote p,
+.reveal .blockquote ul {
+  font-size: 0.82em;
+  line-height: 1.28;
+}
+
+// ---------------------------------------------------------------------------
+// Column layout helpers
+// ---------------------------------------------------------------------------
+
+.reveal .columns.align-top {
+  align-items: flex-start;
+}
+
+.reveal .columns.align-top .cell,
+.reveal .columns.align-top p,
+.reveal .columns.align-top pre {
+  margin-top: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Slide backgrounds
+// ---------------------------------------------------------------------------
+
+// Dark backgrounds — override text + heading to white
+.reveal .slides section.bg-indigo   { background-color: $c-indigo   !important; color: $white !important; }
+.reveal .slides section.bg-amethyst { background-color: $c-amethyst !important; color: $white !important; }
+.reveal .slides section.bg-olive    { background-color: $c-olive    !important; color: $white !important; }
+.reveal .slides section.bg-red      { background-color: $c-red      !important; color: $white !important; }
+.reveal .slides section.bg-graphite { background-color: $graphite   !important; color: $white !important; }
+
+.reveal .slides section.bg-indigo :is(h1,h2,h3,h4),
+.reveal .slides section.bg-amethyst :is(h1,h2,h3,h4),
+.reveal .slides section.bg-olive :is(h1,h2,h3,h4),
+.reveal .slides section.bg-red :is(h1,h2,h3,h4),
+.reveal .slides section.bg-graphite :is(h1,h2,h3,h4) { color: $white !important; }
+
+// Light backgrounds — override text + heading to graphite
+.reveal .slides section.bg-orange    { background-color: $c-orange  !important; color: $graphite !important; }
+.reveal .slides section.bg-white     { background-color: $white     !important; color: $graphite !important; }
+.reveal .slides section.bg-parchment { background-color: $parchment !important; color: $graphite !important; }
+
+.reveal .slides section.bg-orange :is(h1,h2,h3,h4),
+.reveal .slides section.bg-white :is(h1,h2,h3,h4),
+.reveal .slides section.bg-parchment :is(h1,h2,h3,h4) { color: $graphite !important; }

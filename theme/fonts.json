@@ -8,9 +8,11 @@
     "heading2Size": "1.9em",
     "heading3Size": "1.4em",
     "heading4Size": "1em",
-    "textSizeSmall": "0.7",
-    "textSizeTiny": "0.5",
+    "textSizeHeading": "1.4",
     "textSizeLarge": "1.3",
+    "textSizeBody": "1.0",
+    "textSizeSmaller": "0.82",
+    "textSizeTiny": "0.65",
     "bodyLineHeight": "1.5",
     "headingLineHeight": "1.2"
   },

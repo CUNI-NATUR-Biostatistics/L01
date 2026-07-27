@@ -15,6 +15,7 @@ sysfonts::font_add_google("Inter", "biostat_body")
 sysfonts::font_add_google("Source Sans 3", "biostat_heading")
 sysfonts::font_add_google("JetBrains Mono", "biostat_mono")
 showtext::showtext_auto()
+showtext::showtext_opts(dpi = 300)  # align font metric DPI with ggsave save DPI
 
 # Colour palette -----
 biostat_cols <- c(
@@ -62,7 +63,7 @@ image_dpi    <- 300
 
 # ggplot2 theme -----
 theme_biostat <- function(
-  base_size   = text_size_base,
+  base_size   = 11,
   base_family = biostat_base_font
 ) {
   ggplot2::theme_bw(
@@ -79,8 +80,14 @@ theme_biostat <- function(
     axis.text        = ggplot2::element_text(size = ggplot2::rel(0.9)),
     legend.title     = ggplot2::element_text(size = ggplot2::rel(1)),
     legend.text      = ggplot2::element_text(size = ggplot2::rel(0.9)),
+    legend.background = ggplot2::element_rect(fill = "#F4F1EC", colour = NA),
+    legend.key       = ggplot2::element_rect(fill = "#F4F1EC", colour = NA),
     strip.text       = ggplot2::element_text(face = "bold"),
-    panel.background = ggplot2::element_rect(fill = "#F4F1EC", colour = NA),
+    axis.title.x     = ggplot2::element_text(margin = ggplot2::margin(t = 6)),
+    axis.title.y     = ggplot2::element_text(margin = ggplot2::margin(r = 8)),
+    panel.border     = ggplot2::element_blank(),
+    axis.line        = ggplot2::element_line(colour = "#2E2E2E", linewidth = 0.4),
+    panel.background = ggplot2::element_rect(fill = "#FFFFFF", colour = NA),
     plot.background  = ggplot2::element_rect(fill = "#F4F1EC", colour = NA),
     panel.grid.minor = ggplot2::element_blank(),
     legend.position  = "bottom"

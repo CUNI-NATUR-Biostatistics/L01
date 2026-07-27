@@ -17,6 +17,7 @@
 generate_skripta_typst_theme <- function(
   colors_file = here::here("theme/colors.json"),
   fonts_file = here::here("theme/fonts.json"),
+  custom_theme_file = here::here("theme/custom_theme.json"),
   output_file = here::here("Learning_materials/skripta_theme.typ")
 ) {
   message("Generating Learning_materials/skripta_theme.typ...\n")
@@ -27,11 +28,16 @@ generate_skripta_typst_theme <- function(
   if (!file.exists(fonts_file)) {
     stop("fonts.json not found at: ", fonts_file)
   }
+  if (!file.exists(custom_theme_file)) {
+    stop("custom_theme.json not found at: ", custom_theme_file)
+  }
 
   colors_data <-
     jsonlite::fromJSON(colors_file)
   fonts <-
     jsonlite::fromJSON(fonts_file)
+  custom_theme <-
+    jsonlite::fromJSON(custom_theme_file)
 
   primary <- colors_data$primary
   semantic <- colors_data$semantic
@@ -48,8 +54,13 @@ generate_skripta_typst_theme <- function(
   heading_color_hex <- resolve_hex("headingColor")
   link_color_hex <- resolve_hex("linkColor")
   code_bg_hex <- resolve_hex("codeBackgroundColor")
-  accent_color_hex <- resolve_hex("accentColor")
+  grey_olive_hex <- colors_data$primary[["grey_olive"]]
   orange_hex <- colors_data$primary[["orange"]]
+  table_header_hex <- colors_data$primary[["indigo_velvet"]]
+  table_header_text_hex <- colors_data$primary[["parchment"]]
+  table_border_hex <- colors_data$primary[["grey_olive"]]
+  table_stripe_hex <- colors_data$primary[["light_gray"]]
+  table_settings <- custom_theme$table
 
   sz <- fonts$typstSizes
   wt <- fonts$weights
@@ -153,6 +164,33 @@ generate_skripta_typst_theme <- function(
       ),
       "",
       "// ---------------------------------------------------------------------------",
+      "// Tables — applies to Markdown and generated data tables",
+      "// ---------------------------------------------------------------------------",
+      "#show table: set table(",
+      paste0("  inset: ", table_settings$typstTableCellPadding, ","),
+      paste0(
+        '  stroke: ',
+        table_settings$typstTableStrokeWidth,
+        ' + rgb("',
+        table_border_hex,
+        '"),'
+      ),
+      paste0(
+        '  fill: (x, y) => if y == 0 { rgb("',
+        table_header_hex,
+        '") } else if calc.even(y) { rgb("',
+        table_stripe_hex,
+        '") } else { none }'
+      ),
+      ")",
+      "",
+      paste0(
+        '#show table.cell.where(y: 0): set text(fill: rgb("',
+        table_header_text_hex,
+        '"), weight: 700)'
+      ),
+      "",
+      "// ---------------------------------------------------------------------------",
       "// Callout blocks (override Quarto defaults with brand colours)",
       "// Quarto passes these background_color values per type:",
       "//   note     #dae6fb   tip      #ccf1e3",
@@ -168,9 +206,11 @@ generate_skripta_typst_theme <- function(
         "\n  body_background_color: white",
         "\n) = {",
         "\n  let accent = if background_color == rgb(\"#ccf1e3\") {",
-        "\n    rgb(\"", accent_color_hex, "\")  // tip \u2192 amethyst",
-        "\n  } else if (background_color == rgb(\"#fcefdc\") or background_color == rgb(\"#ffe5d0\") or background_color == rgb(\"#f7dddc\")) {",
-        "\n    rgb(\"", orange_hex, "\")  // warning / caution / important \u2192 orange",
+        "\n    rgb(\"", grey_olive_hex, "\")  // tip \u2192 grey_olive",
+        "\n  } else if (background_color == rgb(\"#fcefdc\") or background_color == rgb(\"#ffe5d0\")) {",
+        "\n    rgb(\"", orange_hex, "\")  // warning / caution \u2192 orange",
+        "\n  } else if background_color == rgb(\"#f7dddc\") {",
+        "\n    rgb(\"", heading_color_hex, "\")  // important \u2192 indigo_velvet",
         "\n  } else {",
         "\n    rgb(\"", heading_color_hex, "\")  // note + fallback \u2192 indigo_velvet",
         "\n  }",

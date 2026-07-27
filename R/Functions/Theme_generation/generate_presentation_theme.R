@@ -41,6 +41,7 @@ generate_presentation_theme <- function(
   pr <- ct$presentation
   cd <- ct$code
   bq <- ct$blockquote
+  tb <- ct$table
   sh <- ct$shadows
 
   body_font_stack <-
@@ -152,7 +153,10 @@ generate_presentation_theme <- function(
       "// Code blocks",
       "// ---------------------------------------------------------------------------",
       ".reveal pre {",
-      "  box-shadow: none;",
+      paste0("  box-shadow: ", sh$componentShadow, ";"),
+      paste0("  border: ", cd$codeBorder, ";"),
+      paste0("  border-radius: ", cd$codeBorderRadius, ";"),
+      "  box-sizing: border-box;",
       "}",
       "",
       ".reveal pre code {",
@@ -168,11 +172,32 @@ generate_presentation_theme <- function(
       ".reveal pre code::-webkit-scrollbar { display: none; }",
       "",
       "// ---------------------------------------------------------------------------",
+      "// Figures — ggplot and other cell output images",
+      "// ---------------------------------------------------------------------------",
+      ".reveal .cell-output-display img {",
+      paste0("  border-radius: ", cd$codeBorderRadius, ";"),
+      "  display: block;",
+      "  max-width: 100%;",
+      "  box-sizing: border-box;",
+      "}",
+      "",
+      "// ---------------------------------------------------------------------------",
       "// Tables",
       "// ---------------------------------------------------------------------------",
       ".reveal table th {",
       "  background-color: $tableHeaderBackground !important;",
       "  color: $tableHeaderColor !important;",
+      paste0("  padding: ", tb$tableCellPadding, ";"),
+      "  border-bottom: 2px solid $tableBorderColor;",
+      "}",
+      "",
+      ".reveal table td {",
+      paste0("  padding: ", tb$tableCellPadding, ";"),
+      paste0(
+        "  border-bottom: 1px solid rgba($tableBorderColor, ",
+        tb$tableBorderOpacity,
+        ");"
+      ),
       "}",
       "",
       ".reveal table tr:nth-child(even) td {",
@@ -203,9 +228,11 @@ generate_presentation_theme <- function(
       ".text-font-body      { font-family: $mainFont; }",
       ".text-font-heading   { font-family: $headingFont; }",
       ".text-font-monospace { font-family: $monospaceFont; }",
-      paste0(".text-smaller { font-size: calc($mainFontSize * ", sz$textSizeSmall, ") !important; }"),
-      paste0(".text-tiny    { font-size: calc($mainFontSize * ", sz$textSizeTiny,  ") !important; }"),
-      paste0(".text-larger  { font-size: calc($mainFontSize * ", sz$textSizeLarge, ") !important; }"),
+      paste0(".text-size-heading  { font-size: calc($mainFontSize * ", sz$textSizeHeading,  ") !important; }"),
+      paste0(".text-size-large    { font-size: calc($mainFontSize * ", sz$textSizeLarge,    ") !important; }"),
+      paste0(".text-size-body     { font-size: calc($mainFontSize * ", sz$textSizeBody,     ") !important; }"),
+      paste0(".text-size-smaller  { font-size: calc($mainFontSize * ", sz$textSizeSmaller,  ") !important; }"),
+      paste0(".text-size-tiny     { font-size: calc($mainFontSize * ", sz$textSizeTiny,     ") !important; }"),
       ".text-bold    { font-weight: bold; }",
       ".text-center  { text-align: center; }",
       ".text-right   { text-align: right; }",

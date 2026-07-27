@@ -64,11 +64,17 @@ generate_colors_scss <- function(
         paste0(".bg-", name, " { background-color: ", hex, "; }"),
         paste0(".text-color-", name, " { color: ", hex, " !important; }"),
         paste0(
-          ".text-highlight-", name, " { ",
+          ".text-hgl-", name, " { ",
           "background-color: ", hex, "; ",
           "color: ", contrast, "; ",
-          "padding: 2px 4px; ",
-          "border-radius: 3px; }"
+          "padding: 2px 6px; ",
+          "border-radius: 5px; }"
+        ),
+        paste0(
+          ".text-bg-", name, " { ",
+          "background-color: ", hex, "; ",
+          "padding: 2px 6px; ",
+          "border-radius: 5px; }"
         ),
         ""
       )
