@@ -1,6 +1,6 @@
 ---
-title: "Vizualizace dat a deskriptivní statistika"
-subtitle: "Podkladové čtenářské materiály k přednášce"
+title: "Co váží „typický“ savec?"
+subtitle: "První setkání s daty a popisem jedné proměnné"
 lang: cs
 format:
   html:
@@ -20,7 +20,7 @@ format:
     number-sections: true
     output-file: "skripta_raw.pdf"
     include-in-header: "skripta_theme.typ"
-date: 2026/02/26
+date: 2026/07/26
 date-format: long
 date-modified: last-modified
 ---
@@ -34,23 +34,21 @@ here::i_am("Learning_materials/skripta.qmd")
 
 if (!require("tidyverse")) install.packages("tidyverse")
 if (!require("ggbeeswarm")) install.packages("ggbeeswarm")
-if (!require("palmerpenguins")) install.packages("palmerpenguins")
 if (!require("glossary")) install.packages("glossary")
 
 library(tidyverse)
 library(ggbeeswarm)
-library(palmerpenguins)
 library(glossary)
 
-# Glossary: point to the canonical slovnik pojmy.yaml hosted on GitHub.
-# Terms are looked up by slug ID (e.g. "histogram", "median", "boxplot").
-# Usage in text: `r render_glossary_term("slug", display = "Czech term")`
-# The glossary_style() call applies brand colours to the hover tooltip (HTML only).
+# Slovníček: kanonická hesla načítáme z repozitáře slovnik.
 local_pojmy <- tempfile(fileext = ".yaml")
 tryCatch(
   {
     download.file(
-      url = "https://raw.githubusercontent.com/CUNI-NATUR-Biostatistics/slovnik/main/pojmy.yaml",
+      url = paste0(
+        "https://raw.githubusercontent.com/",
+        "CUNI-NATUR-Biostatistics/slovnik/main/pojmy.yaml"
+      ),
       destfile = local_pojmy,
       quiet = TRUE
     )
@@ -88,7 +86,6 @@ if (knitr::is_html_output()) {
     def_bg = "#FFFFFF",
     def_color = "#2E2E2E"
   )
-  # Override: show tooltip on hover (not :active) and suppress the arrow on active.
   cat(
     "<style>",
     "a.glossary:hover .def { display: inline-block; }",
@@ -111,267 +108,513 @@ if (knitr::is_html_output()) {
   )
 }
 ```
-
-```{r}
-#| label: priprava-dat
-#| echo: false
-#| message: false
-#| warning: false
-
-# Kompletní dataset bez chybějících hodnot
-data_tucnaci <-
-  palmerpenguins::penguins |>
-  tidyr::drop_na()
-
-# Hlavní proměnná: počet tučňáků na průzkum (species × island × year)
-data_poctu_tucnaku <-
-  data_tucnaci |>
-  dplyr::count(species, island, year) |>
-  dplyr::rename(pocet_tucnaku = n)
-
-vzorek_poctu_tucnaku <-
-  data_poctu_tucnaku[["pocet_tucnaku"]]
-
-# Outlier: neobvykle velký průzkum
-pocet_tucnaku_outlier <-
-  c(vzorek_poctu_tucnaku, 90L)
-
-# Spojitá: délka zobáku (mm)
-vec_delka_zobaku <-
-  data_tucnaci[["bill_length_mm"]]
-
-data_delka_zobaku <-
-  tibble::tibble(
-    delka_zobaku = vec_delka_zobaku
-  )
-
-# Nominální: druh tučňáka
-vec_druh_tucnaku <-
-  as.character(data_tucnaci[["species"]])
-
-data_druh_tucnaku <-
-  tibble::tibble(
-    druh_tucnaku = vec_druh_tucnaku
-  )
-
-barvy_druhu <-
-  c(
-    "Adelie"    = "darkorange",
-    "Chinstrap" = "mediumpurple",
-    "Gentoo"    = "cyan4"
-  )
-
-# Ordinální: kategorie tělesné hmotnosti (tercilement z reálných dat)
-prahy_hmotnosti <-
-  quantile(
-    data_tucnaci[["body_mass_g"]],
-    probs = c(1 / 3, 2 / 3)
-  )
-
-data_kategorie_hmotnosti <-
-  tibble::tibble(
-    hmotnost = data_tucnaci[["body_mass_g"]]
-  ) |>
-  dplyr::mutate(
-    kategorie_hmotnosti = dplyr::case_when(
-      hmotnost < prahy_hmotnosti[[1]] ~ "malý",
-      hmotnost < prahy_hmotnosti[[2]] ~ "střední",
-      TRUE ~ "velký"
-    ) |>
-      factor(
-        levels = c("malý", "střední", "velký"),
-        ordered = TRUE
-      )
-  )
-
-vec_kategorie_hmotnosti <-
-  data_kategorie_hmotnosti[["kategorie_hmotnosti"]]
-```
-
 ```{r}
 #| label: nastaveni-vizualizace
 #| echo: false
 #| message: false
 #| warning: false
 
-# Jednotný vzhled pro všechny grafy v dokumentu
+col_data <- "#6B7280"
+col_mean <- "#F3A712"
+col_median <- "#5D2890"
+col_fill <- "#D8C9E8"
+
 ggplot2::theme_set(
   ggplot2::theme_bw() +
     ggplot2::theme(
       panel.grid.minor = ggplot2::element_blank(),
+      plot.title = ggplot2::element_text(
+        face = "bold",
+        colour = "#2E2E2E"
+      ),
       strip.background = ggplot2::element_rect(
-        fill  = "#F0EDE8",
+        fill = "#F0EDE8",
         color = "#8A8A8A"
       ),
       strip.text = ggplot2::element_text(
-        face   = "bold",
+        face = "bold",
         colour = "#5D2890"
       )
     )
 )
-
-# Sdílená barevná paleta
-col_data <- "#8A8A8A"
-col_highlight <- "#F3A712"
-col_median_line <- "#5D2890"
-
-# Sdílený základ pro beeswarm grafy s počtem tučňáků (horizontální)
-plot_base_beeswarm <-
-  ggplot2::ggplot(
-    data = data_poctu_tucnaku,
-    mapping = ggplot2::aes(y = pocet_tucnaku, x = 1)
-  ) +
-  ggbeeswarm::geom_beeswarm(
-    cex = 1.5,
-    color = col_data,
-    alpha = 0.7,
-    size = 3
-  ) +
-  ggplot2::coord_flip() +
-  ggplot2::scale_y_continuous(breaks = seq(0, 55, by = 5)) +
-  ggplot2::labs(
-    y = "Počet tučňáků (na průzkum)",
-    x = ""
-  ) +
-  ggplot2::theme(
-    axis.text.y = ggplot2::element_blank(),
-    axis.ticks.y = ggplot2::element_blank(),
-    panel.grid.major.y = ggplot2::element_blank()
-  )
 ```
 
-## Úvod
+## Vítejte v biostatistice
 
-Tyto materiály slouží jako **textový doprovod k přednášce**. Přečtěte si je před přednáškou, aby vám základní pojmy nezněly cize, a vraťte se k nim po přednášce, když si budete chtít ujasnit jakýkoliv detail.
+Biostatistika pomáhá převést biologickou otázku na postup, který lze
+zkontrolovat: **co jsme pozorovali, co jsme změřili, jak jsme data zobrazili a
+co z nich smíme tvrdit**. V tomto kurzu proto nebudeme začínat seznamem testů.
+Budeme se opakovaně vracet k cestě:
 
-Po prostudování těchto materiálů budete schopni:
+> biologická otázka → data → graf → model → kontrola → interpretace
 
-- Uložit naměřená data do vektoru v R a základně se v nich zorientovat.
-- Zvolit vhodný graf pro jeden typ proměnné a vysvětlit, co graf ukazuje.
-- Vypočítat a interpretovat základní deskriptivní statistiky (minimum, maximum, `r render_glossary_term("prumer", display = "průměr")`, `r render_glossary_term("median", display = "medián")`, kvartily, `r render_glossary_term("iqr", display = "IQR")`, SD).
-- Sestavit a přečíst `r render_glossary_term("boxplot", display = "krabicový graf (boxplot)")`.
-- Rozlišit typy proměnných a vybrat pro ně odpovídající popis i vizualizaci.
+V této lekci zůstaneme u prvního statistického kroku: jak poctivě popsat
+**jednu `r render_glossary_term("promenna", display = "proměnnou")`**. Ještě
+nebudeme vysvětlovat vztah mezi dvěma proměnnými ani z jednoho vzorku vyvozovat
+závěry o celé populaci.
 
-::: {.callout-note}
-## Jak číst kód v těchto materiálech
+### Jak jsou kurz a materiály uspořádány
 
-Ukázky kódu v R jsou ve výchozím stavu **skryté**. Klikněte na tlačítko „Zobrazit kód v R" pro jejich rozbalení. Kód nemusíte hned spouštět — nejprve ho přečtěte a ujistěte se, že rozumíte, co dělá. Ke spuštění se vrátíte na cvičení.
+| Součást | K čemu slouží | Jak s ní pracovat |
+|---|---|---|
+| Přednáška | Společné přemýšlení nad biologickou otázkou, grafy a interpretací | Hlasujte, porovnávejte vysvětlení a ptejte se, co výsledek skutečně znamená. |
+| Praktické cvičení | Samostatná práce s daty a R s podporou vyučujících | Kód zkoušejte, měňte a průběžně vysvětlujte vlastními slovy. |
+| Tyto podklady | Úplnější vysvětlení a reprodukovatelné příklady | Čtěte je před výukou nebo se k nim vraťte při opakování. |
+| Výstupy v HTML a PDF | Dvě podoby stejného obsahu | HTML nabízí interaktivní prvky; PDF se hodí pro souvislé čtení a poznámky. |
+
+::: {.callout-important}
+## Organizační údaje před zveřejněním
+
+- TODO[RELEASE-BLOCKER: doplnit přesný způsob hodnocení a podmínky zakončení kurzu]
+- TODO[RELEASE-BLOCKER: doplnit pravidla účasti a omlouvání absence]
+- TODO[RELEASE-BLOCKER: doplnit termíny, způsob odevzdávání a pravidla pro pozdní odevzdání]
+- TODO[RELEASE-BLOCKER: doplnit komunikační kanál, konzultační možnosti a očekávanou dobu odpovědi]
+- TODO[RELEASE-BLOCKER: doplnit vazbu mezi přednáškou, praktickým cvičením a zveřejňováním materiálů]
 :::
 
----
+## Jak číst skripta
 
-## Naše data — tučňáci z Palmer Station
+Tento dokument vznikl v Quarto, ale pro jeho čtení nemusíte Quarto znát ani
+instalovat. Stejný obsah dostáváte jako webovou stránku (HTML) a jako PDF.
+Liší se hlavně způsob, jak se v něm pohybujete.
 
-Jako konkrétní datový příklad použijeme data z projektu **Palmer Penguins** — terénní studie ze tří ostrovů u Antarktidy (Biscoe, Dream, Torgersen). Vědci každoročně (2007–2009) počítali tučňáky tří druhů (*Adelie*, *Chinstrap*, *Gentoo*). Naší hlavní proměnnou bude **počet tučňáků zaznamenaných v jednom průzkumu** — jednoduché celé číslo, které ilustruje všechny statistické koncepty z kurzu.
+### Doporučený způsob čtení
 
-### Sběr dat krok za krokem
+1. Nejdříve si přečtěte **výsledky učení**. Říkají, co byste po dokončení
+   kapitoly měli umět.
+2. U otázky, hlasování nebo úkolu se zastavte a zkuste odpovědět dříve, než
+   budete pokračovat.
+3. Graf nebo tabulku nejprve sami popište. Teprve potom čtěte vysvětlení pod
+   nimi.
+4. Kód nemusíte memorovat. Sledujte, jaká data do něj vstupují, co s nimi
+   příkaz dělá a jaký výsledek vrací.
+5. Na konci se vraťte ke shrnutí a ověřte si, zda už dokážete vysvětlit hlavní
+   myšlenky vlastními slovy.
 
-Podívejme se na první čtyři průzkumné záznamy:
+### HTML a PDF
 
-| Průzkum | Počet tučňáků |
-|---------|:-------------:|
-| 1       | 10            |
-| 2       | 18            |
-| 3       | 16            |
-| 4       | 20            |
+Následující blok je zároveň ukázkou **záložek** (anglicky *tabs*, technicky
+*tabset*). V HTML mezi záložkami přepínáte kliknutím. V PDF jsou jejich obsahy
+vytištěné postupně za sebou.
 
-V R uložíme tato čtyři čísla do **vektoru** — jednoduché řady hodnot:
+::: {.panel-tabset}
+#### HTML
+
+- Obsah na okraji stránky umožňuje přejít přímo do vybrané části.
+- Projděte všechny záložky; současně je viditelná jen jedna.
+- Rámeček s šipkou lze rozbalit a zase sbalit.
+- U podtrženého odborného pojmu se po najetí kurzorem zobrazí stručné
+  vysvětlení.
+- U delšího bloku kódu se po najetí objeví tlačítko pro jeho zkopírování.
+
+#### PDF
+
+- K orientaci slouží obsah, nadpisy a čísla stránek.
+- Obsah všech záložek je vytištěný postupně, takže žádná část nechybí.
+- Sbalitelné rámečky jsou rozbalené. U odpovědi se proto zastavte ještě před
+  jejím přečtením.
+- Význam odborných pojmů najdete v odkazovaném online slovníku.
+:::
+
+### Co znamenají rámečky a další značky
+
+| Značka | Jak s ní pracovat |
+|---|---|
+| **Důležité** | Hlavní pojem nebo závěr, který byste si měli odnést. |
+| **Pozor** | Častá chyba nebo omyl. Zkontrolujte, že rozumíte, proč je daný postup problematický. |
+| **Poznámka** | Podpůrné vysvětlení, příklad nebo kontext k hlavnímu výkladu. |
+| **Doplňující** | Volitelná technická či rozšiřující informace. Při prvním čtení ji můžete přeskočit. |
+| **Otázka**, **Hlasování**, **Úkol** | Výzva k vlastní odpovědi nebo činnosti. Nejdříve se rozhodněte sami. |
+| **Odpověď** | Kontrola po vlastním pokusu. V HTML ji otevřete kliknutím; v PDF je vytištěná. |
+| Blok kódu a jeho výstup | Reprodukovatelný záznam postupu: co jsme zadali počítači a co počítač vrátil. |
+| Podtržený odborný pojem | Odkaz na stručnou definici v online slovníku. |
+
+Význam nese především nadpis rámečku. Barva pomáhá s orientací, ale není nutné
+si ji pamatovat.
+
+::: {.callout-tip collapse="true"}
+## Doplňující
+
+Tento rámeček obsahuje volitelné rozšíření. V HTML jej můžete rozbalit; v PDF
+je vytištěný celý.
+:::
+
+### Jak číst kód
+
+Každý řádek kódu, který vytváří výsledek, je v těchto materiálech viditelný,
+abyste mohli zkontrolovat, odkud se číslo nebo graf vzaly. Kód si nemusíte
+pamatovat. Při čtení se ptejte: **Jaká data vstupují? Co příkaz dělá? Jakou
+odpověď dostáváme?** Řádky začínající znakem `#` jsou komentáře pro čtenáře;
+počítač je nevykonává.
+
+## Výsledky učení
+
+Po prostudování materiálů dokážete:
+
+- vysvětlit, co v tabulce představuje jeden řádek, vytvořit z několika měření
+  vektor v R a zkontrolovat jej pomocí `length()` a `head()`;
+- přečíst bodový graf,
+  `r render_glossary_term("histogram", display = "histogram")`, graf hustoty,
+  `r render_glossary_term("sloupcovy-graf", display = "sloupcový graf")` a
+  `r render_glossary_term("boxplot", display = "krabicový graf")`
+  a popsat, co každý z nich ukazuje a skrývá;
+- vysvětlit, proč data zobrazujeme dříve, než je shrneme jedním číslem;
+- najít a interpretovat
+  `r render_glossary_term("prumer", display = "průměr")`,
+  `r render_glossary_term("median", display = "medián")`,
+  `r render_glossary_term("kvantil", display = "kvartily")`,
+  `r render_glossary_term("iqr", display = "IQR")`, minimum, maximum a
+  `r render_glossary_term("smerodatna-odchylka", display = "směrodatnou odchylku")`
+  v číslech i na grafu;
+- rozlišit `r render_glossary_term("spojita-promenna", display = "spojitou")`,
+  `r render_glossary_term("diskretni-promenna", display = "diskrétní")`,
+  `r render_glossary_term("nominalni-promenna", display = "nominální")` a
+  `r render_glossary_term("ordinalni-promenna", display = "ordinální")`
+  `r render_glossary_term("promenna", display = "proměnnou")` a vybrat pro ni
+  smysluplný první graf a shrnutí.
+
+## Datová detektivka: kolik váží „typický“ savec?
 
 ```{r}
-#| label: vytvorit-maly-vektor
-#| echo: true
-#| eval: true
-pocet_tucnaku <-
-  c(10L, 18L, 16L, 20L)
-
-pocet_tucnaku
-```
-
-Jak přidáváme průzkumy, vektor se prodlužuje. My máme celkem **15 průzkumů** (kombinace třech druhů, tří ostrovů a tří let). V těchto materiálech budeme pracovat s vektorem `vzorek_poctu_tucnaku`, který tato data obsahuje. Kdykoli ho uvidíte, jde o naši sadu 15 hodnot.
-
-### Pohled na data
-
-Než začneme počítat statistiky, podívejme se alespoň na prvních deset hodnot:
-
-```{r}
-#| label: zobrazit-delku
-#| echo: true
-#| eval: true
-length(vzorek_poctu_tucnaku)
-```
-
-```{r}
-#| label: prvnich-deset
-#| echo: true
-#| eval: true
-head(vzorek_poctu_tucnaku, n = 10)
-```
-
-Vidíme různé hodnoty: 10, 18, 16, ... I těch 15 čísel nám ale samo o sobě moc neřekne o tvaru distribuce. Proto **vizualizujeme**.
-
----
-
-## Vizualizace dat
-
-### Proč nejdřív vizualizovat? {#sec-proc-vizualizovat}
-
-Před tím, než spočítáme jakékoli číslo, bychom se na data měli *podívat*. To není jen zvyk — je to nutnost. Proč?
-
-Mám dvě skupiny tučňáků. Obě mají průměrný počet **7**. Výpočty tedy říkají totéž:
-
-```{r}
-#| label: motivace-statistiky
-#| echo: true
-#| eval: true
-# Průměr skupiny A
-mean(c(5, 6, 6, 7, 7, 7, 8, 8, 9))
-
-# Průměr skupiny B
-mean(c(4, 4, 5, 5, 7, 9, 9, 10, 10))
-```
-
-Obě skupiny mají stejný `r render_glossary_term("prumer", display = "průměr")`. Ale podívejme se na `r render_glossary_term("rozdeleni", display = "rozdělení")` hodnot:
-
-```{r}
-#| label: motivace-data
+#| label: hodnoty-pro-uvodni-titulky
 #| echo: false
 #| message: false
 #| warning: false
-data_motivace <-
-  tibble::tibble(
-    pocet_tucnaku = c(5, 6, 6, 7, 7, 7, 8, 8, 9, 4, 4, 5, 5, 7, 9, 9, 10, 10),
-    skupina = rep(c("Skupina A", "Skupina B"), each = 9)
+vec_hmotnost_pro_titulky <- ggplot2::msleep[["bodywt"]]
+prumer_hmotnost_pro_titulky <- mean(vec_hmotnost_pro_titulky)
+median_hmotnost_pro_titulky <- median(vec_hmotnost_pro_titulky)
+```
+
+V tabulce máme hmotnost `r length(vec_hmotnost_pro_titulky)` druhů savců.
+Chceme odpovědět na zdánlivě jednoduchou otázku:
+
+> **Kolik váží „typický“ savec v této tabulce?**
+
+Představte si, že ze stejných dat vyšly dva smyšlené novinové články.
+
+::: {.callout-note}
+## Smyšlený titulek A
+
+**Vědci spočítali: „`r render_glossary_term("prumer", display = "Průměrný")`
+savec (*mean*) váží
+`r formatC(prumer_hmotnost_pro_titulky, format = "f", digits = 0, decimal.mark = ",")`
+kg.“**
+:::
+
+::: {.callout-note}
+## Smyšlený titulek B
+
+**Jiná analýza stejných dat tvrdí: „Běžný savec
+(`r render_glossary_term("median", display = "medián")`; *median*) váží jen
+`r formatC(median_hmotnost_pro_titulky, format = "f", digits = 2, decimal.mark = ",")`
+kg.“**
+:::
+
+### Hlasování
+
+Který titulek je podle vás nejpravděpodobněji správný?
+
+- A) Správný je pouze titulek A.
+- B) Správný je pouze titulek B.
+- C) Obě čísla mohou být vypočtena správně.
+- D) Bez dalších informací nelze rozhodnout.
+
+Než budete pokračovat, vyberte jednu odpověď a napište si **jednu větu**, která
+ji zdůvodňuje. Zatím nepotřebujete znát názvy výpočtů. Potřebujete pouze
+rozpoznat, jaké informace vám chybějí.
+
+::: {.callout-tip}
+## Odpověď zatím odložíme
+
+Nejdříve se naučíme sledovat cestu od měření přes tabulku a graf až k číselnému
+shrnutí. K oběma titulkům se vrátíme ve chvíli, kdy budeme umět posoudit nejen
+výsledek výpočtu, ale také tvar dat.
+:::
+
+## Od měření k tabulce a vektoru
+
+Dataset `msleep` obsahuje údaje o spánku a tělesné hmotnosti různých druhů
+savců. Vychází z publikovaných biologických údajů; každý řádek představuje
+**jeden zastoupený druh**, nikoli jednoho jednotlivého savce.
+
+Představme si terénní nebo laboratorní práci, ze které taková tabulka vzniká.
+Výzkumníci pro každý druh shromáždí nebo převezmou měření, zapíší název druhu,
+jednotku a hodnotu a přidají je jako nový řádek. Naší
+`r render_glossary_term("jednotka-pozorovani", display = "jednotkou pozorování")`
+je zastoupený druh. My začneme jedinou
+`r render_glossary_term("promenna", display = "proměnnou")`:
+**celkovou dobou spánku za den v hodinách** (`sleep_total`).
+
+```{r}
+#| label: pripravit-zakladni-data
+#| echo: false
+#| message: false
+#| warning: false
+data_savci <-
+  ggplot2::msleep |>
+  dplyr::transmute(
+    druh = name,
+    rod = genus,
+    potrava = dplyr::recode(
+      vore,
+      "carni" = "masožravec",
+      "herbi" = "býložravec",
+      "insecti" = "hmyzožravec",
+      "omni" = "všežravec",
+      .missing = "neuvedeno"
+    ),
+    rad = order,
+    ochrana = conservation,
+    spanek_h = sleep_total,
+    hmotnost_kg = bodywt
+  )
+
+data_spanek <-
+  data_savci |>
+  tidyr::drop_na(spanek_h)
+
+vec_spanek_h <- data_spanek[["spanek_h"]]
+```
+
+### Čtyři skutečné záznamy
+
+Podívejme se na první čtyři řádky. Hodnota v posledním sloupci je číslo, které
+by výzkumník zapsal do tabulky.
+
+```{r}
+#| label: prvni-ctyri-zaznamy
+#| echo: false
+#| message: false
+#| warning: false
+data_spanek |>
+  dplyr::slice_head(n = 4) |>
+  dplyr::transmute(
+    `Druh (species)` = druh,
+    `Celkový spánek za den (sleep total; h)` = spanek_h
+  ) |>
+  knitr::kable(
+    align = c("l", "r")
   )
 ```
 
+### Stejné hodnoty jako vektor v R
+
+**Vektor** je uspořádaná řada hodnot stejného základního typu.
+<!-- TODO: add slug vektor to pojmy.yaml -->
+Čtyři hodnoty z tabulky můžeme do R zapsat pomocí funkce `c()`:
+
 ```{r}
-#| label: motivace-vizualizace
+#| label: vytvorit-maly-vektor-spanku
+#| echo: true
+#| eval: true
+vec_spanek_ukazka <-
+  c(
+    12.1, # Cheetah
+    17.0, # Owl monkey
+    14.4, # Mountain beaver
+    14.9  # Greater short-tailed shrew
+  )
+
+vec_spanek_ukazka
+```
+
+Každá hodnota má stejný význam i jednotku: počet hodin spánku za den pro jeden
+zastoupený druh.
+
+U celé tabulky nemusíme `r length(vec_spanek_h)` čísel opisovat ručně. Vybereme
+sloupec `sleep_total` přímo z datového rámce:
+
+```{r}
+#| label: vybrat-vektor-spanku
+#| echo: true
+#| eval: true
+# Vybereme jeden sloupec z původní tabulky.
+vec_spanek_h <-
+  ggplot2::msleep[["sleep_total"]]
+```
+
+### První kontrola vektoru
+
+Než začneme počítat nebo kreslit, zkontrolujeme dvě jednoduché věci:
+
+1. **Kolik hodnot máme?**
+2. **Vypadají první hodnoty jako očekávaná měření v hodinách?**
+
+```{r}
+#| label: zkontrolovat-delku-vektoru
+#| echo: true
+#| eval: true
+length(vec_spanek_h)
+```
+
+```{r}
+#| label: zobrazit-prvni-hodnoty
+#| echo: true
+#| eval: true
+head(
+  x = vec_spanek_h,
+  n = 10
+)
+```
+
+`length()` potvrzuje počet hodnot. `head()` ukazuje začátek vektoru, takže
+rychle odhalíme například omylem načtený textový sloupec nebo nečekané jednotky.
+Ani jedna kontrola ale ještě neukazuje tvar celého souboru hodnot.
+
+::: {.callout-tip collapse="true"}
+## `integer` a `double`: dva způsoby uložení čísel
+
+R ukládá `5L` jako celé číslo typu `integer` a `5` jako číslo typu `double`:
+
+```r
+typeof(5L) # "integer"
+typeof(5)  # "double"
+```
+
+Jde o **technický způsob uložení čísla v počítači**, nikoli automaticky o
+statistický typ `r render_glossary_term("promenna", display = "proměnné")`.
+Zaokrouhlená tělesná hmotnost `70` může být spojité
+měření uložené jako `double`; počet pěti mláďat může být diskrétní proměnná
+uložená jako `integer`. O statistickém typu rozhoduje význam hodnot.
+:::
+
+### Jak vypadá celý datový rámec?
+
+Vektor drží jednu proměnnou. Původní datový rámec drží více proměnných vedle
+sebe. Každý řádek stále představuje jeden druh.
+
+```{r}
+#| label: prohlednout-datovy-ramec
+#| echo: true
+#| eval: true
+# Počet řádků a sloupců původních dat.
+dim(ggplot2::msleep)
+
+# Prvních šest řádků a vybrané sloupce.
+head(
+  x = ggplot2::msleep[
+    ,
+    c("name", "sleep_total", "bodywt", "vore")
+  ],
+  n = 6
+)
+```
+
+| Otázka | Odpověď pro `msleep` |
+|---|---|
+| Co představuje jeden řádek? | jeden zastoupený druh savce |
+| Co představuje sloupec `sleep_total`? | celkovou dobu spánku za den v hodinách |
+| Co představuje sloupec `bodywt`? | tělesnou hmotnost druhu v kilogramech |
+| Je jeden řádek jeden jedinec? | ne; druh je zde shrnut jednou hodnotou |
+
+::: {.callout-important}
+## Druh není jedinec
+
+Řádek reprezentuje hodnotu vybranou pro **druh**. Slon africký a drobný rejsek
+mají v tabulce každý právě jeden řádek. Výsledek proto popisuje zastoupené
+druhy, nikoli `r render_glossary_term("cetnost", display = "četnost")` nebo
+hmotnost všech savčích jedinců na Zemi.
+:::
+
+::: {.callout-tip collapse="true"}
+## Odkud data pocházejí a co v nich chybí
+
+Dataset `msleep` má podle
+[dokumentace balíčku ggplot2](https://ggplot2.tidyverse.org/reference/msleep.html)
+`r nrow(ggplot2::msleep)` řádků a `r ncol(ggplot2::msleep)`
+`r render_glossary_term("promenna", display = "proměnných")`.
+Údaje o spánku a hmotnosti vycházejí z práce Savage a West (2007),
+[A quantitative, theoretical framework for understanding mammalian sleep](https://pubmed.ncbi.nlm.nih.gov/17215372/).
+Dokumentace uvádí, že taxonomický řád, stav ochrany a typ potravy byly doplněny
+z Wikipedie.
+
+Ne všechny buňky jsou vyplněné: v celé tabulce chybí
+`r sum(is.na(ggplot2::msleep))` hodnot. Celková doba spánku a tělesná hmotnost
+jsou úplné, ale například stav ochrany chybí u
+`r sum(is.na(ggplot2::msleep[["conservation"]]))` druhů a typ potravy u
+`r sum(is.na(ggplot2::msleep[["vore"]]))` druhů. Chybějící hodnota není nula;
+znamená, že údaj v tabulce nemáme.
+:::
+
+## Vizualizace dat: nejdříve se podívejte
+
+Samotný výpis `r length(vec_spanek_h)` hodnot se čte obtížně. Graf uspořádá
+hodnoty podle jejich velikosti a dovolí nám vidět
+`r render_glossary_term("rozdeleni", display = "rozdělení")`: kde se hodnoty
+hromadí, jak široce jsou rozptýlené a zda některé leží stranou.
+
+### Proč nestačí jedno číslo?
+
+Následující dva malé soubory jsou **záměrně sestavené didaktické příklady**,
+nikoli další pozorování z `msleep`. Oba mají průměr 10 hodin.
+
+```{r}
+#| label: stejny-prumer-vypocet
+#| echo: true
+#| eval: true
+vec_spanek_a <-
+  c(8, 9, 9, 10, 10, 10, 11, 11, 12)
+
+vec_spanek_b <-
+  c(6, 6, 8, 8, 10, 12, 12, 14, 14)
+
+mean(vec_spanek_a)
+mean(vec_spanek_b)
+```
+
+```{r}
+#| label: pripravit-stejny-prumer
 #| echo: false
 #| message: false
 #| warning: false
+data_stejny_prumer <-
+  tibble::tibble(
+    spanek_h = c(
+      8, 9, 9, 10, 10, 10, 11, 11, 12,
+      6, 6, 8, 8, 10, 12, 12, 14, 14
+    ),
+    skupina = rep(c("Soubor A", "Soubor B"), each = 9)
+  )
+```
+
+*Nejdříve graf sami popište: kde leží hodnoty a v čem se oba soubory liší?*
+
+```{r}
+#| label: graf-stejny-prumer
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 3
 ggplot2::ggplot(
-  data = data_motivace,
+  data = data_stejny_prumer,
   mapping = ggplot2::aes(
-    x = pocet_tucnaku,
+    x = spanek_h,
     y = 1
   )
 ) +
   ggbeeswarm::geom_beeswarm(
     mapping = ggplot2::aes(color = skupina),
     cex = 1,
-    size = 5
+    size = 4
   ) +
   ggplot2::facet_wrap(~skupina) +
-  ggplot2::scale_x_continuous(breaks = 1:12) +
+  ggplot2::geom_vline(
+    xintercept = 10,
+    color = col_mean,
+    linetype = "dashed",
+    linewidth = 1
+  ) +
   ggplot2::scale_color_manual(
-    values = c("Skupina A" = col_median_line, "Skupina B" = col_highlight)
+    values = c("Soubor A" = col_median, "Soubor B" = col_mean)
   ) +
-  ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "Počet průzkumů",
-    title = "Stejný průměr — ale úplně jiný tvar dat"
-  ) +
+  ggplot2::scale_x_continuous(breaks = 6:14) +
   ggplot2::coord_cartesian(ylim = c(0.9, 1.1)) +
+  ggplot2::labs(
+    x = "Celkový spánek za den (h)",
+    y = NULL,
+    title = "Stejný průměr, jiný tvar hodnot",
+    subtitle = "Přerušovaná čára označuje průměr 10 hodin"
+  ) +
   ggplot2::theme(
     axis.text.y = ggplot2::element_blank(),
     axis.ticks.y = ggplot2::element_blank(),
@@ -380,48 +623,49 @@ ggplot2::ggplot(
   )
 ```
 
-Skupina A má hodnoty soustředěné kolem 7 — data jsou symetrická, „hezká". Skupina B má hodnoty spíše na okrajích — je buď malá, nebo velká, ale málokdy průměrná. To je zásadní biologický rozdíl, který číslo „průměr = 7" vůbec neodhalí.
+Soubor A je soustředěný kolem 10 hodin. Soubor B má více hodnot na obou okrajích
+a méně hodnot poblíž středu. Jedno číslo tuto odlišnost skrylo.
 
 ::: {.callout-warning}
 ## Nikdy nepracujte jen s čísly bez grafu
 
-Čísla mohou klamat. Velmi odlišná data mohou mít stejný `r render_glossary_term("prumer", display = "průměr")` i stejnou `r render_glossary_term("smerodatna-odchylka", display = "směrodatnou odchylku")`. Graf odhalí to, co čísla skrývají. Vždy nejdřív vizualizujte.
+Velmi odlišná data mohou mít stejný
+`r render_glossary_term("prumer", display = "průměr")`,
+`r render_glossary_term("median", display = "medián")` nebo dokonce více stejných
+souhrnných statistik. **Graf není ozdoba výsledku. Je to první kontrola toho,
+co se souhrnné číslo chystá skrýt.**
 :::
 
-### Bodový graf (beeswarm)
-
-Nejpřímočařejší vizualizace: **každý bod = jeden průzkum**. Body jsou mírně rozptýleny do stran — technika se nazývá *beeswarm* (roj včel) — aby se vzájemně nepřekrývaly a zůstaly čitelné.
-
-Co bodový graf ukazuje: vidíme **každou jednotlivou hodnotu**, tvar rozdělení i případná `r render_glossary_term("odlehla-pozorovani", display = "odlehlá pozorování")`.
-
-::: {.panel-tabset}
-
-## Graf
-
 ```{r}
-#| label: beeswarm-graf
+#| label: pripravit-zaklad-bodoveho-grafu
 #| echo: false
 #| message: false
 #| warning: false
-ggplot2::ggplot(
-  data = data_poctu_tucnaku,
-  mapping = ggplot2::aes(
-    y = pocet_tucnaku,
-    x = 1
-  )
-) +
-  ggbeeswarm::geom_beeswarm(
-    cex = 1.5,
-    color = col_data,
-    alpha = 1,
-    size = 3
+plot_spanek_body <-
+  ggplot2::ggplot(
+    data = data_spanek,
+    mapping = ggplot2::aes(
+      x = spanek_h,
+      y = 1
+    )
   ) +
-  ggplot2::coord_flip() +
-  ggplot2::scale_y_continuous(breaks = seq(0, 55, by = 5)) +
+  ggbeeswarm::geom_quasirandom(
+    width = 0.38,
+    orientation = "y",
+    color = col_data,
+    alpha = 0.75,
+    size = 2.4
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 20, by = 2)
+  ) +
+  ggplot2::coord_cartesian(
+    xlim = c(0, 21),
+    ylim = c(0.58, 1.42)
+  ) +
   ggplot2::labs(
-    y = "Počet tučňáků (na průzkum)",
-    x = "",
-    title = "15 průzkumů — každý bod je jeden průzkum"
+    x = "Celkový spánek za den (h)",
+    y = NULL
   ) +
   ggplot2::theme(
     axis.text.y = ggplot2::element_blank(),
@@ -430,1204 +674,927 @@ ggplot2::ggplot(
   )
 ```
 
-## Kód v R
+### Bodový graf
+
+**Bodový graf (anglicky *dot plot*; zde uspořádaný jako *beeswarm plot*)**
+zobrazuje každou hodnotu jako samostatný bod. Body jsou mírně posunuté nahoru
+a dolů, aby se nepřekrývaly a lépe využily plochu grafu.
+
+*Kolik druhů představuje jeden bod? Kde leží nejkratší a nejdelší doba spánku?*
+
+::: {.panel-tabset}
+#### Graf
 
 ```{r}
-#| label: beeswarm-kod
+#| label: bodovy-graf-spanku
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.1
+plot_spanek_body +
+  ggplot2::labs(
+    title = "Každý bod představuje jeden zastoupený druh"
+  )
+```
+
+#### Kód v R
+
+```{r}
+#| label: bodovy-graf-kod
 #| echo: true
-#| eval: false
-# Jednoduchá alternativa v base R: stripchart
+#| eval: true
+#| fig-height: 2.1
+# Zobrazíme každou hodnotu jako jeden bod.
 stripchart(
-  x = vzorek_poctu_tucnaku,
+  x = vec_spanek_h,
   method = "jitter",
+  jitter = 0.25,
   pch = 19,
-  col = "#8A8A8A",
-  xlab = "Počet tučňáků (na průzkum)",
+  col = "#6B7280",
+  xlab = "Celkový spánek za den (h)",
   main = "Bodový graf"
 )
 ```
-
 :::
 
-**Co vidíme?** Velká většina průzkumů zaznamenala 16–26 tučňáků. Gentoo průzkumy na ostrově Biscoe dosahují vyšších hodnot (34–46). Data jsou mírně asymetrická — například jeden průzkum Adelie na Biscoe zaznamenal jen 10 jedinců.
+Výhoda bodového grafu je úplnost: žádná hodnota nezmizí. Nevýhodou je, že u
+velkých datových souborů se může mnoho bodů překrývat.
 
-### Histogram
+### Hodnoty seskupené do intervalů
 
-`r render_glossary_term("histogram", display = "Histogram")` **seskupuje hodnoty do košů** (binů) a výška každého sloupce udává `r render_glossary_term("cetnost", display = "četnost")` průzkumů v daném koši. Šířku koše (binwidth) si volíme sami.
+`r render_glossary_term("histogram", display = "Histogram")` seskupuje
+číselné hodnoty do navazujících intervalů neboli **košů** (anglicky *bins*).
+Výška sloupce ukazuje `r render_glossary_term("cetnost", display = "četnost")`
+hodnot v daném koši.
 
-Oproti bodovému grafu histogram nezobrazuje každý bod zvlášť — vidíme tvar distribuce, ale ztratíme přesné hodnoty jednotlivých průzkumů.
+*Které rozmezí spánku obsahuje nejvíce druhů? Co už z histogramu nedokážete
+vyčíst o jednotlivém druhu?*
 
 ::: {.panel-tabset}
-
-## Graf
+#### Graf
 
 ```{r}
-#| label: histogram-graf
+#| label: histogram-spanku
 #| echo: false
 #| message: false
 #| warning: false
 ggplot2::ggplot(
-  data = data_poctu_tucnaku,
-  mapping = ggplot2::aes(x = pocet_tucnaku)
+  data = data_spanek,
+  mapping = ggplot2::aes(x = spanek_h)
 ) +
   ggplot2::geom_histogram(
-    binwidth = 1,
-    fill = col_data,
+    binwidth = 2,
+    boundary = 0,
+    fill = col_fill,
     color = "white"
   ) +
-  ggplot2::scale_x_continuous(breaks = seq(0, 55, by = 5)) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 20, by = 2)
+  ) +
   ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "Počet průzkumů",
-    title = "Histogram — každý koš odpovídá jednomu počtu průzkumů"
+    x = "Celkový spánek za den (h)",
+    y = "Počet druhů",
+    title = "Histogram doby spánku",
+    subtitle = "Jeden koš pokrývá dvě hodiny"
   )
 ```
 
-## Kód v R
-
-```{r}
-#| label: histogram-kod
-#| echo: true
-#| eval: false
-hist(
-  x = vzorek_poctu_tucnaku,
-  breaks = seq(4.5, 49.5, by = 5),
-  col = "#8A8A8A",
-  border = "white",
-  xlab = "Počet tučňáků (na průzkum)",
-  ylab = "Počet průzkumů",
-  main = "Histogram"
-)
+```{=typst}
+#pagebreak()
 ```
 
+#### Kód v R
+
+```{r}
+#| label: histogram-spanku-kod
+#| echo: true
+#| eval: true
+#| fig-height: 3.4
+# Rozdělíme osu na intervaly široké dvě hodiny.
+hist(
+  x = vec_spanek_h,
+  breaks = seq(
+    from = 0,
+    to = 22,
+    by = 2
+  ),
+  col = "#D8C9E8",
+  border = "white",
+  xlab = "Celkový spánek za den (h)",
+  ylab = "Počet druhů",
+  main = "Histogram doby spánku"
+)
+```
 :::
 
 ::: {.callout-tip collapse="true"}
-## Jak volit šířku koše?
+## Doplňující: jak volit šířku koše?
 
-**Koš** (bin) je interval hodnot — například „od 14,5 do 19,5 tučňáků". Každý průzkum spadne do právě jednoho koše a `r render_glossary_term("histogram", display = "histogram")` zobrazí výšku sloupce rovnou `r render_glossary_term("cetnost", display = "četnosti")` průzkumů v tom koši.
-
-Šířka koše (`binwidth`) tedy říká, jak velký kus osy *x* jeden sloupec pokrývá. Volba šířky zásadně mění, co vidíte:
-
-- **Příliš malá šířka** → každý koš obsahuje málo hodnot, graf je „zubatý", šum překryje signál.
-- **Příliš velká šířka** → spousta hodnot se sloučí do jednoho sloupce, přicházíme o detaily tvaru distribuce.
+Volba šířky koše (anglicky *bin width*) mění míru detailu, ale nemění původní
+hodnoty. Příliš úzké koše vytvoří zubatý graf; příliš široké koše mohou skrýt
+důležitý tvar.
 
 ```{r}
-#| label: histogram-binwidth-srovnani
+#| label: porovnat-sirku-kose
 #| echo: false
 #| message: false
 #| warning: false
-make_bins <- function(x, bw) {
-  breaks_vec <-
-    seq(
-      from = floor(min(x) / bw) * bw - bw / 2,
-      to = ceiling(max(x) / bw) * bw + bw / 2,
-      by = bw
-    )
-  midpoints <- (breaks_vec[-length(breaks_vec)] + breaks_vec[-1]) / 2
-  counts <- as.integer(table(cut(x, breaks = breaks_vec, right = FALSE, include.lowest = TRUE)))
-  tibble::tibble(
-    x = midpoints,
-    count = counts,
-    bw = bw
-  )
-}
-
-data_bins <-
-  purrr::map(
-    .x = c(1, 5, 10),
-    .f = \(bw) make_bins(vzorek_poctu_tucnaku, bw)
-  ) |>
-  purrr::list_rbind() |>
-  dplyr::mutate(
-    label = factor(
-      paste0("binwidth = ", bw),
-      levels = c("binwidth = 1", "binwidth = 5", "binwidth = 10")
-    )
-  )
-
-ggplot2::ggplot(
-  data = data_bins,
-  mapping = ggplot2::aes(x = x, y = count, width = bw)
-) +
-  ggplot2::geom_col(
-    fill = col_data,
-    color = "white"
-  ) +
-  ggplot2::facet_wrap(~label, scales = "free_x") +
-  ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "Počet průzkumů",
-    title = "Stejná data, tři různé šířky koše"
-  )
-```
-
-**Jak to konkrétně funguje?** Při `binwidth = 5` a středu koše na 20 zachytí koš všechny hodnoty od 17,5 do 22,5 — tedy průzkumy s asi 20 tučňáky. Při `binwidth = 10` by koš zachytil vše od 15 do 25 — sloučí dohromady průzkumy s 16, 18 i 20 tučňáky.
-
-**Praktické doporučení:**
-
-- Pro **diskrétní** (celočíselná) data jako počet tučňáků: `binwidth = 5` — každý koš pokryje přirozené rozmezí hodnot.
-- Pro **spojitá** data (délka v mm, hmotnost): experimentujte — začněte s výchozím nastavením R (`breaks = "Sturges"`) a dolaďte.
-- Cíl: koše by měly být dost malé, aby byl vidět tvar distribuce, ale dost velké, aby každý koš obsahoval aspoň několik hodnot.
-:::
-
-### Graf hustoty
-
-Graf hustoty je **vyhlazená verze histogramu**. Neukazuje absolutní počty, ale relativní hustotu — kde v osovém prostoru jsou hodnoty nejčastější. Osa y má jednotku „hustota" (density), nikoli „počet průzkumů".
-
-Prakticky vzato: špička grafu hustoty ukazuje, kde jsou data nejkoncentrovanější.
-
-::: {.panel-tabset}
-
-## Graf
-
-```{r}
-#| label: hustota-graf
-#| echo: false
-#| message: false
-#| warning: false
-ggplot2::ggplot(
-  data = data_poctu_tucnaku,
-  mapping = ggplot2::aes(x = pocet_tucnaku)
-) +
-  ggplot2::geom_density(
-    fill = col_data,
-    alpha = 0.4,
-    color = col_data
-  ) +
-  ggplot2::scale_x_continuous(breaks = seq(0, 55, by = 5)) +
-  ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "Hustota",
-    title = "Graf hustoty — vyhlazená distribuce"
-  )
-```
-
-## Kód v R
-
-```{r}
-#| label: hustota-kod
-#| echo: true
-#| eval: false
-hustota_tucnaku <-
-  density(vzorek_poctu_tucnaku)
-
-plot(
-  hustota_tucnaku,
-  xlab = "Počet tučňáků (na průzkum)",
-  ylab = "Hustota",
-  main = "Graf hustoty"
+hist_1 <- hist(
+  vec_spanek_h,
+  breaks = seq(0, 21, by = 1),
+  plot = FALSE
 )
-```
-
-:::
-
-Všechny tři grafy — bodový, histogram i hustotní — ukazují tutéž věc z trochu jiné perspektivy. V praxi volte ten, který nejlépe komunikuje váš příběh. Bodový graf je nejupřímnější (vidíte vše), histogram je intuitivní pro počty, hustotní graf je nejhladší pro srovnání tvarů distribucí.
-
----
-
-## Deskriptivní statistiky
-
-Grafy jsou skvělé pro pochopení dat, ale někdy potřebujeme jedno **číslo** — srovnatelné napříč skupinami, reportovatelné v tabulce. Deskriptivní statistiky nám říkají dvě věci: *kde leží střed dat* a *jaká je jejich `r render_glossary_term("variabilita", display = "variabilita")`*.
-
-Nejdřív si ukážeme výpočty **ručně na malém příkladu**. Použijeme devět průzkumných záznamů:
-
-```{r}
-#| label: demo-vektor
-#| echo: true
-#| eval: true
-maly_vzorek <-
-  c(5L, 6L, 7L, 7L, 8L, 8L, 8L, 9L, 10L)
-```
-
-::: {.callout-note collapse="true"}
-## Proč píšeme `5L` místo `5`?
-
-Když napíšete v R prosté `5`, R ho uloží jako **desetinné číslo** (typ `double`, neboli `numeric`): interně je to `5.000000`. Přípona `L` říká R, že jde o **celé číslo** (typ `integer`): `5L` je přesně 5, bez desetinné části.
-
-```r
-typeof(5)    # "double"
-typeof(5L)   # "integer"
-```
-
-Proč na tom záleží?
-
-- **Počty tučňáků jsou vždy celá čísla** — průzkum nemůže zaznamenat 7,3 tučňáka. Označení `L` tuto skutečnost explicitně zakóduje do dat.
-- **Paměťová úspornost**: `integer` zabírá v paměti přibližně polovinu oproti `double`.
-- **Ochrana před překlepem**: R vás upozorní, pokud byste omylem přiřadili desetinnou hodnotu tam, kde je očekáváno celé číslo.
-
-V praxi se `L` nejčastěji píše u indexů, počtů a jiných celočíselných konstant. Pro délku v mm nebo teplotu bychom `L` nepísali — tam se očekávají desetinná čísla.
-:::
-
-Seřaďme je od nejmenšího po největší — to nám pomůže pochopit každou statistiku:
-
-**`r paste(sort(c(5L, 6L, 7L, 7L, 8L, 8L, 8L, 9L, 10L)), collapse = ", ")`**
-
-Kdykoli uvidíte `vzorek_poctu_tucnaku`, jde o plná data z 15 průzkumů.
-
-### Minimum a maximum
-
-**Minimum** je nejmenší pozorovaná hodnota. **Maximum** je největší.
-
-Z naší seřazené řady:
-
-- Minimum: **`r min(maly_vzorek)`** — první (nejmenší) hodnota
-- Maximum: **`r max(maly_vzorek)`** — poslední (největší) hodnota
-
-Jsou to nejjednodušší statistiky, ale upozorní nás na případné extrémní hodnoty.
-
-```{r}
-#| label: min-max-demo
-#| echo: true
-#| eval: true
-min(maly_vzorek)
-
-max(maly_vzorek)
-```
-
-Na plných datech z 15 průzkumů:
-
-```{r}
-#| label: min-max-plna-data
-#| echo: true
-#| eval: true
-min(vzorek_poctu_tucnaku)
-
-max(vzorek_poctu_tucnaku)
-```
-
-::: {.panel-tabset}
-
-## Minimum na grafu
-
-```{r}
-#| label: minimum-graf
-#| echo: false
-#| message: false
-#| warning: false
-plot_base_beeswarm +
-  ggplot2::geom_hline(
-    yintercept = min(vzorek_poctu_tucnaku),
-    color = col_highlight,
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Minimum = {min(vzorek_poctu_tucnaku)}"
-    )
-  )
-```
-
-## Maximum na grafu
-
-```{r}
-#| label: maximum-graf
-#| echo: false
-#| message: false
-#| warning: false
-plot_base_beeswarm +
-  ggplot2::geom_hline(
-    yintercept = max(vzorek_poctu_tucnaku),
-    color = col_highlight,
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Maximum = {max(vzorek_poctu_tucnaku)}"
-    )
-  )
-```
-
-:::
-
-### Percentily
-
-Percentil je hodnota, pod níž leží určitý **podíl dat**. Pracujeme vždy se seřazenou řadou.
-
-Ukažme si to na malém příkladu (`r paste(sort(c(5L, 6L, 7L, 7L, 8L, 8L, 8L, 9L, 10L)), collapse = ", ")`):
-
-- **0. percentil (minimum):** `r min(maly_vzorek)` — pod touto hodnotou neleží žádný průzkumový záznam.
-- **25. percentil (Q1, dolní kvartil):** R interpoluje a vrátí **`r quantile(maly_vzorek, 0.25)`**.
-- **50. percentil (`r render_glossary_term("median", display = "medián")`):** Polovina dat leží pod, polovina nad. R vrátí **`r median(maly_vzorek)`**.
-- **75. percentil (Q3, horní kvartil):** Tři čtvrtiny dat leží pod. R vrátí **`r quantile(maly_vzorek, 0.75)`**.
-- **100. percentil (maximum):** `r max(maly_vzorek)`.
-
-```{r}
-#| label: percentily-demo
-#| echo: true
-#| eval: true
-quantile(
-  x = maly_vzorek,
-  probs = c(0, 0.25, 0.50, 0.75, 1)
+hist_2 <- hist(
+  vec_spanek_h,
+  breaks = seq(0, 22, by = 2),
+  plot = FALSE
 )
-```
-
-::: {.callout-note}
-## Proč percentily nevychází vždy „hezky"?
-
-Výpočet percentilů z malého vzorku vyžaduje interpolaci — odhadujeme polohu mezi hodnotami, které ve skutečnosti nemáme. Proto 25. percentil vychází `r quantile(maly_vzorek, 0.25)`, ačkoli v datech tato přesná hodnota nemusí být. S větším vzorkem vychází výsledky přirozeněji. R nabízí dokonce 9 různých metod výpočtu (`type = 1` až `9`) — výchozí je metoda 7.
-:::
-
-### Medián
-
-Medián je **50. percentil** — hodnota, která rozděluje seřazená data přesně napůl.
-
-**Číselný příklad.** Seřadíme `r length(maly_vzorek)` průzkumných záznamů. Prostřední pozice = (`r length(maly_vzorek)` + 1) / 2 = **`r (length(maly_vzorek) + 1L) / 2L`**. Hodnota na `r (length(maly_vzorek) + 1L) / 2L`. místě je `r median(maly_vzorek)`.
-
-**Čísla v rovnici** — všechny hodnoty seřazené, prostřední zvýrazněná:
-
-$$`r paste(head(sort(maly_vzorek), (length(maly_vzorek) - 1L) / 2L), collapse = ",\\ ")`,\ \boxed{`r median(maly_vzorek)`},\ `r paste(tail(sort(maly_vzorek), (length(maly_vzorek) - 1L) / 2L), collapse = ",\\ ")` \quad\Rightarrow\quad \tilde{x} = x_{\left(\frac{`r length(maly_vzorek)`+1}{2}\right)} = x_{(`r (length(maly_vzorek) + 1L) / 2L`)} = `r median(maly_vzorek)`$$
-
-**Obecný vzorec** (pro liché n):
-
-$$\tilde{x} = x_{\left(\frac{n+1}{2}\right)}$$
-
-Kdybychom měli sudé n (např. 8 záznamů), prostřední dvě pozice n/2 a n/2 + 1 by se zprůměrovaly:
-
-$$\tilde{x} = \frac{x_{\left(\frac{n}{2}\right)} + x_{\left(\frac{n}{2}+1\right)}}{2}$$
-
-```{r}
-#| label: median-demo
-#| echo: true
-#| eval: true
-median(maly_vzorek)
-```
-
-Na plných datech:
-
-```{r}
-#| label: median-plna-data
-#| echo: true
-#| eval: true
-median(vzorek_poctu_tucnaku)
-```
-
-::: {.panel-tabset}
-
-## Medián na grafu
-
-```{r}
-#| label: median-graf
-#| echo: false
-#| message: false
-#| warning: false
-plot_base_beeswarm +
-  ggplot2::geom_hline(
-    yintercept = median(vzorek_poctu_tucnaku),
-    color = col_median_line,
-    linetype = "dashed",
-    linewidth = 1.2
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Medián = {median(vzorek_poctu_tucnaku)}"
-    )
-  )
-```
-
-:::
-
-### Mezikvartilové rozpětí (IQR)
-
-Teď víme, kde leží **střed** dat. Ale jak moc jsou data **rozptýlená**?
-
-Jednou z odpovědí je **mezikvartilové rozpětí** (`r render_glossary_term("iqr", display = "IQR")` = interquartile range). Je to vzdálenost mezi horním a dolním kvartilem.
-
-**Číselný příklad.** Z malého příkladu R vrátí Q1 = `r quantile(maly_vzorek, 0.25)` a Q3 = `r quantile(maly_vzorek, 0.75)`. Vzdálenost = `r quantile(maly_vzorek, 0.75)` − `r quantile(maly_vzorek, 0.25)` = **`r IQR(maly_vzorek)` průzkumných záznamů**.
-
-**Čísla v rovnici:**
-
-$$\text{IQR} = `r quantile(maly_vzorek, 0.75)` - `r quantile(maly_vzorek, 0.25)` = `r IQR(maly_vzorek)`$$
-
-**Obecný vzorec:**
-
-$$\text{IQR} = Q_3 - Q_1$$
-
-To znamená: prostřední polovina (50 %) průzkumů má počet tučňáků v rozmezí `r quantile(maly_vzorek, 0.25)` až `r quantile(maly_vzorek, 0.75)`.
-
-```{r}
-#| label: iqr-demo
-#| echo: true
-#| eval: true
-quantile(maly_vzorek, 0.25)  # Q1
-
-quantile(maly_vzorek, 0.75)  # Q3
-
-IQR(maly_vzorek)             # Q3 - Q1
-```
-
-Na plných datech:
-
-```{r}
-#| label: iqr-plna-data
-#| echo: true
-#| eval: true
-quantile(vzorek_poctu_tucnaku, 0.25)  # Q1
-
-quantile(vzorek_poctu_tucnaku, 0.75)  # Q3
-
-IQR(vzorek_poctu_tucnaku)             # Q3 - Q1
-```
-
-::: {.panel-tabset}
-
-## IQR na grafu
-
-```{r}
-#| label: iqr-graf
-#| echo: false
-#| message: false
-#| warning: false
-val_q1 <-
-  quantile(vzorek_poctu_tucnaku, 0.25)
-
-val_q3 <-
-  quantile(vzorek_poctu_tucnaku, 0.75)
-
-plot_base_beeswarm +
-  ggplot2::annotate(
-    geom = "rect",
-    xmin = -Inf, xmax = Inf,
-    ymin = val_q1, ymax = val_q3,
-    fill = col_data,
-    alpha = 0.2
-  ) +
-  ggplot2::geom_hline(
-    yintercept = c(val_q1, val_q3),
-    color = col_data,
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Q1 = {val_q1},  Q3 = {val_q3},  IQR = {val_q3 - val_q1}"
-    ),
-    subtitle = "Modrá plocha = prostřední 50 % dat"
-  )
-```
-
-:::
-
-::: {.callout-tip}
-## Kdy použít IQR místo SD?
-
-`r render_glossary_term("iqr", display = "IQR")` je **odolné vůči `r render_glossary_term("odlehla-pozorovani", display = "odlehlým hodnotám")`**. Pokud máte data s extrémními hodnotami, nebo pokud jsou data výrazně asymetrická, IQR je bezpečnější volbou než `r render_glossary_term("smerodatna-odchylka", display = "směrodatná odchylka")`. Pro ordinální data (stupně poškození, škály souhlasu) je IQR prakticky jedinou smysluplnou mírou `r render_glossary_term("variabilita", display = "variability")`.
-:::
-
-### Průměr
-
-`r render_glossary_term("prumer", display = "Průměr")` (mean) je nejznámější statistika. Mechanicky: sečteme všechny hodnoty a vydělíme jejich počtem.
-
-**Číselný příklad.** Sečteme všech `r length(maly_vzorek)` hodnot a vydělíme jejich počtem.
-
-**Čísla v rovnici:**
-
-$$\bar{x} = \frac{`r paste(maly_vzorek, collapse = " + ")`}{`r length(maly_vzorek)`} = \frac{`r sum(maly_vzorek)`}{`r length(maly_vzorek)`} = `r round(mean(maly_vzorek), 2)`$$
-
-**Obecný vzorec:**
-
-$$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
-
-```{r}
-#| label: prumer-demo
-#| echo: true
-#| eval: true
-# Ručně: součet děleno počet
-sum(maly_vzorek) / length(maly_vzorek)
-
-# Zkráceně pomocí funkce
-mean(maly_vzorek)
-```
-
-Na plných datech:
-
-```{r}
-#| label: prumer-plna-data
-#| echo: true
-#| eval: true
-round(
-  mean(vzorek_poctu_tucnaku),
-  digits = 2
+hist_4 <- hist(
+  vec_spanek_h,
+  breaks = seq(0, 24, by = 4),
+  plot = FALSE
 )
-```
 
-::: {.panel-tabset}
-
-## Průměr na grafu
-
-```{r}
-#| label: prumer-graf
-#| echo: false
-#| message: false
-#| warning: false
-plot_base_beeswarm +
-  ggplot2::geom_hline(
-    yintercept = mean(vzorek_poctu_tucnaku),
-    color = col_highlight,
-    linetype = "dashed",
-    linewidth = 1.2
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Průměr = {round(mean(vzorek_poctu_tucnaku), 1)}"
-    )
-  )
-```
-
-:::
-
-### Průměr vs. medián — kdy záleží na rozdílu?
-
-Průměr a medián měří „střed" dat různými způsoby. Většinou jsou si podobné — ale ne vždy. A ten rozdíl může být biologicky důležitý.
-
-Představme si, že jsme registrovali **neobvykle velký průzkum s 90 tučňáky** — možná rozšíření sledované oblasti nebo výjimečně příznívá sežóna. Přidáme ho do dat:
-
-```{r}
-#| label: outlier-srovnani
-#| echo: true
-#| eval: true
-# Bez odlehlé hodnoty
-mean(vzorek_poctu_tucnaku)
-median(vzorek_poctu_tucnaku)
-
-# S odlehlou hodnotou (90 tučňáků)
-mean(pocet_tucnaku_outlier)
-median(pocet_tucnaku_outlier)
-```
-
-```{r}
-#| label: outlier-vizualizace
-#| echo: false
-#| message: false
-#| warning: false
-data_srovnani <-
+data_kose <-
   dplyr::bind_rows(
     tibble::tibble(
-      pocet_tucnaku = vzorek_poctu_tucnaku,
-      dataset = "Bez odlehlé hodnoty (n = 15)"
+      stred = hist_1$mids,
+      pocet = hist_1$counts,
+      sirka = 1,
+      nastaveni = "Šířka koše = 1 h"
     ),
     tibble::tibble(
-      pocet_tucnaku = pocet_tucnaku_outlier,
-      dataset = "S odlehlou hodnotou (n = 16)"
+      stred = hist_2$mids,
+      pocet = hist_2$counts,
+      sirka = 2,
+      nastaveni = "Šířka koše = 2 h"
+    ),
+    tibble::tibble(
+      stred = hist_4$mids,
+      pocet = hist_4$counts,
+      sirka = 4,
+      nastaveni = "Šířka koše = 4 h"
     )
   ) |>
   dplyr::mutate(
-    dataset = factor(
-      dataset,
+    nastaveni = factor(
+      nastaveni,
       levels = c(
-        "Bez odlehlé hodnoty (n = 15)",
-        "S odlehlou hodnotou (n = 16)"
+        "Šířka koše = 1 h",
+        "Šířka koše = 2 h",
+        "Šířka koše = 4 h"
       )
     )
   )
 
-stat_summary <-
-  data_srovnani |>
-  dplyr::group_by(dataset) |>
-  dplyr::summarise(
-    prumer = mean(pocet_tucnaku),
-    median = median(pocet_tucnaku)
-  ) |>
-  dplyr::ungroup()
-
 ggplot2::ggplot(
-  data = data_srovnani,
-  mapping = ggplot2::aes(x = pocet_tucnaku)
+  data = data_kose,
+  mapping = ggplot2::aes(
+    x = stred,
+    y = pocet,
+    width = sirka
+  )
 ) +
-  ggplot2::geom_histogram(
-    binwidth = 1,
-    fill = col_data,
+  ggplot2::geom_col(
+    fill = col_fill,
     color = "white"
   ) +
-  ggplot2::geom_vline(
-    data = stat_summary,
-    mapping = ggplot2::aes(xintercept = prumer, color = "Průměr"),
-    linetype = "dashed",
-    linewidth = 1
+  ggplot2::facet_wrap(~nastaveni) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 20, by = 4)
   ) +
-  ggplot2::geom_vline(
-    data = stat_summary,
-    mapping = ggplot2::aes(xintercept = median, color = "Medián"),
-    linetype = "dotted",
-    linewidth = 1
-  ) +
-  ggplot2::scale_color_manual(
-    values = c("Průměr" = col_highlight, "Medián" = col_median_line),
-    name = ""
-  ) +
-  ggplot2::facet_wrap(~dataset, scales = "free_x") +
   ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "Počet průzkumů",
-    title = "Průměr je citlivý na odlehlé hodnoty, medián nikoli"
-  ) +
-  ggplot2::theme(legend.position = "bottom")
-```
-
-Průměr se posunul — jeden extrémní průzkum ho „přitáhl" ke své hodnotě. Medián se skoro nezměnil.
-
-::: {.callout-warning}
-## Průměr může být zavádějící
-
-`r render_glossary_term("prumer", display = "Průměr")` je „přitahován" `r render_glossary_term("odlehla-pozorovani", display = "odlehlými hodnotami")`. V ekologii s nimi pracujeme neustále: počty druhů na lokalitách (jedna lokalita může být extrémně bohatá), velikosti těl v populaci, nebo množství srážek (jedno extrémní sucho nebo povodeň). Pokud máte podezření na odlehlé hodnoty nebo asymetrická data, preferujte **`r render_glossary_term("median", display = "medián")`** jako míru středu.
-:::
-
-::: {.callout-note collapse="true"}
-## Kdy je průměr lepší volbou?
-
-`r render_glossary_term("prumer", display = "Průměr")` je matematicky pohodlný a dobře se chová, když jsou data přibližně **symetricky rozložená** kolem středu (bez výrazných `r render_glossary_term("odlehla-pozorovani", display = "odlehlých hodnot")`). Právě takový tvar vidíme u počtu tučňáků na průzkum — proto průměr a medián vychází velmi podobně.
-
-Průměr je také základní stavební kámen statistického modelování. `r render_glossary_term("linearni-model", display = "Lineární model")` (`lm()`), který budeme používat po celý kurz, počítá průměry skupin a průměrné efekty `r render_glossary_term("prediktor", display = "prediktorů")`. Je tedy důležité chápat, kdy průměru věřit a kdy být obezřetní.
-:::
-
-### Rozptyl a směrodatná odchylka
-
-Víme, kde leží střed dat. Teď chceme vědět, jak moc jsou data **rozptýlená kolem středu**. K tomu používáme `r render_glossary_term("rozptyl", display = "rozptyl")` a `r render_glossary_term("smerodatna-odchylka", display = "směrodatnou odchylku")`.
-
-Intuice: spočítejme, jak daleko je každá hodnota od průměru. Tuto vzdálenost nazýváme **odchylka** (`r render_glossary_term("residuum", display = "residuum")`, chyba).
-
-**Číselný příklad.** Průměr malého příkladu = `r round(mean(maly_vzorek), 2)`. Pro první průzkumový záznam (hodnota `r maly_vzorek[1]`): `r maly_vzorek[1]` − `r round(mean(maly_vzorek), 2)` = **`r round(maly_vzorek[1] - mean(maly_vzorek), 2)`**. Celý přehled pro všechny záznamy:
-
-```{r}
-#| label: tabulka-odchylek
-#| echo: false
-#| message: false
-#| warning: false
-data_odchylky <-
-  tibble::tibble(
-    pruzkum = seq_along(maly_vzorek),
-    pocet_tucnaku = maly_vzorek,
-    prumer = round(mean(maly_vzorek), 2),
-    odchylka = round(maly_vzorek - mean(maly_vzorek), 2),
-    odchylka_sq = round((maly_vzorek - mean(maly_vzorek))^2, 2)
+    x = "Celkový spánek za den (h)",
+    y = "Počet druhů",
+    title = "Stejná data, tři šířky koše"
   )
-
-knitr::kable(
-  data_odchylky,
-  col.names = c("Průzkum", "Počet tučňáků", "Průměr (x̄)", "Odchylka (xᵢ − x̄)", "Odchylka²"),
-  align = c("c", "c", "c", "r", "r")
-)
 ```
 
-**Čísla v rovnici** (příklad pro první průzkumový záznam):
+Praktický postup není hledat jedinou „správnou“ šířku. Vyzkoušejte několik
+rozumných možností a ověřte, zda hlavní interpretace nezávisí na jednom
+nastavení.
+:::
 
-$$e_1 = `r maly_vzorek[1]` - `r round(mean(maly_vzorek), 2)` = `r round(maly_vzorek[1] - mean(maly_vzorek), 2)`$$
+### Graf hustoty
 
-**Obecný vzorec:**
+**Graf hustoty (anglicky *density plot*)** je vyhlazený pohled na tvar
+číselných hodnot. Neukazuje počty druhů; osa *y* vyjadřuje hustotu. Křivka je
+proto vhodná pro porovnávání tvaru, ale méně vhodná pro čtení konkrétních
+četností.
 
-$$e_i = x_i - \bar{x}$$
-
-Součet všech odchylek = `r round(sum(maly_vzorek - mean(maly_vzorek)), 10)` — záporné a kladné se vždy vyruší.
-
-Jednoduché řešení by bylo vzít **absolutní hodnoty** odchylek (ignorovat znaménko) a ty sečíst. To skutečně dává smysluplné číslo zvané „průměrná absolutní odchylka". Nicméně statistika tradičně volí jiný postup: odchylky **umocníme**. Proč?
-
-1. **Zbavíme se znaménka**: $(-2{,}56)^2 = 6{,}55$ — záporné odchylky se stanou kladnými, stejně jako kladné.
-2. **Velké odchylky jsou penalizovány víc**: Průzkum vzdálený 3 tučňáky od průměru přispívá $3^2 = 9$ do součtu. Tři průzkumy každý o 1 tučňáka vzdálené přispívají $3 \times 1^2 = 3$. Díky tomu SD „cítí" outlery a silně asymetrická data — stejnou vlastnost, za kterou jsme kritizovali průměr, ale tentokrát ji využijeme záměrně.
-3. **Matematická pohodlnost**: Kvadrát je hladká funkce vhodná pro derivaci a optimalizaci — to se hodí v pokročilejší statistice.
-
-**Součet čtverců odchylek** (anglicky *sum of squares*, zkratka SS) je tedy součet hodnot ze sloupce Odchylka² v tabulce.
-
-**Čísla v rovnici:**
-
-$$\begin{align}
-\text{SS} &= `r paste(paste0("(", maly_vzorek, "-", round(mean(maly_vzorek), 2), ")^2"), collapse = " + ")` \\
-          &= `r paste(round((maly_vzorek - mean(maly_vzorek))^2, 2), collapse = " + ")` \\
-          &= `r round(sum((maly_vzorek - mean(maly_vzorek))^2), 2)`
-\end{align}$$
-
-**Obecný vzorec:**
-
-$$\text{SS} = \sum_{i=1}^{n} (x_i - \bar{x})^2$$
-
-**Číselný příklad.** Rozptyl = SS / (n − 1) = `r round(sum((maly_vzorek - mean(maly_vzorek))^2), 2)` / `r length(maly_vzorek) - 1L` = **`r round(var(maly_vzorek), 2)`**.
-
-**Čísla v rovnici:**
-
-$$s^2 = \frac{`r paste(round((maly_vzorek - mean(maly_vzorek))^2, 2), collapse = " + ")`}{`r length(maly_vzorek)` - 1} = \frac{`r round(sum((maly_vzorek - mean(maly_vzorek))^2), 2)`}{`r length(maly_vzorek) - 1L`} = `r round(var(maly_vzorek), 2)`$$
-
-**Obecný vzorec:**
-
-$$s^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2$$
-
-*(Dělíme n − 1 místo n, protože odhadujeme rozptyl celé populace z vzorku. K tomu se vrátíme v přednášce o inferenci.)*
-
-Ale rozptyl je v **kvadrátových jednotkách** — tučňáci², což je fyzikálně nesmyslné. Proto vezmeme odmocninu.
-
-**Číselný příklad.** SD = √`r round(var(maly_vzorek), 2)` = **`r round(sd(maly_vzorek), 2)` tučňáka**.
-
-**Čísla v rovnici:**
-
-$$s = \sqrt{\frac{`r round(sum((maly_vzorek - mean(maly_vzorek))^2), 2)`}{`r length(maly_vzorek) - 1L`}} = \sqrt{`r round(var(maly_vzorek), 2)`} = `r round(sd(maly_vzorek), 2)`$$
-
-**Obecný vzorec:**
-
-$$s = \sqrt{s^2}$$
-
-To znamená: typický průzkumový záznam se od průměru odchyluje o přibližně `r round(sd(maly_vzorek), 1)` tučňáka.
-
-```{r}
-#| label: sd-demo
-#| echo: true
-#| eval: true
-var(maly_vzorek)  # rozptyl (variance)
-
-sd(maly_vzorek)   # směrodatná odchylka
-```
-
-Na plných datech:
-
-```{r}
-#| label: sd-plna-data
-#| echo: true
-#| eval: true
-round(sd(vzorek_poctu_tucnaku), digits = 2)
-```
-
-Co toto číslo znamená **graficky**? Níže jsou dva pohledy:
-
-- **Levý graf** zobrazuje průzkumy jako body. Červená přerušovaná čára je průměr, červené pásmo je rozsah průměr ± 1 SD. Zhruba dvě třetiny průzkumů leží uvnitř tohoto pásma — to je základní vlastnost dat blízkých normálnímu `r render_glossary_term("rozdeleni", display = "rozdělení")`.
-- **Pravý graf** porovnává dvě skupiny se **stejným průměrem**, ale různou SD. Všimněte si, jak širší SD znamená roztáhlejší, plošší histogram.
+*Kde má křivka vrchol? Odpovídá tato oblast nejvyšším sloupcům histogramu?*
 
 ::: {.panel-tabset}
-
-## SD jako pásmo ±1 SD
+#### Graf
 
 ```{r}
-#| label: sd-graf
+#| label: hustota-spanku
 #| echo: false
 #| message: false
 #| warning: false
-val_prumer <-
-  mean(vzorek_poctu_tucnaku)
-
-val_sd <-
-  sd(vzorek_poctu_tucnaku)
-
-plot_base_beeswarm +
-  ggplot2::annotate(
-    geom = "rect",
-    xmin = -Inf, xmax = Inf,
-    ymin = val_prumer - val_sd,
-    ymax = val_prumer + val_sd,
-    fill = col_highlight,
-    alpha = 0.15
-  ) +
-  ggplot2::geom_hline(
-    yintercept = val_prumer,
-    color = col_highlight,
-    linetype = "dashed",
-    linewidth = 1.2
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Průměr = {round(val_prumer, 1)},  SD = {round(val_sd, 1)}"
-    ),
-    subtitle = "Červené pásmo = průměr ± 1 SD"
-  )
-```
-
-## Stejný průměr — různá SD
-
-```{r}
-#| label: porovnani-sd-data
-#| echo: false
-#| message: false
-#| warning: false
-set.seed(900723)
-
-val_mean_fix <- 8
-
-vec_mala_sd <-
-  rnorm(n = 100, mean = val_mean_fix, sd = 0.8)
-
-vec_mala_sd <-
-  vec_mala_sd - mean(vec_mala_sd) + val_mean_fix
-
-vec_velka_sd <-
-  rnorm(n = 100, mean = val_mean_fix, sd = 3)
-
-vec_velka_sd <-
-  vec_velka_sd - mean(vec_velka_sd) + val_mean_fix
-
-data_porovnani_sd <-
-  tibble::tibble(
-    hodnota = c(vec_mala_sd, vec_velka_sd),
-    skupina = rep(
-      c("Malá SD (≈ 0,8 tučňáka)", "Velká SD (≈ 3 tučňáci)"),
-      each = 100
-    )
-  )
-
 ggplot2::ggplot(
-  data = data_porovnani_sd,
-  mapping = ggplot2::aes(x = hodnota, fill = skupina)
+  data = data_spanek,
+  mapping = ggplot2::aes(x = spanek_h)
 ) +
-  ggplot2::geom_histogram(
-    binwidth = 0.5,
-    color = "white",
-    alpha = 0.85
-  ) +
-  ggplot2::geom_vline(
-    data = data_porovnani_sd |>
-      dplyr::group_by(skupina) |>
-      dplyr::summarise(prumer = mean(hodnota)) |>
-      dplyr::ungroup(),
-    mapping = ggplot2::aes(xintercept = prumer),
-    color = col_highlight,
-    linetype = "dashed",
+  ggplot2::geom_density(
+    fill = col_fill,
+    alpha = 0.55,
+    color = col_median,
     linewidth = 1
   ) +
-  ggplot2::scale_fill_manual(
-    values = c(
-      "Malá SD (≈ 0,8 tučňáka)" = col_median_line,
-      "Velká SD (≈ 3 tučňáci)" = col_highlight
-    )
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 20, by = 2)
   ) +
-  ggplot2::facet_wrap(~skupina) +
   ggplot2::labs(
-    x = "Počet tučňáků",
-    y = "Počet průzkumů",
-    title = "Obě skupiny mají průměr = 8 — liší se jen variabilitou"
-  ) +
-  ggplot2::theme(legend.position = "none")
+    x = "Celkový spánek za den (h)",
+    y = "Hustota",
+    title = "Graf hustoty doby spánku"
+  )
 ```
 
+#### Kód v R
+
+```{r}
+#| label: hustota-spanku-kod
+#| echo: true
+#| eval: true
+#| fig-height: 3.4
+# Odhadneme vyhlazenou hustotu hodnot.
+hustota_spanku <-
+  density(
+    x = vec_spanek_h
+  )
+
+plot(
+  x = hustota_spanku,
+  xlab = "Celkový spánek za den (h)",
+  ylab = "Hustota",
+  main = "Graf hustoty doby spánku"
+)
+```
 :::
 
-::: {.callout-note collapse="true"}
-## Co SD znamená biologicky?
+### Tři pohledy na tutéž proměnnou
 
-Představte si dvě populace ptáků se stejnou průměrnou délkou křídla 20 cm. První populace má SD = 0,5 cm, druhá SD = 3 cm. První populace je velmi uniformní — možná žijí v homogenním prostředí pod silnou stabilizující selekcí. Druhá populace je variabilnější — možná jde o smíšenou populaci, nebo zažívají různorodé selekční tlaky.
+| Graf | Co zachovává | Co skrývá nebo mění |
+|---|---|---|
+| Bodový graf (*dot/beeswarm plot*) | každou jednotlivou hodnotu | při velkém počtu hodnot může být přeplněný |
+| Histogram (*histogram*) | četnosti v intervalech a celkový tvar | přesné hodnoty; vzhled závisí na šířce koše |
+| Graf hustoty (*density plot*) | hladký tvar rozdělení | konkrétní počty a jednotlivé hodnoty |
 
-SD tedy není jen „chyba měření" — obsahuje **biologickou informaci o `r render_glossary_term("variabilita", display = "variabilitě")` v populaci**. Menší SD neznamená „lepší data", jen uniformnější populaci.
-:::
+Žádný z těchto grafů není automaticky nejlepší. Vybíráme podle otázky a podle
+toho, co potřebujeme čtenáři ukázat.
 
----
+## Deskriptivní statistiky: čísla, která patří ke grafu
 
-## Statistiky jako vizualizace — krabicový graf
+Graf ukazuje celý tvar dat. Někdy ale potřebujeme také několik
+**srovnatelných čísel**: například do tabulky výsledků nebo do jedné věty v
+článku. **Deskriptivní statistiky** shrnou:
+<!-- TODO: add slug deskriptivni-statistika to pojmy.yaml -->
 
-Všechny statistiky, které jsme spočítali (min, max, percentily, `r render_glossary_term("median", display = "medián")`, `r render_glossary_term("iqr", display = "IQR")`), lze nakreslit jako jeden přehledný graf: `r render_glossary_term("boxplot", display = "krabicový graf (boxplot)")`. Pojďme ho sestavit krok za krokem, aby bylo jasné, co každý prvek znamená.
+- **polohu** hodnot: kde leží jejich střed nebo okraje;
+- **`r render_glossary_term("variabilita", display = "variabilitu")`**: jak moc
+  se hodnoty liší.
 
-### Krok 1: Medián
+Souhrnné číslo nikdy nenahrazuje graf. Čteme je společně.
 
-Začneme s tím, co již umíme — narýsujeme svislou čáru na pozici mediánu:
+### Malý skutečný příklad
+
+Pro ruční výpočty použijeme devět známých druhů z `msleep`. Každý řádek stále
+představuje druh a hodnotou je celkový spánek za den v hodinách.
 
 ```{r}
-#| label: boxplot-krok1-prep
+#| label: pripravit-maly-priklad-spanku
 #| echo: false
 #| message: false
 #| warning: false
-val_med <-
-  median(vzorek_poctu_tucnaku)
-
-val_q1 <-
-  quantile(vzorek_poctu_tucnaku, 0.25)
-
-val_q3 <-
-  quantile(vzorek_poctu_tucnaku, 0.75)
-
-val_iqr <-
-  IQR(vzorek_poctu_tucnaku)
-
-val_whisker_lo <-
-  max(
-    min(vzorek_poctu_tucnaku),
-    val_q1 - 1.5 * val_iqr
-  )
-
-val_whisker_hi <-
-  min(
-    max(vzorek_poctu_tucnaku),
-    val_q3 + 1.5 * val_iqr
-  )
-```
-
-```{r}
-#| label: boxplot-krok1
-#| echo: false
-#| message: false
-#| warning: false
-plot_base_beeswarm +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 0.82, xend = 1.18, y = val_med, yend = val_med),
-    color = col_median_line,
-    linewidth = 2.5
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue("Krok 1: Medián = {val_med}")
-  )
-```
-
-### Krok 2: Krabice (IQR)
-
-Přidáme obdélník od Q1 do Q3 — to je vlastní „krabice" (box):
-
-```{r}
-#| label: boxplot-krok2
-#| echo: false
-#| message: false
-#| warning: false
-plot_base_beeswarm +
-  ggplot2::annotate(
-    geom = "rect",
-    xmin = 0.82, xmax = 1.18,
-    ymin = val_q1, ymax = val_q3,
-    fill = col_data,
-    alpha = 0.45,
-    color = col_data,
-    linewidth = 1
-  ) +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 0.82, xend = 1.18, y = val_med, yend = val_med),
-    color = col_median_line,
-    linewidth = 2.5
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Krok 2: Krabice = IQR (Q1 = {val_q1}, Q3 = {val_q3})"
-    )
-  )
-```
-
-### Krok 3: Vousy a odlehlé hodnoty
-
-Vousy sahají od hran krabice maximálně o **1,5× IQR** dál. Body mimo vousy jsou `r render_glossary_term("odlehla-pozorovani", display = "odlehlá pozorování")` — kreslí se jako separátní body:
-
-```{r}
-#| label: boxplot-krok3
-#| echo: false
-#| message: false
-#| warning: false
-data_boxplot_outliery <-
-  data_poctu_tucnaku |>
+data_maly_spanek <-
+  data_spanek |>
   dplyr::filter(
-    pocet_tucnaku < val_whisker_lo | pocet_tucnaku > val_whisker_hi
+    druh %in% c(
+      "Rabbit",
+      "Domestic cat",
+      "Dog",
+      "Chimpanzee",
+      "Sheep",
+      "Human",
+      "Pig",
+      "Horse",
+      "Cow"
+    )
+  ) |>
+  dplyr::mutate(
+    druh_cz = dplyr::recode(
+      druh,
+      "Rabbit" = "králík",
+      "Domestic cat" = "kočka domácí",
+      "Dog" = "pes",
+      "Chimpanzee" = "šimpanz",
+      "Sheep" = "ovce",
+      "Human" = "člověk",
+      "Pig" = "prase",
+      "Horse" = "kůň",
+      "Cow" = "kráva"
+    )
+  ) |>
+  dplyr::arrange(spanek_h)
+
+vec_maly_spanek <- data_maly_spanek[["spanek_h"]]
+n_maly <- length(vec_maly_spanek)
+minimum_maly <- min(vec_maly_spanek)
+maximum_maly <- max(vec_maly_spanek)
+q1_maly <- quantile(vec_maly_spanek, probs = 0.25, names = FALSE)
+median_maly <- median(vec_maly_spanek)
+q3_maly <- quantile(vec_maly_spanek, probs = 0.75, names = FALSE)
+iqr_maly <- IQR(vec_maly_spanek)
+prumer_maly <- mean(vec_maly_spanek)
+
+txt_hodnoty_maly <-
+  formatC(
+    vec_maly_spanek,
+    format = "fg",
+    digits = 5,
+    decimal.mark = ",",
+    drop0trailing = TRUE
+  )
+txt_soucet_maly <-
+  formatC(
+    sum(vec_maly_spanek),
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+txt_prumer_maly <-
+  formatC(
+    prumer_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+txt_median_maly <-
+  formatC(
+    median_maly,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+txt_q1_maly <-
+  formatC(
+    q1_maly,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+txt_q3_maly <-
+  formatC(
+    q3_maly,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+txt_iqr_maly <-
+  formatC(
+    iqr_maly,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
   )
 
-plot_base_beeswarm +
+math_hodnoty_maly <-
+  stringr::str_replace_all(
+    txt_hodnoty_maly,
+    ",",
+    "{,}"
+  )
+math_soucet_maly <-
+  stringr::str_replace_all(
+    txt_soucet_maly,
+    ",",
+    "{,}"
+  )
+math_prumer_maly <-
+  stringr::str_replace_all(
+    txt_prumer_maly,
+    ",",
+    "{,}"
+  )
+math_median_maly <-
+  stringr::str_replace_all(
+    txt_median_maly,
+    ",",
+    "{,}"
+  )
+math_q1_maly <-
+  stringr::str_replace_all(
+    txt_q1_maly,
+    ",",
+    "{,}"
+  )
+math_q3_maly <-
+  stringr::str_replace_all(
+    txt_q3_maly,
+    ",",
+    "{,}"
+  )
+math_iqr_maly <-
+  stringr::str_replace_all(
+    txt_iqr_maly,
+    ",",
+    "{,}"
+  )
+```
+
+```{r}
+#| label: tabulka-maleho-prikladu-spanku
+#| echo: false
+#| message: false
+#| warning: false
+data_maly_spanek |>
+  dplyr::transmute(
+    `Druh` = druh_cz,
+    `Původní název (name)` = druh,
+    `Spánek za den (h)` = spanek_h
+  ) |>
+  knitr::kable(
+    align = c("l", "l", "r")
+  )
+```
+
+Hodnoty jsou v tabulce seřazené od nejmenší po největší. Díky tomu můžeme
+sledovat, odkud se každé další číslo bere.
+
+### Aritmetický průměr
+
+`r render_glossary_term("prumer", display = "Aritmetický průměr")` (anglicky
+*mean*) získáme tak, že sečteme všechny hodnoty a součet vydělíme jejich počtem.
+
+Nejdříve slovy:
+
+$$
+\text{průměrná doba spánku}
+=
+\frac{\text{součet dob spánku}}{\text{počet druhů}}
+$$
+
+V malém příkladu dosadíme všechny hodnoty z tabulky:
+
+$$
+\begin{align}
+\text{průměrná doba spánku}
+&=
+\frac{`r paste(math_hodnoty_maly, collapse = " + ")`}{`r n_maly`}
+\\
+&=
+\frac{`r math_soucet_maly`}{`r n_maly`}
+\\
+&=
+`r math_prumer_maly`\ \text{h}
+\end{align}
+$$
+
+Obecný zápis je:
+
+$$
+\overline{x}
+=
+\frac{1}{n}
+\sum_{i=1}^{n}x_i
+$$
+
+Zde:
+
+- $x_i$ je hodnota $i$-tého pozorování;
+- $n$ je počet pozorování;
+- $\sum$ znamená součet všech hodnot;
+- $\overline{x}$ je průměr.
+
+```{r}
+#| label: prumer-v-r
+#| echo: true
+#| eval: true
+# Průhledný výpočet: součet dělený počtem.
+sum(vec_maly_spanek) / length(vec_maly_spanek)
+
+# Stejný výsledek jednou funkcí.
+mean(vec_maly_spanek)
+```
+
+```{r}
+#| label: prumer-na-grafu
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+plot_spanek_body +
+  ggplot2::geom_vline(
+    xintercept = mean(vec_spanek_h),
+    color = col_mean,
+    linetype = "dashed",
+    linewidth = 1.4
+  ) +
+  ggplot2::labs(
+    title = paste0(
+      "Průměr = ",
+      formatC(
+        mean(vec_spanek_h),
+        format = "f",
+        digits = 2,
+        decimal.mark = ","
+      ),
+      " h"
+    ),
+    subtitle = "Přerušovaná čára označuje aritmetický průměr"
+  )
+```
+
+Každá hodnota aritmetický průměr ovlivňuje. Proto se průměr posouvá směrem k velmi vzdáleným hodnotám.
+
+### Prostřední hodnota seřazených dat
+
+`r render_glossary_term("median", display = "Medián")` (anglicky *median*) je
+prostřední hodnota seřazených dat. Polovina hodnot leží nejvýše na jeho úrovni
+a polovina nejméně na jeho úrovni.
+
+Nejdříve vztah zapíšeme pouze slovy:
+
+$$
+\text{medián doby spánku}
+=
+\text{prostřední hodnota seřazených dob spánku}
+$$
+
+V malém příkladu máme lichý počet hodnot. Prostřední je pátá:
+
+$$
+`r paste(math_hodnoty_maly[1:4], collapse = ",\\ ")`,
+\ \boxed{`r math_median_maly`},
+\ `r paste(math_hodnoty_maly[6:9], collapse = ",\\ ")`
+$$
+
+Teprve nyní zápis zobecníme. Pro lichý počet $n$ je medián hodnotou na pozici:
+
+$$
+\widetilde{x}
+=
+x_{\left(\frac{n+1}{2}\right)}
+$$
+
+Zde:
+
+- $x$ označuje sledovanou číselnou proměnnou;
+- $x_{(i)}$ označuje $i$-tou hodnotu po seřazení;
+- $n$ je počet hodnot;
+- $\widetilde{x}$ je medián.
+
+```{r}
+#| label: median-v-r
+#| echo: true
+#| eval: true
+median(vec_maly_spanek)
+```
+
+```{r}
+#| label: median-na-grafu
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+plot_spanek_body +
+  ggplot2::geom_vline(
+    xintercept = median(vec_spanek_h),
+    color = col_median,
+    linewidth = 1.4
+  ) +
+  ggplot2::labs(
+    title = paste0(
+      "Medián = ",
+      formatC(
+        median(vec_spanek_h),
+        format = "f",
+        digits = 1,
+        decimal.mark = ","
+      ),
+      " h"
+    ),
+    subtitle = "Čára rozděluje seřazené druhy na dvě poloviny"
+  )
+```
+
+### Percentily a kvartily
+
+**Percentil (anglicky *percentile*)** je hodnota, pod níž leží určitý podíl
+seřazených dat. Několik percentilů má vlastní názvy;
+`r render_glossary_term("kvantil", display = "kvartily")` dělí seřazená data na
+čtyři části:
+
+- 0. percentil je minimum;
+- 25. percentil je dolní kvartil Q1;
+- 50. percentil je medián;
+- 75. percentil je horní kvartil Q3;
+- 100. percentil je maximum.
+
+```{r}
+#| label: percentily-v-r
+#| echo: true
+#| eval: true
+quantile(
+  x = vec_maly_spanek,
+  probs = c(0, 0.25, 0.50, 0.75, 1)
+)
+```
+
+*Najděte v následujícím grafu prostřední čáru a pásmo mezi Q1 a Q3. Kolik
+hodnot by přibližně mělo ležet uvnitř pásma?*
+
+```{r}
+#| label: kvartily-na-grafu
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+q_spanek <-
+  quantile(
+    vec_spanek_h,
+    probs = c(0.25, 0.50, 0.75),
+    names = FALSE
+  )
+
+plot_spanek_body +
   ggplot2::annotate(
     geom = "rect",
-    xmin = 0.82, xmax = 1.18,
-    ymin = val_q1, ymax = val_q3,
-    fill = col_data,
-    alpha = 0.45,
+    xmin = q_spanek[[1]],
+    xmax = q_spanek[[3]],
+    ymin = -Inf,
+    ymax = Inf,
+    fill = col_fill,
+    alpha = 0.45
+  ) +
+  ggplot2::geom_vline(
+    xintercept = q_spanek,
+    color = c(col_data, col_median, col_data),
+    linetype = c("dashed", "solid", "dashed"),
+    linewidth = c(0.9, 1.4, 0.9)
+  ) +
+  ggplot2::labs(
+    title = "Q1, medián a Q3 rozdělují seřazené hodnoty",
+    subtitle = "Stínované pásmo obsahuje prostřední polovinu druhů"
+  )
+```
+
+::: {.callout-tip collapse="true"}
+## Doplňující: proč kvartil nemusí být přímo v datech?
+
+U malého souboru může požadovaná procentní pozice ležet mezi dvěma
+pozorovanými hodnotami. R pak podle zvolené metody provede interpolaci. Proto
+kvartil nemusí být přesně jednou z hodnot v tabulce. Funkce `quantile()` nabízí
+více metod pomocí argumentu `type`; pro tento úvod ponecháváme výchozí
+nastavení.
+:::
+
+### Prostřední polovina hodnot
+
+Medián popisuje polohu středu, nikoli šířku dat.
+`r render_glossary_term("iqr", display = "Mezikvartilové rozpětí (IQR)")`
+(anglicky *interquartile range*) je vzdálenost mezi horním a dolním kvartilem.
+
+Nejdříve slovy:
+
+$$
+\text{mezikvartilové rozpětí doby spánku}
+=
+\text{horní kvartil doby spánku}
+-
+\text{dolní kvartil doby spánku}
+$$
+
+V malém příkladu nejprve znovu ukážeme všech devět seřazených hodnot. Dolní a
+horní kvartil jsou zde třetí a sedmá hodnota:
+
+$$
+`r paste(math_hodnoty_maly[1:2], collapse = ",\\ ")`,
+\ \boxed{`r math_q1_maly`}_{Q_1},
+\ `r paste(math_hodnoty_maly[4:6], collapse = ",\\ ")`,
+\ \boxed{`r math_q3_maly`}_{Q_3},
+\ `r paste(math_hodnoty_maly[8:9], collapse = ",\\ ")`
+$$
+
+Teprve potom odečteme jejich hodnoty:
+
+$$
+\begin{align}
+\text{IQR}
+&=
+`r math_q3_maly`
+-
+`r math_q1_maly`
+\\
+&=
+`r math_iqr_maly`\ \text{h}
+\end{align}
+$$
+
+Obecný zápis je:
+
+$$
+\text{IQR}
+=
+Q_3-Q_1
+$$
+
+Zde $Q_1$ označuje dolní kvartil a $Q_3$ horní kvartil. IQR popisuje rozsah
+prostřední poloviny hodnot.
+
+```{r}
+#| label: iqr-v-r
+#| echo: true
+#| eval: true
+quantile(
+  x = vec_maly_spanek,
+  probs = c(0.25, 0.75)
+)
+
+IQR(vec_maly_spanek)
+```
+
+```{r}
+#| label: iqr-na-grafu
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+q1_spanek <- quantile(vec_spanek_h, probs = 0.25, names = FALSE)
+q3_spanek <- quantile(vec_spanek_h, probs = 0.75, names = FALSE)
+
+plot_spanek_body +
+  ggplot2::annotate(
+    geom = "rect",
+    xmin = q1_spanek,
+    xmax = q3_spanek,
+    ymin = -Inf,
+    ymax = Inf,
+    fill = col_fill,
+    alpha = 0.5
+  ) +
+  ggplot2::geom_vline(
+    xintercept = c(q1_spanek, q3_spanek),
     color = col_data,
+    linetype = "dashed",
     linewidth = 1
   ) +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 1, xend = 1, y = val_q3, yend = val_whisker_hi),
-    color = col_data,
-    linewidth = 1.2
-  ) +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 1, xend = 1, y = val_q1, yend = val_whisker_lo),
-    color = col_data,
-    linewidth = 1.2
-  ) +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 0.82, xend = 1.18, y = val_med, yend = val_med),
-    color = col_median_line,
-    linewidth = 2.5
-  ) +
-  ggplot2::geom_point(
-    data = data_boxplot_outliery,
-    ggplot2::aes(y = pocet_tucnaku, x = 1),
-    color = col_highlight,
-    size = 2.5,
-    shape = 1,
-    stroke = 1.5
-  ) +
   ggplot2::labs(
-    title = "Krok 3: Vousy (1,5× IQR) + odlehlé hodnoty (červeně)"
+    title = paste0(
+      "IQR = ",
+      formatC(
+        IQR(vec_spanek_h),
+        format = "f",
+        digits = 1,
+        decimal.mark = ","
+      ),
+      " h"
+    ),
+    subtitle = "Stínované pásmo = prostřední polovina druhů"
   )
 ```
 
-### Výsledný krabicový graf
+### Minimum a maximum
 
-Takto vypadá výsledný boxplot, jak ho generuje R automaticky — tentýž tvar, jen nakreslený jedním příkazem:
-
-::: {.panel-tabset}
-
-## Boxplot
+**Minimum** je nejmenší pozorovaná hodnota a **maximum** největší. V malém
+příkladu je minimum `r minimum_maly` h a maximum `r maximum_maly` h.
 
 ```{r}
-#| label: boxplot-finalni
-#| echo: false
-#| message: false
-#| warning: false
-ggplot2::ggplot(
-  data = data_poctu_tucnaku,
-  mapping = ggplot2::aes(y = pocet_tucnaku, x = 1)
-) +
-  ggplot2::geom_boxplot(
-    fill = col_data,
-    alpha = 0.35,
-    width = 0.36
-  ) +
-  ggplot2::coord_flip(
-    xlim = c(0.5, 1.5)
-  ) +
-  ggplot2::scale_y_continuous(breaks = seq(0, 55, by = 5)) +
-  ggplot2::labs(
-    y = "Počet tučňáků (na průzkum)",
-    x = "",
-    title = "Krabicový graf"
-  ) +
-  ggplot2::theme(
-    axis.text.y = ggplot2::element_blank(),
-    axis.ticks.y = ggplot2::element_blank()
-  )
-```
-
-## Kód v R
-
-```{r}
-#| label: boxplot-kod
-#| echo: true
-#| eval: false
-boxplot(
-  x = vzorek_poctu_tucnaku,
-  horizontal = TRUE,
-  col = "#8A8A8A",
-  xlab = "Počet tučňáků (na průzkum)",
-  main = "Krabicový graf"
-)
-```
-
-:::
-
-**Jak číst boxplot** — přehled prvků:
-
-| Prvek               | Co znamená                               |
-|---------------------|------------------------------------------|
-| Tlustá čára uprostřed | Medián (50. percentil)                 |
-| Krabice             | Prostřední 50 % dat (Q1 až Q3, tedy IQR) |
-| Vousy               | Data do vzdálenosti 1,5× IQR od krabice  |
-| Osamělé body        | Odlehlé hodnoty (přesahují vousy)        |
-
-::: {.callout-note}
-## Boxplot je nejlepší graf pro srovnání skupin
-
-Zatímco `r render_glossary_term("histogram", display = "histogramy")` a beeswarm grafy jsou skvělé pro zobrazení **jednoho** `r render_glossary_term("rozdeleni", display = "rozdělení")`, `r render_glossary_term("boxplot", display = "boxploty")` excelují, když chceme **porovnat více skupin** vedle sebe. Uvidíte to v dalších přednáškách — například když budeme srovnávat počty tučňáků na různých lokalitách nebo v různých letech.
-:::
-
----
-
-## Typy proměnných
-
-Ne všechna data jsou čísla. A ne všechna čísla jsou si rovna. Typ proměnné určuje, jaký graf zvolíme, jakou statistiku spočítáme a jaký model použijeme.
-
-Budeme rozlišovat `r render_glossary_term("numericka-promenna", display = "numerické proměnné")` a `r render_glossary_term("kategoricka-promenna", display = "kategoriální proměnné")`; každá z nich vyžaduje jiný popis i jiný graf.
-
-### Kvantitativní — diskrétní
-
-Diskrétní proměnné nabývají pouze **celočíselných hodnot** — mezi nimi není žádná platná hodnota.
-
-**Biologické příklady:**
-
-- Počet tučňáků (na průzkum): 10, 18, 16, 20, ...
-- Počet druhů ptáků na lokalitě
-- Počet vajec v hnízdě
-- Počet jedinců v populaci
-
-Nelze mít 7,3 tučňáka ani 4,7 vejce. Příroda „skáče" po celých číslech.
-
-```{r}
-#| label: diskretni-priklad
+#| label: minimum-maximum-v-r
 #| echo: true
 #| eval: true
-pocet_tucnaku_ukazka <-
-  c(10L, 18L, 16L, 20L)  # sufx L = celé číslo (integer)
+# Nejkratší pozorovaná doba spánku.
+min(vec_maly_spanek)
 
-class(pocet_tucnaku_ukazka)
+# Nejdelší pozorovaná doba spánku.
+max(vec_maly_spanek)
 ```
 
-::: {.panel-tabset}
+Na grafu jsou to levý a pravý okraj pozorovaných hodnot.
 
-## Vhodná vizualizace
+::: {.panel-tabset}
+#### Minimum
 
 ```{r}
-#| label: diskretni-vizualizace
+#| label: minimum-na-grafu
 #| echo: false
 #| message: false
 #| warning: false
-ggplot2::ggplot(
-  data = data_poctu_tucnaku,
-  mapping = ggplot2::aes(x = pocet_tucnaku)
-) +
-  ggplot2::geom_histogram(
-    binwidth = 1,
-    fill = col_data,
-    color = "white"
+#| fig-height: 2.6
+plot_spanek_body +
+  ggplot2::geom_vline(
+    xintercept = min(vec_spanek_h),
+    color = col_mean,
+    linetype = "dashed",
+    linewidth = 1.2
   ) +
-  ggplot2::scale_x_continuous(breaks = seq(0, 55, by = 5)) +
   ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "Počet průzkumů",
-    title = "Diskrétní proměnná — histogram s binwidth = 1"
+    title = paste0(
+      "Minimum = ",
+      formatC(
+        min(vec_spanek_h),
+        format = "f",
+        digits = 1,
+        decimal.mark = ","
+      ),
+      " h"
+    )
   )
 ```
 
-:::
-
-### Kvantitativní — spojité
-
-Spojité proměnné mohou nabývat **jakékoli hodnoty** v intervalu. Přesnost závisí jen na měřicím přístroji.
-
-**Biologické příklady:**
-
-- Délka zobáku v mm (39,1 mm, 40,3 mm, ...)
-- Teplota vzduchu
-- Hmotnost živočicha
-- Koncentrace chlorofylu v listu
+#### Maximum
 
 ```{r}
-#| label: zobrazit-schema-zobaku
-#| echo: false
-#| out-width: "50%"
-#| fig-cap: "Schéma měření zobáku (culmen) tučňáka. Zdroj: Allison Horst."
-knitr::include_graphics(
-  here::here("Learning_materials", "images", "culmen_depth.png")
-)
-```
-
-```{r}
-#| label: spojite-priklad
-#| echo: true
-#| eval: true
-delka_zobaku_ukazka <-
-  c(39.1, 40.3, 36.7, 42.9)  # desetinná čísla
-
-class(delka_zobaku_ukazka)
-```
-
-Pro spojitá data máme více vizualizačních možností — každá odhalí trochu jiný aspekt:
-
-::: {.panel-tabset}
-
-## Bodový graf
-
-```{r}
-#| label: spojite-beeswarm
+#| label: maximum-na-grafu
 #| echo: false
 #| message: false
 #| warning: false
+#| fig-height: 2.6
+plot_spanek_body +
+  ggplot2::geom_vline(
+    xintercept = max(vec_spanek_h),
+    color = col_mean,
+    linetype = "dashed",
+    linewidth = 1.2
+  ) +
+  ggplot2::labs(
+    title = paste0(
+      "Maximum = ",
+      formatC(
+        max(vec_spanek_h),
+        format = "f",
+        digits = 1,
+        decimal.mark = ","
+      ),
+      " h"
+    )
+  )
+```
+:::
+
+Minimum a maximum popisují pozorovaný rozsah, ale silně závisí na jediném
+nejkrajnějším řádku.
+
+### Průměr a medián: návrat k titulku
+
+Nyní máme oba nástroje, které vytvořily úvodní titulky. Podívejme se na
+hmotnosti všech zastoupených druhů.
+
+```{r}
+#| label: pripravit-hmotnost-pro-detektivku
+#| echo: false
+#| message: false
+#| warning: false
+data_hmotnost <-
+  data_savci |>
+  tidyr::drop_na(hmotnost_kg)
+
+vec_hmotnost_kg <- data_hmotnost[["hmotnost_kg"]]
+prumer_hmotnost <- mean(vec_hmotnost_kg)
+median_hmotnost <- median(vec_hmotnost_kg)
+```
+
+::: {.panel-tabset}
+#### Původní osa
+
+```{r}
+#| label: hmotnost-prumer-median-puvodni
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
 ggplot2::ggplot(
-  data = data_delka_zobaku,
-  mapping = ggplot2::aes(x = delka_zobaku, y = 1)
+  data = data_hmotnost,
+  mapping = ggplot2::aes(
+    x = hmotnost_kg,
+    y = 1
+  )
 ) +
   ggbeeswarm::geom_beeswarm(
-    cex = 1.5,
+    cex = 0.8,
     color = col_data,
-    alpha = 0.6,
-    size = 3
+    alpha = 0.7,
+    size = 2.1
   ) +
+  ggplot2::geom_vline(
+    xintercept = prumer_hmotnost,
+    color = col_mean,
+    linetype = "dashed",
+    linewidth = 1.2
+  ) +
+  ggplot2::geom_vline(
+    xintercept = median_hmotnost,
+    color = col_median,
+    linewidth = 1.2
+  ) +
+  ggplot2::coord_cartesian(ylim = c(0.8, 1.2)) +
   ggplot2::labs(
-    x = "Délka zobáku (mm)",
-    y = "",
-    title = "Bodový graf — každý bod je jeden tučňák"
+    x = "Tělesná hmotnost (body weight; kg)",
+    y = NULL,
+    title = "Několik velmi těžkých druhů roztahuje osu",
+    subtitle = "Oranžově průměr, fialově medián"
   ) +
   ggplot2::theme(
     axis.text.y = ggplot2::element_blank(),
@@ -1636,230 +1603,1380 @@ ggplot2::ggplot(
   )
 ```
 
-## Histogram
+#### Přiblížení pomocí logaritmické osy
 
 ```{r}
-#| label: spojite-histogram
+#| label: hmotnost-prumer-median-log
 #| echo: false
 #| message: false
 #| warning: false
+#| fig-height: 2.6
 ggplot2::ggplot(
-  data = data_delka_zobaku,
-  mapping = ggplot2::aes(x = delka_zobaku)
+  data = data_hmotnost,
+  mapping = ggplot2::aes(
+    x = hmotnost_kg,
+    y = 1
+  )
 ) +
+  ggbeeswarm::geom_beeswarm(
+    cex = 0.8,
+    color = col_data,
+    alpha = 0.7,
+    size = 2.1
+  ) +
+  ggplot2::geom_vline(
+    xintercept = prumer_hmotnost,
+    color = col_mean,
+    linetype = "dashed",
+    linewidth = 1.2
+  ) +
+  ggplot2::geom_vline(
+    xintercept = median_hmotnost,
+    color = col_median,
+    linewidth = 1.2
+  ) +
+  ggplot2::scale_x_log10(
+    breaks = c(0.01, 0.1, 1, 10, 100, 1000),
+    labels = c("0,01", "0,1", "1", "10", "100", "1000")
+  ) +
+  ggplot2::coord_cartesian(ylim = c(0.8, 1.2)) +
+  ggplot2::labs(
+    x = "Tělesná hmotnost (body weight; kg; logaritmická osa)",
+    y = NULL,
+    title = "Logaritmická osa zpřístupní lehké i těžké druhy",
+    subtitle = "Výpočty zůstávají v původních kilogramech"
+  ) +
+  ggplot2::theme(
+    axis.text.y = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    panel.grid.major.y = ggplot2::element_blank()
+  )
+```
+:::
+
+Na původní ose vidíme, že většina druhů leží blízko nuly ve srovnání s několika
+velmi těžkými druhy. Logaritmická osa pouze mění rozestupy na grafu, aby byly
+body čitelné; průměr i medián jsou stále vypočtené z kilogramů.
+
+- Průměr hmotnosti je
+  **`r formatC(prumer_hmotnost, format = "f", digits = 0, decimal.mark = ",")`
+  kg**.
+- Medián hmotnosti je
+  **`r formatC(median_hmotnost, format = "f", digits = 2, decimal.mark = ",")`
+  kg**.
+
+Obě čísla jsou vypočtena správně. Průměr ale silně posunulo několik velmi
+těžkých druhů. Medián lépe popisuje prostřední řádek této výrazně asymetrické
+tabulky.
+
+::: {.callout-important}
+## Vyřešení úvodního hlasování
+
+Nejpřesnější odpověď byla **C) Obě čísla mohou být vypočtena správně.**
+Správný výpočet však ještě nezaručuje poctivý titulek. Musíme také uvést, jaké
+shrnutí jsme použili, jak vypadá graf a co představuje jeden řádek.
+:::
+
+::: {.callout-tip collapse="true"}
+## Doplňující: kdy může být průměr užitečnější?
+
+`r render_glossary_term("prumer", display = "Průměr")` je přirozený pro
+přibližně symetrická číselná data bez mimořádně
+vzdálených hodnot a je základním stavebním kamenem mnoha statistických modelů.
+`r render_glossary_term("median", display = "Medián")` je odolnější vůči
+`r render_glossary_term("odlehla-pozorovani", display = "odlehlým pozorováním")`
+a často lépe popisuje střed silně asymetrických dat. Volba není soutěž mezi
+„dobrou“ a „špatnou“ statistikou; musí odpovídat grafu a otázce.
+:::
+
+### Jak daleko hodnoty leží od středu
+
+Průměr popsal střed. Nyní potřebujeme říci, jak moc jsou hodnoty **rozptýlené
+kolem průměru**. Začneme vzdáleností každé hodnoty od průměru.
+
+Nejdříve slovy:
+
+$$
+\text{odchylka doby spánku druhu}
+=
+\text{doba spánku druhu}
+-
+\text{průměrná doba spánku}
+$$
+
+```{r}
+#| label: pripravit-odchylky-spanku
+#| echo: false
+#| message: false
+#| warning: false
+odchylky_maly <- vec_maly_spanek - prumer_maly
+ctverce_odchylek_maly <- odchylky_maly^2
+soucet_ctvercu_maly <- sum(ctverce_odchylek_maly)
+rozptyl_maly <- soucet_ctvercu_maly / (n_maly - 1)
+sd_maly <- sqrt(rozptyl_maly)
+
+txt_odchylky_maly <-
+  formatC(
+    odchylky_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+txt_ctverce_maly <-
+  formatC(
+    ctverce_odchylek_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+txt_soucet_ctvercu_maly <-
+  formatC(
+    soucet_ctvercu_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+txt_rozptyl_maly <-
+  formatC(
+    rozptyl_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+txt_sd_maly <-
+  formatC(
+    sd_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
+math_odchylky_maly <-
+  stringr::str_replace_all(
+    txt_odchylky_maly,
+    ",",
+    "{,}"
+  )
+math_ctverce_maly <-
+  stringr::str_replace_all(
+    txt_ctverce_maly,
+    ",",
+    "{,}"
+  )
+math_soucet_ctvercu_maly <-
+  stringr::str_replace_all(
+    txt_soucet_ctvercu_maly,
+    ",",
+    "{,}"
+  )
+math_rozptyl_maly <-
+  stringr::str_replace_all(
+    txt_rozptyl_maly,
+    ",",
+    "{,}"
+  )
+math_sd_maly <-
+  stringr::str_replace_all(
+    txt_sd_maly,
+    ",",
+    "{,}"
+  )
+```
+
+Tabulka propojuje každou hodnotu s jejím místem v dalším výpočtu:
+
+```{r}
+#| label: tabulka-odchylek-spanku
+#| echo: false
+#| message: false
+#| warning: false
+data_maly_spanek |>
+  dplyr::transmute(
+    `Druh` = druh_cz,
+    `Spánek (h)` = spanek_h,
+    `Odchylka od průměru (h)` = round(odchylky_maly, 2),
+    `Čtverec odchylky (h²)` = round(ctverce_odchylek_maly, 2)
+  ) |>
+  knitr::kable(
+    align = c("l", "r", "r", "r")
+  )
+```
+
+Například první hodnota v tabulce dává:
+
+$$
+\begin{align}
+\text{odchylka spánku koně}
+&=
+`r math_hodnoty_maly[[1]]`
+-
+`r math_prumer_maly`
+\\
+&=
+`r math_odchylky_maly[[1]]`\ \text{h}
+\end{align}
+$$
+
+Obecný zápis odchylky je:
+
+$$
+e_i=x_i-\overline{x}
+$$
+
+Zde $e_i$ označuje odchylku $i$-té hodnoty od průměru. Kladné a záporné
+odchylky se při prostém součtu vyruší. Proto je umocníme na druhou a sečteme.
+Výsledek se nazývá **součet čtverců** (anglicky *sum of squares*, SS).
+
+$$
+\begin{align}
+\text{součet čtverců odchylek}
+&=
+`r paste(math_ctverce_maly, collapse = " + ")`
+\\
+&=
+`r math_soucet_ctvercu_maly`\ \text{h}^2
+\end{align}
+$$
+
+Obecně:
+
+$$
+\text{SS}
+=
+\sum_{i=1}^{n}
+\left(x_i-\overline{x}\right)^2
+$$
+
+`r render_glossary_term("rozptyl", display = "Výběrový rozptyl")` (anglicky
+*sample variance*) získáme vydělením součtu čtverců počtem hodnot minus jedna.
+
+Nejdříve slovy:
+
+$$
+\text{výběrový rozptyl doby spánku}
+=
+\frac{\text{součet čtverců odchylek}}{\text{počet druhů}-1}
+$$
+
+V malém příkladu:
+
+$$
+\begin{align}
+\text{výběrový rozptyl doby spánku}
+&=
+\frac{`r math_soucet_ctvercu_maly`}{`r n_maly`-1}
+\\
+&=
+\frac{`r math_soucet_ctvercu_maly`}{`r n_maly - 1`}
+\\
+&=
+`r math_rozptyl_maly`\ \text{h}^2
+\end{align}
+$$
+
+Obecně:
+
+$$
+s^2
+=
+\frac{1}{n-1}
+\sum_{i=1}^{n}
+\left(x_i-\overline{x}\right)^2
+$$
+
+Rozptyl má čtvercové jednotky, zde hodiny na druhou. Abychom se vrátili k
+hodinám, vezmeme odmocninu. Tím získáme
+`r render_glossary_term("smerodatna-odchylka", display = "směrodatnou odchylku (SD)")`
+(anglicky *standard deviation*).
+
+Nejdříve slovy:
+
+$$
+\text{směrodatná odchylka doby spánku}
+=
+\sqrt{\text{výběrový rozptyl doby spánku}}
+$$
+
+V malém příkladu:
+
+$$
+\begin{align}
+\text{směrodatná odchylka doby spánku}
+&=
+\sqrt{`r math_rozptyl_maly`}
+\\
+&=
+`r math_sd_maly`\ \text{h}
+\end{align}
+$$
+
+Obecně:
+
+$$
+s=\sqrt{s^2}
+$$
+
+Zde $s^2$ označuje výběrový rozptyl a $s$ směrodatnou odchylku. SD má stejné
+jednotky jako původní proměnná.
+
+```{r}
+#| label: rozptyl-sd-v-r
+#| echo: true
+#| eval: true
+# Výběrový rozptyl v hodinách na druhou.
+var(vec_maly_spanek)
+
+# Směrodatná odchylka v hodinách.
+sd(vec_maly_spanek)
+```
+
+### SD jako vzdálenost na grafu
+
+Na grafu můžeme kolem průměru vyznačit vzdálenost jedné SD na obě strany.
+Pásmo není automatickým pravidlem, kolik bodů „musí“ obsahovat. Ukazuje měřítko
+rozptýlení hodnot kolem průměru.
+
+```{r}
+#| label: sd-jako-pasmo
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+prumer_spanek <- mean(vec_spanek_h)
+sd_spanek <- sd(vec_spanek_h)
+
+plot_spanek_body +
+  ggplot2::annotate(
+    geom = "rect",
+    xmin = prumer_spanek - sd_spanek,
+    xmax = prumer_spanek + sd_spanek,
+    ymin = -Inf,
+    ymax = Inf,
+    fill = col_mean,
+    alpha = 0.16
+  ) +
+  ggplot2::geom_vline(
+    xintercept = prumer_spanek,
+    color = col_mean,
+    linetype = "dashed",
+    linewidth = 1.3
+  ) +
+  ggplot2::labs(
+    title = paste0(
+      "Průměr = ",
+      formatC(
+        prumer_spanek,
+        format = "f",
+        digits = 2,
+        decimal.mark = ","
+      ),
+      " h; SD = ",
+      formatC(
+        sd_spanek,
+        format = "f",
+        digits = 2,
+        decimal.mark = ","
+      ),
+      " h"
+    ),
+    subtitle = "Stínované pásmo sahá jednu SD na každou stranu od průměru"
+  )
+```
+
+### Stejný průměr, jiná SD
+
+Vraťme se ke dvěma didaktickým souborům se stejným průměrem. Jejich rozdílnou
+šířku nyní umíme vyjádřit číslem.
+
+```{r}
+#| label: porovnat-sd-stejneho-prumeru
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 3
+data_stejny_prumer_souhrn <-
+  data_stejny_prumer |>
+  dplyr::group_by(skupina) |>
+  dplyr::summarise(
+    prumer = mean(spanek_h),
+    sd = sd(spanek_h),
+    .groups = "drop"
+  )
+
+ggplot2::ggplot(
+  data = data_stejny_prumer,
+  mapping = ggplot2::aes(
+    x = spanek_h,
+    y = 1
+  )
+) +
+  ggbeeswarm::geom_beeswarm(
+    mapping = ggplot2::aes(color = skupina),
+    cex = 1,
+    size = 4
+  ) +
+  ggplot2::geom_vline(
+    data = data_stejny_prumer_souhrn,
+    mapping = ggplot2::aes(xintercept = prumer),
+    color = col_mean,
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  ggplot2::geom_errorbar(
+    data = data_stejny_prumer_souhrn,
+    mapping = ggplot2::aes(
+      xmin = prumer - sd,
+      xmax = prumer + sd,
+      y = 0.82
+    ),
+    inherit.aes = FALSE,
+    width = 0.05,
+    color = col_median,
+    linewidth = 1
+  ) +
+  ggplot2::facet_wrap(
+    ~skupina,
+    labeller = ggplot2::labeller(
+      skupina = c(
+        "Soubor A" = paste0(
+          "Soubor A: SD = ",
+          formatC(
+            sd(c(8, 9, 9, 10, 10, 10, 11, 11, 12)),
+            format = "f",
+            digits = 2,
+            decimal.mark = ","
+          )
+        ),
+        "Soubor B" = paste0(
+          "Soubor B: SD = ",
+          formatC(
+            sd(c(6, 6, 8, 8, 10, 12, 12, 14, 14)),
+            format = "f",
+            digits = 2,
+            decimal.mark = ","
+          )
+        )
+      )
+    )
+  ) +
+  ggplot2::scale_color_manual(
+    values = c("Soubor A" = col_median, "Soubor B" = col_mean)
+  ) +
+  ggplot2::scale_x_continuous(breaks = 6:14) +
+  ggplot2::coord_cartesian(ylim = c(0.75, 1.2)) +
+  ggplot2::labs(
+    x = "Celkový spánek za den (h)",
+    y = NULL,
+    title = "Větší SD odpovídá širšímu rozptýlení",
+    subtitle = "Fialová úsečka ukazuje průměr ± 1 SD"
+  ) +
+  ggplot2::theme(
+    axis.text.y = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    panel.grid.major.y = ggplot2::element_blank(),
+    legend.position = "none"
+  )
+```
+
+::: {.callout-tip collapse="true"}
+## Doplňující: co může míra rozptýlení znamenat biologicky?
+
+Představte si dvě populace ptáků se stejnou
+`r render_glossary_term("prumer", display = "průměrnou")` délkou křídla. Jedna
+má `r render_glossary_term("smerodatna-odchylka", display = "malou SD")`, druhá
+velkou. První je z hlediska délky křídel uniformnější; druhá
+`r render_glossary_term("variabilita", display = "variabilnější")`. Příčinou
+mohou být například rozdílné podmínky prostředí,
+smíšené věkové skupiny, pohlavní dimorfismus nebo chyba měření. SD sama příčinu
+neodhalí, ale upozorní, že biologická variabilita stojí za další otázku.
+:::
+
+### Které dvojice souhrnů patří k sobě?
+
+| Míra středu | Míra variability | Kdy je dvojice často užitečná |
+|---|---|---|
+| průměr (*mean*) | směrodatná odchylka (*standard deviation*) | přibližně symetrická číselná data bez výrazně vzdálených hodnot |
+| medián (*median*) | IQR (*interquartile range*) | asymetrická číselná data nebo data s výrazně vzdálenými hodnotami |
+
+Nejde o mechanické pravidlo. Nejprve vždy prohlédněte graf a zvažte biologický
+význam.
+
+## Statistiky jako vizualizace: stavíme graf ze souhrnů
+
+Minimum, `r render_glossary_term("kvantil", display = "kvartily")`, medián a IQR
+již známe. Nyní z nich sestavíme
+`r render_glossary_term("boxplot", display = "krabicový graf (boxplot)")`
+krok za krokem, aby žádná jeho část nebyla záhadným symbolem.
+
+```{r}
+#| label: pripravit-konstrukci-boxplotu
+#| echo: false
+#| message: false
+#| warning: false
+median_spanek <- median(vec_spanek_h)
+q1_spanek <- quantile(vec_spanek_h, probs = 0.25, names = FALSE)
+q3_spanek <- quantile(vec_spanek_h, probs = 0.75, names = FALSE)
+iqr_spanek <- IQR(vec_spanek_h)
+stat_boxplot_spanek <- boxplot.stats(vec_spanek_h)
+vous_dolni <- stat_boxplot_spanek$stats[[1]]
+vous_horni <- stat_boxplot_spanek$stats[[5]]
+vec_odlehle_spanek <- stat_boxplot_spanek$out
+```
+
+### Krok 1: jednotlivé hodnoty a medián
+
+Začneme bodovým grafem a přidáme čáru na pozici mediánu. Každý bod stále
+vidíme.
+
+```{r}
+#| label: boxplot-krok-median
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+plot_spanek_body +
+  ggplot2::geom_vline(
+    xintercept = median_spanek,
+    color = col_median,
+    linewidth = 1.5
+  ) +
+  ggplot2::labs(
+    title = "Krok 1: medián rozděluje seřazené hodnoty na poloviny"
+  )
+```
+
+### Krok 2: krabice je IQR
+
+Obdélník od Q1 do Q3 obsahuje prostřední polovinu hodnot. Jeho šířka je IQR.
+
+```{r}
+#| label: boxplot-krok-krabice
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+plot_spanek_body +
+  ggplot2::annotate(
+    geom = "rect",
+    xmin = q1_spanek,
+    xmax = q3_spanek,
+    ymin = 0.83,
+    ymax = 1.17,
+    fill = col_fill,
+    color = col_data,
+    alpha = 0.65,
+    linewidth = 0.9
+  ) +
+  ggplot2::geom_vline(
+    xintercept = median_spanek,
+    color = col_median,
+    linewidth = 1.5
+  ) +
+  ggplot2::labs(
+    title = "Krok 2: krabice sahá od Q1 do Q3",
+    subtitle = "Její šířka odpovídá IQR"
+  )
+```
+
+### Krok 3: vousy a možná odlehlá pozorování
+
+Od hran krabice odměříme vzdálenost 1,5násobku IQR. Vous končí na nejkrajnější
+skutečně pozorované hodnotě, která ještě leží uvnitř této hranice. Hodnoty za
+vousy se vykreslí samostatně jako možná
+`r render_glossary_term("odlehla-pozorovani", display = "odlehlá pozorování")`.
+
+```{r}
+#| label: boxplot-krok-vousy
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+ggplot2::ggplot() +
+  ggplot2::annotate(
+    geom = "rect",
+    xmin = q1_spanek,
+    xmax = q3_spanek,
+    ymin = 0.83,
+    ymax = 1.17,
+    fill = col_fill,
+    color = col_data,
+    alpha = 0.65,
+    linewidth = 0.9
+  ) +
+  ggplot2::annotate(
+    geom = "segment",
+    x = vous_dolni,
+    xend = q1_spanek,
+    y = 1,
+    yend = 1,
+    color = col_data,
+    linewidth = 1
+  ) +
+  ggplot2::annotate(
+    geom = "segment",
+    x = q3_spanek,
+    xend = vous_horni,
+    y = 1,
+    yend = 1,
+    color = col_data,
+    linewidth = 1
+  ) +
+  ggplot2::annotate(
+    geom = "segment",
+    x = c(vous_dolni, vous_horni),
+    xend = c(vous_dolni, vous_horni),
+    y = 0.9,
+    yend = 1.1,
+    color = col_data,
+    linewidth = 1
+  ) +
+  ggplot2::annotate(
+    geom = "segment",
+    x = median_spanek,
+    xend = median_spanek,
+    y = 0.83,
+    yend = 1.17,
+    color = col_median,
+    linewidth = 1.5
+  ) +
+  ggplot2::geom_point(
+    data = tibble::tibble(
+      spanek_h = vec_odlehle_spanek,
+      y = 1
+    ),
+    mapping = ggplot2::aes(
+      x = spanek_h,
+      y = y
+    ),
+    color = col_mean,
+    shape = 1,
+    size = 3,
+    stroke = 1.2
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 20, by = 2)
+  ) +
+  ggplot2::coord_cartesian(
+    xlim = c(0, 21),
+    ylim = c(0.75, 1.25)
+  ) +
+  ggplot2::labs(
+    x = "Celkový spánek za den (h)",
+    y = NULL,
+    title = "Krok 3: přidáme vousy a samostatné body za nimi"
+  ) +
+  ggplot2::theme(
+    axis.text.y = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    panel.grid.major.y = ggplot2::element_blank()
+  )
+```
+
+::: {.callout-warning}
+## Bod za vousy není automaticky chyba
+
+Pravidlo 1,5 × `r render_glossary_term("iqr", display = "IQR")` označuje hodnotu
+k bližšímu prozkoumání. Bod může být
+překlep, zvláštní měření nebo zcela reálný biologický druh. O jeho významu
+rozhodujeme podle zdroje dat a biologického kontextu, ne podle grafu samotného.
+:::
+
+### Výsledný krabicový graf
+
+R sestaví stejné prvky jedním příkazem.
+
+::: {.panel-tabset}
+#### Graf
+
+```{r}
+#| label: boxplot-finalni-spanku
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2.6
+ggplot2::ggplot(
+  data = data_spanek,
+  mapping = ggplot2::aes(
+    x = spanek_h,
+    y = factor(1)
+  )
+) +
+  ggplot2::geom_boxplot(
+    fill = col_fill,
+    color = col_data,
+    width = 0.42
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 20, by = 2)
+  ) +
+  ggplot2::labs(
+    x = "Celkový spánek za den (h)",
+    y = NULL,
+    title = "Krabicový graf doby spánku"
+  ) +
+  ggplot2::theme(
+    axis.text.y = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    panel.grid.major.y = ggplot2::element_blank()
+  )
+```
+
+#### Kód v R
+
+```{r}
+#| label: boxplot-finalni-kod
+#| echo: true
+#| eval: true
+#| fig-height: 2.6
+# Vytvoříme vodorovný krabicový graf.
+boxplot(
+  x = vec_spanek_h,
+  horizontal = TRUE,
+  col = "#D8C9E8",
+  xlab = "Celkový spánek za den (h)",
+  main = "Krabicový graf doby spánku"
+)
+```
+:::
+
+| Prvek | Co znamená |
+|---|---|
+| čára uvnitř krabice | medián, tedy 50. percentil |
+| levý a pravý okraj krabice | Q1 a Q3 |
+| šířka krabice | IQR, tedy prostřední polovina hodnot |
+| vousy | nejkrajnější hodnoty uvnitř hranice 1,5 × IQR |
+| samostatné body | možné odlehlé hodnoty za vousy |
+
+### Když chceme vidět tvar: houslový graf
+
+**Houslový graf** (anglicky *violin plot*) zachovává hladký obrys `r render_glossary_term("rozdeleni", display = "rozdělení")`: čím je „housle“ v určité části širší, tím více hodnot se v této oblasti soustředí.
+<!-- TODO: add slug houslovy-graf to pojmy.yaml -->
+
+Krabicový graf rychle ukáže medián, kvartily a možné odlehlé hodnoty, ale neukáže, zda se hodnoty hromadí v jednom nebo několika shlucích. V takové situaci může být houslový graf informativnější. Úzký boxplot uvnitř ponechává známé souhrny a obrys kolem něj doplňuje tvar dat.
+
+*Kde je housle nejširší? Dokázali byste tuto informaci vyčíst ze samotného krabicového grafu?*
+
+```{r}
+#| label: houslovy-graf-spanku
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-height: 2.5
+# Spojíme tvar rozdělení s úzkým krabicovým grafem.
+ggplot2::ggplot(
+  data = data_spanek,
+  mapping = ggplot2::aes(
+    x = spanek_h,
+    y = ""
+  )
+) +
+  ggplot2::geom_violin(
+    orientation = "y",
+    trim = FALSE,
+    fill = "#D8C9E8",
+    color = "#6B7280"
+  ) +
+  ggplot2::geom_boxplot(
+    orientation = "y",
+    width = 0.14,
+    fill = "white",
+    outlier.shape = NA
+  ) +
+  ggplot2::labs(
+    x = "Celkový spánek za den (h)",
+    y = NULL
+  )
+```
+
+Houslový graf ale také vyhlazuje data. U malého souboru proto mohou být poctivější jednotlivé body; žádný typ grafu není nejlepší ve všech situacích.
+
+::: {.callout-tip collapse="true"}
+## Doplňující: co tento souhrnný graf skrývá?
+
+Krabicový graf je kompaktní a dobře se skládá vedle dalších skupin, ale skrývá
+jednotlivé hodnoty i podrobný tvar rozdělení. Dva různé soubory mohou mít stejný
+boxplot. Když je to možné, doplňte jej body, houslovým grafem nebo se vraťte k
+`r render_glossary_term("histogram", display = "histogramu")`.
+:::
+
+## Typy proměnných: zobecnění na konci
+
+Doteď jsme sledovali hlavně jednu
+`r render_glossary_term("promenna", display = "proměnnou")`: dobu spánku savce
+za den. Teprve
+teď máme dost zkušeností, abychom si položili obecnější otázku:
+**jaký druh informace proměnná nese?**
+
+Stejné zapsané číslo totiž může znamenat něco úplně jiného:
+
+Nejprve proto určujeme
+`r render_glossary_term("jednotka-pozorovani", display = "pozorovací jednotku")`:
+koho nebo co jeden řádek reprezentuje.
+
+| Zápis | Co znamená | Typ proměnné |
+|---:|---|---|
+| 37,0 | tělesná teplota 37,0 °C | `r render_glossary_term("spojita-promenna", display = "numerická spojitá")` |
+| 37 | počet rostlin na ploše | `r render_glossary_term("diskretni-promenna", display = "numerická diskrétní")` |
+| 37 | číselný kód lokality | `r render_glossary_term("nominalni-promenna", display = "kategoriální nominální")` |
+| 3 | hodnocení na škále 1–5 | `r render_glossary_term("ordinalni-promenna", display = "kategoriální ordinální")` |
+
+::: {.callout-important title="Typ proměnné neurčuje vzhled hodnoty"}
+O typu proměnné rozhoduje **význam hodnot a způsob jejich vzniku**, ne to, zda
+jsou v tabulce zapsány číslem nebo slovem.
+:::
+
+::: {.callout-note title="Statistický typ není totéž co třída objektu v R"}
+R popisuje technickou podobu objektu pomocí `class()` a `typeof()`. Funkce `str()` ukáže jeho stručnou strukturu a několik hodnot. Tyto kontroly jsou velmi užitečné, ale samy nerozhodnou, zda je proměnná spojitá, diskrétní, nominální nebo ordinální. K tomu stále potřebujeme vědět, co hodnoty znamenají a jak vznikly.
+:::
+
+Při určování typu si zkuste doplnit větu:
+
+> Jeden řádek představuje ___ a tato proměnná říká ___.
+
+Tím se zároveň vracíte k pozorovací jednotce. Počet druhů v jednom řádu může být
+například vlastností lokality, zatímco řád savce je vlastností druhu.
+
+### Numerická spojitá proměnná
+
+**Numerická spojitá proměnná** (*continuous numerical variable*; vyhledávací
+termín *continuous data*) vzniká měřením. Mezi dvěma hodnotami si obvykle umíme
+představit další možné hodnoty, i když je přístroj zaokrouhlí.
+
+Příklady z reálného světa:
+
+- délka těla nebo listu,
+- tělesná hmotnost,
+- teplota,
+- koncentrace látky,
+- doba spánku.
+
+**Jak ji uvidíme v R?**
+
+```{r}
+#| label: spojita-priklad-kod
+#| eval: true
+
+# Naměřené hodnoty nemusí být celá čísla.
+vec_spanek_h <- ggplot2::msleep[["sleep_total"]]
+
+head(vec_spanek_h)
+class(vec_spanek_h)
+typeof(vec_spanek_h)
+str(vec_spanek_h)
+```
+
+R tento vektor zobrazí jako `numeric` a technicky jej uloží jako `double`. Z toho ještě nepozná, že jde o spojitou proměnnou. To usuzujeme z významu: doba spánku vznikla měřením a mezi dvěma hodnotami si umíme představit další.
+
+Pro spojitou proměnnou jsme už použili čtyři vhodné grafy: bodový graf,
+`r render_glossary_term("histogram", display = "histogram")`, graf hustoty a
+`r render_glossary_term("boxplot", display = "krabicový graf")`.
+
+::: {.panel-tabset}
+
+#### Bodový graf
+
+Ukazuje každé pozorování. Je výborný pro malý až střední soubor.
+
+```{r}
+#| label: spojita-galerie-body
+#| echo: false
+#| fig-cap: "Každá tečka představuje jeden druh savce."
+#| fig-height: 2.1
+
+ggplot2::ggplot(data_spanek, ggplot2::aes(x = spanek_h, y = 0)) +
+  ggbeeswarm::geom_quasirandom(
+    width = 0.38,
+    orientation = "y",
+    size = 2.2,
+    alpha = 0.70,
+    color = col_data
+  ) +
+  ggplot2::scale_y_continuous(NULL, breaks = NULL) +
+  ggplot2::coord_cartesian(ylim = c(-0.42, 0.42)) +
+  ggplot2::labs(x = "Celková doba spánku [h/den]")
+```
+
+#### Histogram
+
+Sdružuje hodnoty do intervalů. Hodí se, když chceme vidět tvar
+`r render_glossary_term("rozdeleni", display = "rozdělení")`.
+
+```{r}
+#| label: spojita-galerie-histogram
+#| echo: false
+#| fig-cap: "Histogram spojité proměnné; vzhled závisí na šířce košů."
+#| fig-height: 3.4
+
+ggplot2::ggplot(data_spanek, ggplot2::aes(x = spanek_h)) +
   ggplot2::geom_histogram(
-    binwidth = 1,
-    fill = col_data,
+    binwidth = 2,
+    boundary = 0,
+    fill = col_fill,
     color = "white"
   ) +
   ggplot2::labs(
-    x = "Délka zobáku (mm)",
-    y = "Počet",
-    title = "Histogram — koše po 1 mm"
+    x = "Celková doba spánku [h/den]",
+    y = "Počet druhů"
   )
 ```
 
-## Graf hustoty
+#### Graf hustoty
+
+Nabízí vyhlazený pohled na tvar rozdělení. Vyhlazení je analytické rozhodnutí,
+nikoli další měření.
 
 ```{r}
-#| label: spojite-hustota
+#| label: spojita-galerie-hustota
 #| echo: false
-#| message: false
-#| warning: false
-ggplot2::ggplot(
-  data = data_delka_zobaku,
-  mapping = ggplot2::aes(x = delka_zobaku)
-) +
+#| fig-cap: "Vyhlazený odhad hustoty spojité proměnné."
+#| fig-height: 3.4
+
+ggplot2::ggplot(data_spanek, ggplot2::aes(x = spanek_h)) +
   ggplot2::geom_density(
-    fill = col_data,
-    alpha = 0.4,
-    color = col_data
+    fill = col_fill,
+    color = col_data,
+    linewidth = 1,
+    alpha = 0.65
   ) +
   ggplot2::labs(
-    x = "Délka zobáku (mm)",
-    y = "Hustota",
-    title = "Graf hustoty — vyhlazená distribuce"
+    x = "Celková doba spánku [h/den]",
+    y = "Hustota"
+  )
+```
+
+#### Krabicový graf
+
+Zhušťuje data do
+`r render_glossary_term("median", display = "mediánu")`,
+`r render_glossary_term("kvantil", display = "kvartilů")`, vousů a
+případných
+`r render_glossary_term("odlehla-pozorovani", display = "odlehlých pozorování")`.
+
+```{r}
+#| label: spojita-galerie-boxplot
+#| echo: false
+#| fig-cap: "Krabicový graf stejné spojité proměnné."
+#| fig-height: 2.6
+
+ggplot2::ggplot(data_spanek, ggplot2::aes(x = spanek_h, y = "")) +
+  ggplot2::geom_boxplot(
+    fill = col_fill,
+    color = col_data,
+    width = 0.45,
+    outlier.color = col_mean
+  ) +
+  ggplot2::labs(
+    x = "Celková doba spánku [h/den]",
+    y = NULL
   )
 ```
 
 :::
 
-### Kategorická — nominální
+### Numerická diskrétní proměnná
 
-Nominální proměnné mají kategorie, **které nelze seřadit** — žádná není „větší" ani „lepší" než jiná.
+**Numerická diskrétní proměnná** (*discrete numerical variable*, také *count
+data*) vzniká nejčastěji počítáním. Možné hodnoty jsou oddělené: mezi 4 a 5
+mláďaty není 4,6 mláděte.
 
-**Biologické příklady:**
+Příklady:
 
-- Druh tučňáka (Adelie, Chinstrap, Gentoo)
-- Druh opylovače (včela, čmelák, motýl)
-- Typ stanoviště (les, louka, mokřad)
-- Krevní skupina (A, B, AB, 0)
+- počet mláďat,
+- počet druhů na lokalitě,
+- počet semen,
+- počet návštěv květu,
+- počet přečtených sekvencí.
+
+V našem datasetu můžeme změnit pozorovací jednotku a spočítat, kolik druhů
+zastupuje každý taxonomický řád:
+
+**Jak ji uvidíme v R?**
 
 ```{r}
-#| label: nominalni-priklad
-#| echo: true
+#| label: diskretni-priklad-kod
 #| eval: true
-druh_ukazka <-
-  c("Adelie", "Chinstrap", "Adelie", "Gentoo")
 
-class(druh_ukazka)
+# Každá hodnota je počet druhů v jednom taxonomickém řádu.
+vec_pocet_druhu <-
+  as.integer(
+    table(ggplot2::msleep[["order"]])
+  )
+
+head(vec_pocet_druhu)
+class(vec_pocet_druhu)
+typeof(vec_pocet_druhu)
+str(vec_pocet_druhu)
 ```
 
-Každá kategorie dostane vlastní barvu — vizuální kód, který odpovídá realitě:
+R vrátí třídu i způsob uložení `integer`, protože jsme vytvořili vektor celých počtů. Ani `integer` ale automaticky neznamená diskrétní proměnnou: například zaokrouhlená teplota může být také zapsána celým číslem. Rozhodující je, že zde druhy skutečně počítáme.
+
+```{r}
+#| label: diskretni-priprava
+#| echo: false
+
+data_rady <- data_savci |>
+  dplyr::count(rad, name = "pocet_druhu") |>
+  dplyr::arrange(dplyr::desc(pocet_druhu))
+```
+
+Takovou `r render_glossary_term("cetnost", display = "četnost")` můžeme
+zobrazit jako body nebo
+`r render_glossary_term("sloupcovy-graf", display = "sloupcový graf")`.
 
 ::: {.panel-tabset}
 
-## Sloupcový graf (počty)
+#### Bodový graf četností
 
 ```{r}
-#| label: nominalni-barplot
+#| label: diskretni-graf-body
 #| echo: false
-#| message: false
-#| warning: false
+#| fig-cap: "Počet druhů savců zastoupených v jednotlivých taxonomických řádech."
+
 ggplot2::ggplot(
-  data = data_druh_tucnaku,
-  mapping = ggplot2::aes(
-    x = druh_tucnaku,
-    fill = druh_tucnaku
-  )
+  data_rady,
+  ggplot2::aes(x = reorder(rad, pocet_druhu), y = pocet_druhu)
 ) +
-  ggplot2::geom_bar(color = "#2E2E2E") +
-  ggplot2::scale_fill_manual(values = barvy_druhu) +
-  ggplot2::labs(
-    x = "Druh tučňáka",
-    y = "Počet průzkumů",
-    title = "Nominální proměnná — sloupcový graf"
+  ggplot2::geom_segment(
+    ggplot2::aes(xend = rad, y = 0, yend = pocet_druhu),
+    color = col_fill,
+    linewidth = 1.2
   ) +
-  ggplot2::theme(legend.position = "none")
+  ggplot2::geom_point(size = 3, color = col_data) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "Taxonomický řád",
+    y = "Počet druhů"
+  )
 ```
 
-## Sloupcový graf (proporce)
+#### Sloupcový graf
 
 ```{r}
-#| label: nominalni-proporce
+#| label: diskretni-graf-sloupce
 #| echo: false
-#| message: false
-#| warning: false
+#| fig-cap: "Sloupcový graf týchž počtů."
+
 ggplot2::ggplot(
-  data = data_druh_tucnaku,
-  mapping = ggplot2::aes(
-    x = "",
-    fill = druh_tucnaku
-  )
+  data_rady,
+  ggplot2::aes(x = reorder(rad, pocet_druhu), y = pocet_druhu)
 ) +
-  ggplot2::geom_bar(
-    position = "fill",
-    color = "#2E2E2E"
-  ) +
-  ggplot2::scale_fill_manual(
-    values = barvy_druhu,
-    name = "Druh tučňáka"
-  ) +
+  ggplot2::geom_col(fill = col_fill, color = col_data) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "Taxonomický řád",
+    y = "Počet druhů"
+  )
+```
+
+:::
+
+U diskrétních dat můžeme použít také histogram, ale jeho koše musí respektovat
+jednotlivé možné hodnoty.
+`r render_glossary_term("prumer", display = "Průměr")` může být smysluplný i
+tehdy, když sám není
+možným pozorováním: průměrný počet mláďat může být 2,4, přestože žádné zvíře
+nemělo „0,4 mláděte“.
+
+### Kategoriální nominální proměnná
+
+**Kategoriální nominální proměnná** (*nominal categorical variable*; *nominal
+data*) rozděluje pozorování do kategorií, které nemají přirozené pořadí.
+
+Příklady:
+
+- druh nebo taxonomický řád,
+- typ potravy,
+- barva květu,
+- krevní skupina,
+- studijní skupina.
+
+Pro nominální proměnnou obvykle zjišťujeme
+**`r render_glossary_term("cetnost", display = "četnosti")`**
+(*counts/frequencies*)
+nebo podíly kategorií. Průměr kódů kategorií nedává biologický smysl.
+
+**Jak ji uvidíme v R?**
+
+```{r}
+#| label: nominalni-priklad-kod
+#| eval: true
+
+# Chybějící údaj necháme jako viditelnou kategorii.
+vec_typ_potravy <- ggplot2::msleep[["vore"]]
+vec_typ_potravy[is.na(vec_typ_potravy)] <- "neuvedeno"
+vec_typ_potravy <- factor(vec_typ_potravy)
+
+class(vec_typ_potravy)
+typeof(vec_typ_potravy)
+str(vec_typ_potravy)
+table(vec_typ_potravy)
+```
+
+R zobrazuje nominální kategorie jako `factor` s několika úrovněmi (*levels*). `typeof()` přesto vrátí `integer`, protože faktor používá celá čísla jen jako vnitřní kódy pro textové štítky. Tyto kódy nejsou měření a nemá smysl je průměrovat.
+
+```{r}
+#| label: nominalni-priprava
+#| echo: false
+
+data_potrava <- data_savci |>
+  dplyr::transmute(typ_potravy = potrava) |>
+  dplyr::count(typ_potravy, name = "pocet_druhu") |>
+  dplyr::mutate(
+    podil = pocet_druhu / sum(pocet_druhu),
+    typ_potravy = reorder(typ_potravy, pocet_druhu)
+  )
+```
+
+::: {.panel-tabset}
+
+#### Četnosti
+
+```{r}
+#| label: nominalni-graf-cetnosti
+#| echo: false
+#| fig-cap: "Počet druhů v jednotlivých kategoriích potravy."
+
+ggplot2::ggplot(
+  data_potrava,
+  ggplot2::aes(x = typ_potravy, y = pocet_druhu)
+) +
+  ggplot2::geom_col(fill = col_fill, color = col_data) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "Typ potravy",
+    y = "Počet druhů"
+  )
+```
+
+#### Podíly
+
+```{r}
+#| label: nominalni-graf-podily
+#| echo: false
+#| fig-cap: "Podíl druhů v jednotlivých kategoriích potravy."
+
+ggplot2::ggplot(
+  data_potrava,
+  ggplot2::aes(x = typ_potravy, y = podil)
+) +
+  ggplot2::geom_col(fill = col_fill, color = col_data) +
+  ggplot2::coord_flip() +
   ggplot2::scale_y_continuous(
-    labels = scales::percent
+    labels = scales::label_percent(decimal.mark = ",")
   ) +
   ggplot2::labs(
-    x = "",
-    y = "Podíl",
-    title = "Nominální proměnná — proporce"
+    x = "Typ potravy",
+    y = "Podíl druhů"
   )
 ```
 
 :::
 
-### Kategorická — ordinální
+::: {.callout-warning title="Číselný kód není měření"}
+Když lokalitám přidělíme kódy 1, 2 a 3, nevznikne tím numerická proměnná.
+Výpočet průměru těchto kódů by závisel jen na našem libovolném číslování.
+:::
 
-Ordinální proměnné mají kategorie, **které jdou seřadit** — ale vzdálenosti mezi stupni nejsou nutně stejné.
+### Kategoriální ordinální proměnná
 
-**Biologické příklady:**
+**Kategoriální ordinální proměnná** (*ordinal categorical variable*; *ordinal
+data*) má kategorie s přirozeným pořadím, ale vzdálenosti mezi nimi nemusí být
+stejné.
 
-- Hmotnostní kategorie tučňáka (malý, střední, velký)
-- Školní klasifikace (1, 2, 3, 4, 5)
-- Souhlas s výrokem (zcela souhlasím → zcela nesouhlasím)
-- Pokryvnost vegetace (0–5 %, 5–25 %, 25–50 %, ...)
+Příklady:
+
+- malý – střední – velký,
+- mírný – střední – silný symptom,
+- vývojové stadium,
+- odpověď na škále „nesouhlasím“ až „souhlasím“,
+- stupeň poškození listu.
+
+Pro výuku můžeme hmotnost savců rozdělit do tří stejně početných skupin. Jde o
+**uměle vytvořenou kategorii**, nikoli o nově naměřenou biologickou vlastnost:
+
+**Jak ji uvidíme v R?**
+
+```{=typst}
+#pagebreak()
+```
 
 ```{r}
-#| label: ordinalni-priklad
-#| echo: true
+#| label: ordinalni-priklad-kod
 #| eval: true
-# Klíčové: levels musí být seřazené!
-hmotnost_ukazka <-
-  factor(
-    x = c("střední", "velký", "malý", "velký"),
-    levels = c("malý", "střední", "velký"),
-    ordered = TRUE
-  )
 
-hmotnost_ukazka
+# Hranice jsou tercily hmotnosti v tomto konkrétním souboru.
+vec_hmotnost <- ggplot2::msleep[["bodywt"]]
+vec_hmotnost <- vec_hmotnost[!is.na(vec_hmotnost)]
+prahy <- quantile(vec_hmotnost, probs = c(0, 1 / 3, 2 / 3, 1))
+
+vec_velikost <- cut(
+  vec_hmotnost,
+  breaks = prahy,
+  labels = c("lehký", "střední", "těžký"),
+  include.lowest = TRUE,
+  ordered_result = TRUE
+)
+
+class(vec_velikost)
+typeof(vec_velikost)
+str(vec_velikost)
+table(vec_velikost)
 ```
 
-R hlásí `Levels: malý < střední < velký` — znaménko `<` ukazuje pořadí.
-
-::: {.panel-tabset}
-
-## Vhodná vizualizace
+R tento objekt označí třídami `ordered` a `factor`. Vnitřní uložení je opět `integer`, ale pořadí úrovní „lehký“ < „střední“ < „těžký“ je součástí objektu. Právě tím se ordinální faktor liší od nominálního faktoru.
 
 ```{r}
-#| label: ordinalni-barplot
+#| label: ordinalni-priprava
 #| echo: false
-#| message: false
-#| warning: false
+
+prahy_hmotnosti <- quantile(
+  data_savci$hmotnost_kg,
+  probs = c(0, 1 / 3, 2 / 3, 1),
+  na.rm = TRUE
+)
+
+data_velikost <- data_savci |>
+  dplyr::filter(!is.na(hmotnost_kg)) |>
+  dplyr::mutate(
+    velikost = cut(
+      hmotnost_kg,
+      breaks = prahy_hmotnosti,
+      labels = c("lehký", "střední", "těžký"),
+      include.lowest = TRUE,
+      ordered_result = TRUE
+    )
+  ) |>
+  dplyr::count(velikost, name = "pocet_druhu")
+```
+
+```{r}
+#| label: ordinalni-graf
+#| echo: false
+#| fig-cap: "U ordinální proměnné zachováváme přirozené pořadí kategorií."
+
 ggplot2::ggplot(
-  data = data_kategorie_hmotnosti,
-  mapping = ggplot2::aes(x = kategorie_hmotnosti)
+  data_velikost,
+  ggplot2::aes(x = velikost, y = pocet_druhu)
 ) +
-  ggplot2::geom_bar(fill = col_data) +
+  ggplot2::geom_col(fill = col_fill, color = col_data) +
   ggplot2::labs(
-    x = "Kategorie hmotnosti tučňáka",
-    y = "Počet tučňáků",
-    title = "Ordinální proměnná — seřazená osa"
+    x = "Didaktická hmotnostní kategorie",
+    y = "Počet druhů"
   )
 ```
 
+::: {.callout-warning title="Kategorie vytvořená z čísel závisí na pravidle"}
+Jiná hranice by některý druh přesunula do jiné kategorie a odstranila informaci
+o jeho přesné hmotnosti. Při práci s umělými kategoriemi proto vždy uvádějte,
+jak vznikly.
 :::
 
-::: {.callout-important}
-## Ordinální data jako čísla — opatrně!
+### Procvičení: určete typ proměnné
 
-Ordinální data jsou někdy zakódována jako čísla (1 = malý, 2 = střední, 3 = velký). Může být lákavé spočítat `r render_glossary_term("prumer", display = "průměr")` a říci „průměrná kategorie = 1,7". Ale to předpokládá, že rozdíl mezi „malým" a „středním" tučňákem je stejně velký jako mezi „středním" a „velkým" — a to nevíme. Pro ordinální data preferujte **`r render_glossary_term("median", display = "medián")` a `r render_glossary_term("iqr", display = "IQR")`**, nebo speciální ordinální modely.
+Určete typ každé proměnné a navrhněte jeden vhodný graf:
+
+1. pH vody v rybníce,
+2. počet žab odchycených za noc,
+3. druh stanoviště,
+4. stupeň napadení rostliny: žádný – mírný – silný,
+5. identifikační číslo jedince.
+
+::: {.callout-note collapse="true" title="Řešení"}
+1. pH: numerická spojitá; například bodový graf nebo histogram.
+2. Počet žab: numerická diskrétní; například bodový nebo sloupcový graf.
+3. Druh stanoviště: kategoriální nominální; sloupcový graf četností.
+4. Stupeň napadení: kategoriální ordinální; uspořádaný sloupcový graf.
+5. Identifikační číslo: identifikátor, nikoli měřená numerická proměnná; graf
+   jeho čísel obvykle nemá smysl.
 :::
 
-### Přehled typů proměnných {#sec-prehled-typy}
+### Přehled: od typu proměnné k vhodnému popisu
 
-| Typ                   | Biologické příklady          | Střed         | Variabilita | Vhodný graf              |
-|-----------------------|------------------------------|:-------------:|:-----------:|--------------------------|
-| Kvant. diskrétní      | počet tučňáků, počet druhů   | průměr/medián | SD / IQR    | histogram, beeswarm      |
-| Kvant. spojité        | délka, teplota, hmotnost     | průměr/medián | SD / IQR    | histogram, boxplot, hustota |
-| Kategorická nominální | barva, druh, typ stanoviště  | modus         | četnosti    | sloupcový graf           |
-| Kategorická ordinální | hmotnostní kategorie, škála   | medián        | IQR         | sloupcový graf (seřazený)|
+| Typ proměnné | Příklad | Vhodný číselný popis | Vhodné grafy | Anglický termín |
+|---|---|---|---|---|
+| numerická spojitá | doba spánku | medián + `r render_glossary_term("iqr", display = "IQR")` nebo průměr + `r render_glossary_term("smerodatna-odchylka", display = "SD")` | bodový graf, histogram, hustota, boxplot | *continuous numerical* |
+| numerická diskrétní | počet mláďat | četnosti; někdy medián/průměr | bodový, sloupcový nebo vhodně nastavený histogram | *discrete numerical, count data* |
+| kategoriální nominální | typ potravy | četnosti a podíly | sloupcový graf | *nominal categorical* |
+| kategoriální ordinální | stupeň poškození | četnosti; medián pořadí jen opatrně | uspořádaný sloupcový graf | *ordinal categorical* |
 
-::: {.callout-tip}
-## Proč typ proměnné tak záleží?
-
-Typ proměnné určuje:
-
-1. **Jaký graf** zvolíme — histogram pro čísla, sloupcový pro kategorie.
-2. **Jakou statistiku** počítáme — `r render_glossary_term("prumer", display = "průměr")` pro symetrická čísla, `r render_glossary_term("median", display = "medián")` nebo modus pro ostatní.
-3. **Jaký statistický model** použijeme — `r render_glossary_term("linearni-model", display = "lineární model")` pro číselné `r render_glossary_term("odezva", display = "odezvy")`, `r render_glossary_term("logisticka-regrese", display = "logistická regrese")` pro dichotomické kategorie, ordinální model pro seřazené kategorie.
-
-Záměna typů proměnných je jedním z nejčastějších zdrojů chyb v analýze dat. Vždy si nejdřív ujasněte, co vlastně měříte.
+::: {.callout-tip title="Pořadí rozhodování"}
+1. Co představuje jeden řádek?
+2. Co proměnná znamená a jak vznikla?
+3. Jakého je typu?
+4. Který graf ukáže jednotlivé hodnoty nebo rozdělení?
+5. Který číselný souhrn odpovídá tvaru dat a biologické otázce?
 :::
 
----
+```{=typst}
+#pagebreak()
+```
 
-*Materiály jsou průběžně aktualizovány. Datum poslední úpravy viz záhlaví.*
+## Shrnutí
 
----
+V této lekci jsme prošli celou cestu od měření k popisu dat:
 
-## Slovníček pojmů {.unnumbered}
+1. jedno `r render_glossary_term("pozorovani", display = "pozorování")` jsme
+   zapsali do řádku tabulky;
+2. jednu `r render_glossary_term("promenna", display = "proměnnou")` jsme
+   vybrali jako vektor v R a zkontrolovali pomocí
+   `length()` a `head()`;
+3. před výpočtem statistik jsme se podívali na jednotlivé hodnoty a
+   `r render_glossary_term("rozdeleni", display = "rozdělení")`;
+4. `r render_glossary_term("prumer", display = "průměr")`,
+   `r render_glossary_term("median", display = "medián")`,
+   `r render_glossary_term("kvantil", display = "kvartily")`,
+   `r render_glossary_term("iqr", display = "IQR")`, minimum, maximum a
+   `r render_glossary_term("smerodatna-odchylka", display = "SD")` jsme
+   propojili s grafem;
+5. krok za krokem jsme z těchto myšlenek postavili
+   `r render_glossary_term("boxplot", display = "krabicový graf")`;
+6. nakonec jsme rozlišili
+   `r render_glossary_term("spojita-promenna", display = "spojité")`,
+   `r render_glossary_term("diskretni-promenna", display = "diskrétní")`,
+   `r render_glossary_term("nominalni-promenna", display = "nominální")` a
+   `r render_glossary_term("ordinalni-promenna", display = "ordinální")`
+   proměnné.
 
-Pojmy použité v těchto materiálech a jejich definice:
+Neexistuje jedno „nejlepší“ číslo ani jeden „nejlepší“ graf pro všechna data.
+Volba závisí na typu proměnné, tvaru dat,
+`r render_glossary_term("jednotka-pozorovani", display = "pozorovací jednotce")`
+a otázce, kterou chceme zodpovědět.
+
+### Závěrečná otázka
+
+Představte si nový dataset o rostlinách. Každý řádek je jedna rostlina a sloupce
+obsahují druh, výšku, počet květů a stupeň poškození listů.
+
+> Kterou proměnnou byste prozkoumali jako první, jakým grafem a jakou dvojicí
+> statistik? Dokážete svou volbu zdůvodnit?
+
+## Most k další lekci
+
+Zatím jsme zkoumali vždy jednu
+`r render_glossary_term("promenna", display = "proměnnou")`. V další lekci se
+zaměříme na otázku,
+jak data získat, načíst a uspořádat tak, aby byla připravena pro podobné grafy a
+výpočty. Později začneme porovnávat skupiny a hledat vztahy mezi proměnnými.
+
+## Slovníček
 
 ```{r}
-#| label: slovnicek
+#| label: glossary-table
 #| echo: false
+#| results: asis
 if (knitr::is_html_output()) {
+  cat(
+    "<p>V HTML verzi se definice pojmů zobrazují také po najetí kurzorem ",
+    "na podtržený pojem.</p>",
+    sep = ""
+  )
   glossary::glossary_table()
+} else {
+  cat(
+    "Interaktivní definice pojmů jsou dostupné v HTML verzi materiálů a ",
+    "v online slovníčku: ",
+    "https://cuni-natur-biostatistics.github.io/slovnik/.\n",
+    sep = ""
+  )
 }
 ```
-

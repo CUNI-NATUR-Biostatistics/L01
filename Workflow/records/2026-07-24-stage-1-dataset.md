@@ -10,7 +10,7 @@
 - Branch: `lesson/l01-scope-data`
 - Base: `main` at `8927f7b`
 - Planning PR: draft #4
-- Status: `ggplot2::msleep` selected and locked; awaiting planning PR merge
+- Status: `ggplot2::msleep` selected and locked; planning PR #4 merged
 
 ## Dataset requirements
 
@@ -191,7 +191,7 @@ Rejected alternatives after the human decision:
 - [x] Rejection reasons and transferable patterns were recorded.
 - [x] Human reviewer approved `ggplot2::msleep` on 2026-07-26.
 - [x] Dataset locked with the approved derived-variable plan.
-- [ ] Planning PR merged.
+- [x] Planning PR merged.
 
-No Stage 2–3 source authoring may begin until the final three boxes are
-resolved.
+The Stage 0–1 gate is complete. Stage 2–3 source authoring began from updated
+`main` after PR #4 merged.

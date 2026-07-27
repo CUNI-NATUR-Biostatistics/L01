@@ -70,6 +70,17 @@
 )
 
 // ---------------------------------------------------------------------------
+// Tables — applies to Markdown and generated data tables
+// ---------------------------------------------------------------------------
+#show table: set table(
+  inset: 6pt,
+  stroke: 0.6pt + rgb("#8A8A8A"),
+  fill: (x, y) => if y == 0 { rgb("#5D2890") } else if calc.even(y) { rgb("#F0EDE8") } else { none }
+)
+
+#show table.cell.where(y: 0): set text(fill: rgb("#F4F1EC"), weight: 700)
+
+// ---------------------------------------------------------------------------
 // Callout blocks (override Quarto defaults with brand colours)
 // Quarto passes these background_color values per type:
 //   note     #dae6fb   tip      #ccf1e3
@@ -84,9 +95,11 @@
   body_background_color: white
 ) = {
   let accent = if background_color == rgb("#ccf1e3") {
-    rgb("#86579E")  // tip → amethyst
-  } else if (background_color == rgb("#fcefdc") or background_color == rgb("#ffe5d0") or background_color == rgb("#f7dddc")) {
-    rgb("#F3A712")  // warning / caution / important → orange
+    rgb("#8A8A8A")  // tip → grey_olive
+  } else if (background_color == rgb("#fcefdc") or background_color == rgb("#ffe5d0")) {
+    rgb("#F3A712")  // warning / caution → orange
+  } else if background_color == rgb("#f7dddc") {
+    rgb("#5D2890")  // important → indigo_velvet
   } else {
     rgb("#5D2890")  // note + fallback → indigo_velvet
   }
