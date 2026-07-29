@@ -42,42 +42,50 @@ $contrastColorLight: $white;
 // --- parchment ---
 .bg-parchment { background-color: #F4F1EC; }
 .text-color-parchment { color: #F4F1EC !important; }
-.text-highlight-parchment { background-color: #F4F1EC; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+.text-hgl-parchment { background-color: #F4F1EC; color: #2E2E2E; padding: 2px 6px; border-radius: 5px; }
+.text-bg-parchment { background-color: #F4F1EC; padding: 2px 6px; border-radius: 5px; }
 
 // --- graphite ---
 .bg-graphite { background-color: #2E2E2E; }
 .text-color-graphite { color: #2E2E2E !important; }
-.text-highlight-graphite { background-color: #2E2E2E; color: #FFFFFF; padding: 2px 4px; border-radius: 3px; }
+.text-hgl-graphite { background-color: #2E2E2E; color: #FFFFFF; padding: 2px 6px; border-radius: 5px; }
+.text-bg-graphite { background-color: #2E2E2E; padding: 2px 6px; border-radius: 5px; }
 
 // --- grey_olive ---
 .bg-grey_olive { background-color: #8A8A8A; }
 .text-color-grey_olive { color: #8A8A8A !important; }
-.text-highlight-grey_olive { background-color: #8A8A8A; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+.text-hgl-grey_olive { background-color: #8A8A8A; color: #2E2E2E; padding: 2px 6px; border-radius: 5px; }
+.text-bg-grey_olive { background-color: #8A8A8A; padding: 2px 6px; border-radius: 5px; }
 
 // --- indigo_velvet ---
 .bg-indigo_velvet { background-color: #5D2890; }
 .text-color-indigo_velvet { color: #5D2890 !important; }
-.text-highlight-indigo_velvet { background-color: #5D2890; color: #FFFFFF; padding: 2px 4px; border-radius: 3px; }
+.text-hgl-indigo_velvet { background-color: #5D2890; color: #FFFFFF; padding: 2px 6px; border-radius: 5px; }
+.text-bg-indigo_velvet { background-color: #5D2890; padding: 2px 6px; border-radius: 5px; }
 
 // --- amethyst ---
 .bg-amethyst { background-color: #86579E; }
 .text-color-amethyst { color: #86579E !important; }
-.text-highlight-amethyst { background-color: #86579E; color: #FFFFFF; padding: 2px 4px; border-radius: 3px; }
+.text-hgl-amethyst { background-color: #86579E; color: #FFFFFF; padding: 2px 6px; border-radius: 5px; }
+.text-bg-amethyst { background-color: #86579E; padding: 2px 6px; border-radius: 5px; }
 
 // --- orange ---
 .bg-orange { background-color: #F3A712; }
 .text-color-orange { color: #F3A712 !important; }
-.text-highlight-orange { background-color: #F3A712; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+.text-hgl-orange { background-color: #F3A712; color: #2E2E2E; padding: 2px 6px; border-radius: 5px; }
+.text-bg-orange { background-color: #F3A712; padding: 2px 6px; border-radius: 5px; }
 
 // --- white ---
 .bg-white { background-color: #FFFFFF; }
 .text-color-white { color: #FFFFFF !important; }
-.text-highlight-white { background-color: #FFFFFF; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+.text-hgl-white { background-color: #FFFFFF; color: #2E2E2E; padding: 2px 6px; border-radius: 5px; }
+.text-bg-white { background-color: #FFFFFF; padding: 2px 6px; border-radius: 5px; }
 
 // --- light_gray ---
 .bg-light_gray { background-color: #F0EDE8; }
 .text-color-light_gray { color: #F0EDE8 !important; }
-.text-highlight-light_gray { background-color: #F0EDE8; color: #2E2E2E; padding: 2px 4px; border-radius: 3px; }
+.text-hgl-light_gray { background-color: #F0EDE8; color: #2E2E2E; padding: 2px 6px; border-radius: 5px; }
+.text-bg-light_gray { background-color: #F0EDE8; padding: 2px 6px; border-radius: 5px; }
 
 // Semantic shorthands
 .text-color-body    { color: $bodyColor    !important; }

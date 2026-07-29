@@ -17,7 +17,8 @@
   "code": {
     "codeBorderRadius": "6px",
     "codeLineHeight": "1.4",
-    "inlineCodePadding": "0.1rem 0.3rem"
+    "inlineCodePadding": "0.1rem 0.3rem",
+    "codeBorder": "1.5px solid rgba(0, 0, 0, 0.09)"
   },
   "blockquote": {
     "blockquotePadding": "12px 20px",
@@ -27,9 +28,12 @@
   },
   "table": {
     "tableCellPadding": "0.6rem",
-    "tableBorderOpacity": "0.25"
+    "tableBorderOpacity": "0.25",
+    "typstTableCellPadding": "6pt",
+    "typstTableStrokeWidth": "0.6pt"
   },
   "shadows": {
-    "blockquoteShadow": "0 2px 8px rgba(0, 0, 0, 0.08)"
+    "blockquoteShadow": "0 2px 8px rgba(0, 0, 0, 0.08)",
+    "componentShadow": "0 8px 20px rgba(0, 0, 0, 0.07)"
   }
 }

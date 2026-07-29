@@ -1,16 +1,18 @@
 ---
-format: 
+format:
   revealjs:
     slide-number: true
-    theme: [default, ../theme/presentation_theme.scss]
+    theme: [default, ../theme/presentation_theme.scss, ../theme/presentation_components.scss]
     embed-resources: true
     preview-links: false
     output-file: "presentation"
     output-ext: "html"
     highlight-style: github-light
     include-in-header: "../theme/fonts-include.html"
+filters:
+  - ../theme/rn-shorthand.lua
+  - ../_extensions/EmilHvitfeldt/roughnotation/rough.lua
 ---
-
 
 ```{r}
 #| label: setup
@@ -23,30 +25,24 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 
-if (!require("here")) install.packages("here")
-
 library(here)
 
 here::i_am("Presentation/presentation.qmd")
 
-if (!require("tidyverse")) install.packages("tidyverse")
-if (!require("ggbeeswarm")) install.packages("ggbeeswarm")
-if (!require("ggview")) install.packages("ggview")
-if (!require("magick")) install.packages("magick")
-if (!require("cowplot")) install.packages("cowplot")
-if (!require("waffle")) remotes::install_github("hrbrmstr/waffle")
-if (!require("palmerpenguins")) install.packages("palmerpenguins")
+path_materials <- "Presentation/Materials"
 
-library(tidyverse)
-library(ggbeeswarm)
-library(ggview)
-library(magick)
-library(cowplot)
-library(waffle)
-library(palmerpenguins)
+dir.create(
+  here::here(path_materials),
+  recursive = TRUE,
+  showWarnings = FALSE
+)
 
-path_materials <-
-  "Presentation/Materials"
+source(
+  here::here(
+    "R",
+    "set_r_theme.R"
+  )
+)
 
 include_local_figure <- function(data_source) {
   knitr::include_graphics(
@@ -60,34 +56,30 @@ include_local_figure <- function(data_source) {
 ```
 
 ```{r}
-#| label: dynamic link generation
+#| label: dynamic-link-generation
 #| include: false
 project_name <-
   basename(here::here())
 
-# Create a cleaner display name for the lecture
 display_name <-
-  paste("Biostatistika", "-", project_name)
+  "Biostatistika"
 
-# Create dynamic URLs
 github_url <-
-  paste0(
-    "https://github.com/CUNI-NATUR-Biostatistics/",
-    project_name
+  stringr::str_glue(
+    "https://github.com/CUNI-NATUR-Biostatistics/{project_name}"
   )
 
 slides_url <-
-  paste0(
-    "https://CUNI-NATUR-Biostatistics.github.io/",
-    project_name, "/"
+  stringr::str_glue(
+    "https://CUNI-NATUR-Biostatistics.github.io/{project_name}/"
   )
 ```
 
-## Vizualizace dat a deskriptivní statistika
+## Úvod do biostatistiky a kolik asi váží „typický“ savec?
 
 <br>
 
-::: {.text-color-white .text-font-heading .text-size-heading1 .text-bold}
+::: {.text-font-heading .text-size-heading1 .text-bold}
 `r display_name`
 :::
 
@@ -97,532 +89,1098 @@ slides_url <-
 
 [Moodle](https://dl2.cuni.cz/course/view.php?id=106)
 
-## Výsledky učení
+## Ondřej Mottl
 
-Po absolvování této přednášky budete schopni:
+:::: {.columns .align-center}
 
-- Rozlišit typy proměnných
-- Zvolit odpovídající popis dat (deskriptivní statistiky)
-- Zvolit vhodnou vizualizaci dat (grafy)
-- Popsat variabilitu dat (rozptyl, směrodatná odchylka)
-- Rozlišit typy proměnných a vybrat odpovídající graf
+::: {.column width="38%"}
 
-## Naše biologická otázka
+![](Materials/instructor_ondrej_mottl.png){fig-alt="Portrét vyučujícího Ondřeje Mottla v terénu." width="92%"}
 
-Chceme vědět: **Jak velké jsou kolonie tučňáků na různých ostrovech Antarktidy?**
+:::
 
-Jsou kolonie přibližně stejně velké, nebo se výrazně liší?
+::: {.column width="60%" .text-center}
 
-# Naše data
+<br>
 
-## Tučňáci z Palmer Station
+🌿 [Vegetační ekolog]{.text-hgl-indigo_velvet} na katedře botaniky
 
-```{r}
-include_local_figure("lter_penguins.png")
-```
+🧑‍💻 vedoucí [Laboratoře kvantitativní ekologie]{.text-hgl-amethyst}
+
+♻️ zastánce [otevřené a reprodukovatelné vědy]{.text-hgl-orange}
+
+<br>
+
+::: {.takeaway-strip}
+Jak z velkého množství biologických dat "vyždímat" nové informace
+:::
+
+:::
+
+::::
 
 ::: {.footer}
-Artwork by [Allison Horst](https://allisonhorst.github.io/palmerpenguins/articles/art.html) 
+Foto: Vladimír Šigut, Univerzita Karlova
 :::
 
-## Palmer Penguins
-
-Vědci z projektu Palmer Penguins každoročně prováděli průzkumy tučňáků na třech ostrovech u Antarktidy.
-
-::: {.fragment}
-
-U každého průzkumu si zapsali **počet tučňáků**.
-
-:::
-
-
-
-## Palmer Penguins
-
-Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
-
-::: {.fragment}
-| Průzkum | Počet tučňáků |
-| --- | --- |
-| 1 | 10 |
-
-:::
-
-## Palmer Penguins
-
-Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
-
-| Průzkum | Počet tučňáků |
-| --- | --- |
-| 1 | 10 |
-| 2 | 18 |
-
-## Palmer Penguins
-
-Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
-
-| Průzkum | Počet tučňáků |
-| --- | --- |
-| 1 | 10 |
-| 2 | 18 |
-| 3 | 16 |
-
-## Palmer Penguins
-
-Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
-
-| Průzkum | Počet tučňáků |
-| --- | --- |
-| 1 | 10 |
-| 2 | 18 |
-| 3 | 16 |
-| 4 | 20 |
-
-## Palmer Penguins
-
-Zapisujeme si počet tučňáků z průzkumu. Můžeme mít 10, 16, 18, 20, ... tučňáků.
-
-| Průzkum | Počet tučňáků |
-| --- | --- |
-| 1 | 10 |
-| 2 | 18 |
-| 3 | 16 |
-| 4 | 20 |
-| ... | ... |
-
-## Otázka k zamyšlení
-
-Víme, že máme 15 průzkumů s různými počty tučňáků. Jak bychom tato data uložili v R?
-
-- A) 15 samostatných proměnných (`pruzkum_1 <- 10`, `pruzkum_2 <- 18`, …)
-- B) Jeden vektor: `c(10, 18, 16, …)`
-- C) Tabulku se dvěma sloupci
-
-## Palmer Penguins
-
-:::: {.columns}
-
-::: {.column width="50%"}
+## Co mě zajímá? {.text-center}
 
 <br>
 
-```{r}
-#| echo: true
-#| eval: false
-pocet_tucnaku <-
-  c(
-    10L # průzkum 1
-  )
-```
+:::: {.columns .align-top .text-center}
+
+::: {.column .fragment .text-center width="31%"}
+
+#### Biodiverzita
+
+napříč měřítky
+
+![](Materials/research_biodiversity_scales_transparent.png){fig-alt="Ilustrace biodiverzity od jednotlivého organismu přes vegetační plochu po krajinu." width="88%"}
+
 :::
 
-::: {.column width="50%"}
-| Průzkum | Počet tučňáků |
-| --- | --- |
-| 1 | 10 |
+::: {.column .fragment .text-center width="31%"}
+
+#### Velká data
+
+nové metody
+
+![](Materials/research_big_data_methods_transparent.png){fig-alt="Ilustrace ekologických pozorování, která vstupují do statistické analýzy." width="88%"}
+
+:::
+
+::: {.column .fragment .text-center width="31%"}
+
+#### Otevřená věda
+
+reprodukovatelnost
+
+![](Materials/research_open_science_transparent.png){fig-alt="Ilustrace otevřeného a opakovatelného výzkumného postupu od terénu přes analýzu ke sdílenému výsledku." width="88%"}
 
 :::
 
 ::::
 
+::: {.footer}
+Ilustrace vytvořené pomocí OpenAI, 2026
+:::
 
+## Každý týden propojí tři způsoby práce
 
-## Palmer Penguins
+::::: {.slide-margin-top-15}
 
-:::: {.columns}
-
-::: {.column width="50%"}
+::: {.takeaway-strip}
+**Příprava → společné přemýšlení → vlastní práce s daty**
+:::
 
 <br>
 
-```{r}
-#| echo: true
-#| eval: false
-pocet_tucnaku <-
-  c(
-    10L, # průzkum 1
-    18L  # průzkum 2
-  )
-```
+:::: {.columns .align-top}
+
+::: {.column .fragment width="31%"}
+
+### Před výukou
+
+Krátce projdete materiály a zkusíte si položené otázky.
+
 :::
 
-::: {.column width="50%"}
-| Průzkum | Počet tučňáků |
-| --- | --- |
-| 1 | 10 |
-| 2 | 18 |
+::: {.column .fragment width="31%"}
+
+### 90 minut přednášky
+
+Budeme hlasovat, číst grafy a společně obhajovat interpretace.
+
 :::
 
-::::
+::: {.column .fragment width="31%"}
 
-## Palmer Penguins
+### 90 minut praktika
 
-:::: {.columns}
-
-::: {.column width="50%"}
-
-<br>
-
-```{r}
-#| echo: true
-#| eval: false
-pocet_tucnaku <-
-  c(
-    10L, # průzkum 1
-    18L, # průzkum 2
-    16L, # průzkum 3
-    20L, # průzkum 4
-    ... # další průzkumy
-  )
-```
-:::
-
-::: {.column width="50%"}
-| Průzkum | Počet tučňáků |
-| --- | --- |
-| 1 | 10 |
-| 2 | 18 |
-| 3 | 16 |
-| 4 | 20 |
-| ... | ... |
+V menší skupině budete analyzovat data v R s podporou vyučujících.
 
 :::
 
 ::::
 
-## Naše data
+:::::
 
-Získali jsme 15 průzkumových záznamů a zapsali počet tučňáků u každého z nich.
+## Materiály najdete na Moodle {.text-center}
+
+::::: {.slide-margin-top-15}
+
+::: {.takeaway-strip}
+[Moodle je závazný rozcestník kurzu.](https://dl2.cuni.cz/course/view.php?id=106){.text-hgl-indigo_velvet}
+:::
+
+<br>
+
+:::: {.columns .align-top}
+
+::: {.column width="31%"}
+
+### Skripta
+
+[HTML]{.text-hgl-indigo_velvet} pro interaktivní čtení<br>
+[PDF]{.text-hgl-graphite} pro tisk
+
+:::
+
+::: {.column width="31%"}
+
+### Prezentace
+
+[HTML]{.text-hgl-indigo_velvet} pro prohlížení v prohlížeči<br>
+[PDF]{.text-hgl-graphite} pro tisk
+
+:::
+
+::: {.column width="31%"}
+
+### R skripty
+
+Kód pro praktickou práci s daty v R.
+
+:::
+
+::::
+
+:::::
+
+## Výuka je dobrovolná, kompetence povinné
+
+::::: {.slide-margin-top-15}
+
+::: {.text-size-heading2 .text-bold .text-center}
+[Na přednášky a praktika chodit nemusíte.]{.text-hgl-indigo_velvet}
+:::
+
+<br>
+
+:::: {.columns .align-top .text-center}
+
+::: {.column width="31%" .fragment}
+
+### Ve výuce
+
+Získáte vysvětlení, podporu a zpětnou vazbu.
+
+:::
+
+::: {.column width="31%" .fragment}
+
+### Při samostudiu
+
+Všechny požadované znalosti najdete ve skriptech a R skriptech.
+
+:::
+
+::: {.column width="31%" .fragment}
+
+### Povinně
+
+Absolvujete praktický zápočet a závěrečnou zkoušku.
+
+:::
+
+::::
+
+<br>
+
+::: {.takeaway-strip .fragment}
+Učit se můžete prezenčně i doma — [stejné kompetence]{.text-hgl-indigo_velvet} však musí prokázat každý.
+:::
+
+:::::
+
+## Zápočet a zkouška ověřují jiné dovednosti
+
+<br>
+
+::::: {.slide-margin-top-10}
+
+:::: {.columns .align-stretch}
+
+::: {.column width="48%" .fragment}
+::: {.panel-data}
+[Praktický zápočet]{.panel-title}
+
+**Dokážete samostatně provést a vysvětlit základní analýzu v R?**
+
+- malý dataset a biologická otázka
+- částečně připravený R skript
+- kontrola dat, graf, model a biologický závěr
+:::
+:::
+
+::: {.column width="48%" .fragment}
+::: {.panel-indigo}
+[Závěrečná zkouška]{.panel-title}
+
+**Rozumíte analytickým rozhodnutím a interpretaci výsledků?**
+
+- dodaný R kód, grafy a modelové výstupy
+- interpretace, diagnostika a nejistota
+- ne psaní syntaxe zpaměti
+:::
+:::
+
+::::
+
+<br>
+
+::: {.takeaway-strip .fragment}
+[AI můžete používat při učení.]{.text-hgl-indigo_velvet}<br>
+U zápočtu a zkoušky pracujete [samostatně bez internetu a AI]{.text-hgl-orange}.
+:::
+
+::: {.footer}
+Závazný formát, bodové hranice, povolené zdroje, termíny a opravné možnosti jsou uvedeny na Moodle.
+:::
+
+:::::
+
+# Kolik váží běžný savec?
+
+##
+
+<br>
+<br>
 
 ```{r}
-#| label: udelat pracovni dataset
-#| echo: false
-#| eval: true
+#| label: pripravit-hmotnost-pro-titulky
+#| include: false
 #| message: false
 #| warning: false
-data_tucnaci_prez <-
-  palmerpenguins::penguins |>
-  tidyr::drop_na()
+vec_hmotnost_kg <-
+  ggplot2::msleep[["bodywt"]]
 
-data_poctu_tucnaku <-
-  data_tucnaci_prez |>
-  dplyr::count(species, island, year) |>
-  dplyr::rename(pocet_tucnaku = n)
+prumer_hmotnosti <-
+  mean(vec_hmotnost_kg)
 
-pocet_tucnaku <-
-  data_poctu_tucnaku[["pocet_tucnaku"]]
+median_hmotnosti <-
+  median(vec_hmotnost_kg)
+
+txt_prumer_hmotnosti <-
+  formatC(
+    prumer_hmotnosti,
+    format = "f",
+    digits = 0,
+    decimal.mark = ","
+  )
+
+txt_median_hmotnosti <-
+  formatC(
+    median_hmotnosti,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
 ```
 
-```{r}
-#| label: definovat barvy
-#| echo: false
-#| eval: true
-col_data <- "#8A8A8A"
-col_highlight <- "#F3A712"
-col_median_line <- "#5D2890"
-```
+:::: {.columns .align-top}
+
+<br>
+
+::: {.column width="48%"}
+::: {.card-data}
+[Smyšlený titulek A]{.card-title}
+
+**Vědci spočítali:**<br>
+„Průměrný savec váží
+[**`r txt_prumer_hmotnosti` kg**]{.text-hgl-indigo_velvet}.“
+:::
+:::
+
+::: {.column width="48%"}
+::: {.card-data}
+[Smyšlený titulek B]{.card-title}
+
+**Jiná analýza tvrdí:**<br>
+„Běžný savec váží jen
+[**`r txt_median_hmotnosti` kg**]{.text-hgl-amethyst}.“
+:::
+:::
+
+::::
+
+<br>
+
+::: {.fragment .text-center}
+*Stejná tabulka. Dvě dramaticky odlišná čísla.*
+:::
+
+## Výsledky učení
+
+<br>
+
+Po dnešní přednášce budete schopni:
+
+::: {.incremental}
+- vysvětlit, co v tabulce představuje [jeden řádek]{.text-hgl-graphite}
+- přečíst vhodný [graf jedné proměnné]{.text-hgl-graphite}
+- vybrat smysluplnou dvojici [středu]{.text-hgl-indigo_velvet} a [rozptýlení]{.text-hgl-orange}
+- rozlišit čtyři [typy proměnných]{.text-hgl-indigo_velvet} a zvolit jejich první popis
+- vysvětlit, proč jedno správně vypočtené číslo ještě nemusí být dobrý titulek
+:::
+
+## Jak budeme dnes pracovat?
+
+::::: {.slide-margin-top-15}
+
+::: {.takeaway-strip}
+**Otázka → data → graf → souhrn → opatrná interpretace**
+:::
+
+<br>
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+::: {.panel-data}
+[Na přednášce]{.panel-title}
+
+Budete odhadovat, hlasovat, porovnávat grafy a obhajovat závěry.
+:::
+:::
+
+::: {.column width="48%"}
+::: {.panel-note}
+[V materiálech]{.panel-title}
+
+HTML nabízí záložky a rozbalovací otázky; PDF je vhodné pro souvislé čtení.
+:::
+:::
+
+::::
+
+:::::
+
+##
+
+::::: {style="height: 510px; display: flex; flex-direction: column; justify-content: space-between;"}
+
+:::: {.columns .align-stretch}
+
+::: {.column width="48%"}
+::: {.card-data .card-compact}
+[Titulek A]{.card-title}
+
+„Průměrný savec váží **`r txt_prumer_hmotnosti` kg**.“
+:::
+:::
+
+::: {.column width="48%"}
+::: {.card-data .card-compact}
+[Titulek B]{.card-title}
+
+„Běžný savec váží **`r txt_median_hmotnosti` kg**.“
+:::
+:::
+
+::::
+
+::: {.box-question}
+Hlasování: který titulek je správný?
+:::
+
+:::: {.columns .align-stretch}
+
+::: {.column width="23%"}
+::: {.panel-question}
+**A)** Pouze titulek A.
+:::
+:::
+
+::: {.column width="23%"}
+::: {.panel-question}
+**B)** Pouze titulek B.
+:::
+:::
+
+::: {.column width="23%"}
+::: {.panel-question}
+**C)** Oba mohou být správně.
+:::
+:::
+
+::: {.column width="23%"}
+::: {.panel-question}
+**D)** Zatím nemáme dost informací.
+:::
+:::
+
+::::
+
+::: {.takeaway-strip}
+Nejdřív hlasujte sami. Potom svoji volbu obhajte sousedovi.
+:::
+
+:::::
+
+## Přesvědčte souseda {.text-center}
+
+<br>
+
+::: {.text-size-heading2 .text-bold .text-center}
+Proč jste vybrali právě svoji možnost?
+:::
+
+<br>
+
+::: {.panel-data}
+[Důkaz, který máte k dispozici]{.panel-title}
+
+- stejná tabulka savců;
+- `r txt_prumer_hmotnosti` kg versus `r txt_median_hmotnosti` kg
+:::
+
+::: {.notes}
+Nechám přibližně 20 sekund na individuální volbu a 60–90 sekund na obhajobu ve dvojici. Správnou možnost zatím neodhalím.
+:::
+
+## Odpověď zatím odložíme {.text-center}
+
+:::: {.slide-margin-top-15}
+
+::: {.text-size-heading2 .text-bold .text-center}
+Nejdřív zjistíme, [co bylo změřeno]{.text-hgl-graphite}
+a [jak hodnoty vypadají]{.text-hgl-orange}.
+:::
+
+<br>
+<br>
+
+::: {.fragment}
+::: {.takeaway-strip}
+Správný výpočet ještě nezaručuje správnou interpretaci.
+:::
+:::
+
+::::
 
 
+# Od organismu k datům
+
+## Začneme jedním savcem
+
 ```{r}
-#| label: vytvorit graf
-#| echo: false
-#| eval: true
+#| label: pripravit-data-savcu
+#| include: false
 #| message: false
 #| warning: false
-plot_pocet_tucnaku_full <-
-  ggplot2::ggplot(
-    data = data_poctu_tucnaku,
-    mapping = ggplot2::aes(
-      y = pocet_tucnaku,
-      x = 1
-    )
-  ) +
-  ggbeeswarm::geom_beeswarm(
-    cex = 1.5,
-    dodge.width = 0.5,
-    color = col_data
-  ) +
-  ggplot2::labs(
-    y = "Počet tučňáků (na průzkum)",
-    x = ""
-  ) +
-  ggplot2::theme_minimal() +
-  ggplot2::scale_y_continuous(
-    breaks = seq(0, 55, by = 5)
-  ) +
-  ggplot2::theme(
-    axis.text.y = ggplot2::element_blank(),
-    axis.ticks.y = ggplot2::element_blank(),
-    panel.grid.major.y = ggplot2::element_blank(),
-    panel.grid.minor.y = ggplot2::element_blank()
-  ) +
-  ggplot2::coord_flip(
-    xlim = c(0.8, 1.2),
-    ylim = c(10, 45)
-  ) +
-  ggview::canvas(
-    width = 1600,
-    height = 800,
-    units = "px"
+data_savci <-
+  ggplot2::msleep |>
+  dplyr::transmute(
+    druh = name,
+    typ_potravy = dplyr::recode(
+      vore,
+      "carni" = "masožravec",
+      "herbi" = "býložravec",
+      "insecti" = "hmyzožravec",
+      "omni" = "všežravec",
+      .missing = "neuvedeno"
+    ),
+    rad = order,
+    spanek_h = sleep_total,
+    hmotnost_kg = bodywt
   )
 
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_full,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku.png"
+data_spanek <-
+  data_savci |>
+  tidyr::drop_na(spanek_h)
+
+vec_spanek_h <-
+  data_spanek |>
+  dplyr::pull(spanek_h)
+```
+
+:::: {.columns .align-center}
+
+::: {.column width="50%"}
+::: {.text-size-heading2 .text-bold}
+Gepard (*Cheetah*)
+:::
+
+<br>
+
+Výzkumníci studovali spánkové návyky savců a u geparda zaznamenali
+[**`r data_spanek |> dplyr::filter(druh == "Cheetah") |> dplyr::pull(spanek_h)` hodiny spánku za den**]{.text-hgl-orange}.
+
+<br>
+
+::: {.panel-data}
+[Při záznamu měření]{.panel-title}
+
+Výsledek pro jeden zastoupený druh zapíšeme do jednoho řádku tabulky.
+:::
+:::
+
+::: {.column width="50%"}
+
+<br>
+
+![](Materials/mammal_cheetah_illustrative.png){fig-alt="Humorná ilustrace geparda spícího v pyžamu." width="100%"}
+
+::: {style="font-size: 0.45em; text-align: right;"}
+Ilustrace vytvořená pomocí AI.
+:::
+:::
+
+::::
+
+## První pozorování přidá první řádek
+
+<br>
+
+<br>
+
+```{r}
+#| label: zobrazit-prvni-radek
+#| echo: false
+#| message: false
+#| warning: false
+data_spanek |>
+  dplyr::slice_head(n = 1) |>
+  dplyr::transmute(
+    `Druh (species)` = druh,
+    `Spánek za den (h)` = spanek_h
+  ) |>
+  knitr::kable(
+    align = c("l", "r")
   )
+```
+
+<br>
+
+::: {.takeaway-strip}
+Jeden řádek zachovává spojení mezi **druhem** a jeho **hodnotou**.
+:::
+
+## Další druh přidá další řádek
+
+<br>
+
+<br>
+
+```{r}
+#| label: zobrazit-prvni-dva-radky
+#| echo: false
+#| message: false
+#| warning: false
+data_spanek |>
+  dplyr::slice_head(n = 2) |>
+  dplyr::transmute(
+    `Druh (species)` = druh,
+    `Spánek za den (h)` = spanek_h
+  ) |>
+  knitr::kable(
+    align = c("l", "r")
+  )
+```
+
+<br>
+
+::: {.strip-olive}
+Tabulka roste **po řádcích**: jeden zastoupený druh po druhém.
+:::
+
+## Čtyři druhy, čtyři řádky
+
+<br>
+
+```{r}
+#| label: zobrazit-prvni-ctyri-radky
+#| echo: false
+#| message: false
+#| warning: false
+data_spanek |>
+  dplyr::slice_head(n = 4) |>
+  dplyr::transmute(
+    `Druh (species)` = druh,
+    `Spánek za den (h)` = spanek_h
+  ) |>
+  knitr::kable(
+    align = c("l", "r")
+  )
+```
+
+<br>
+
+:::{.panel-question .fragment}
+*Na co přesně se vztahuje hodnota 12,1 hodiny v prvním řádku?*
+:::
+
+## Co představuje jeden řádek?
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-top}
+
+::: {.column width="31%"}
+::: {.card-question}
+[A]{.card-title}
+
+Jednoho konkrétního geparda.
+:::
+:::
+
+::: {.column width="31%"}
+::: {.card-question}
+[B]{.card-title}
+
+[Jeden zastoupený druh savce.]{.rn-circle-indigo}
+:::
+:::
+
+::: {.column width="31%"}
+::: {.card-question}
+[C]{.card-title}
+
+Jednu hodinu měření.
+:::
+:::
+
+::::
+
+<br>
+
+::: {.takeaway-strip}
+Když nehlasujeme: doplňte větu „Jeden řádek této tabulky představuje …“
+:::
+
+:::::
+
+## Jeden řádek = jeden zastoupený druh
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+::: {.panel-result}
+[Co víme]{.panel-title}
+
+Každá hodnota spánku patří jednomu **druhu**, který je v tabulce zastoupen.
+:::
+:::
+
+::: {.column width="48%"}
+::: {.panel-warning}
+[Co z toho neplyne]{.panel-title}
+
+Tabulka neobsahuje data o spánku všech jednotlivých savců na Zemi.
+:::
+:::
+
+::::
+
+:::::
+
+::: {.notes}
+Zdůrazním rozdíl mezi druhem a jedincem. Tento rozdíl se vrátí při interpretaci titulku.
+:::
+
+## Jak uložíme jednu hodnotu v R?
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-center}
+
+::: {.column width="48%"}
+```{r}
+#| label: vytvorit-vektor-jedna-hodnota
+#| echo: true
+#| eval: true
+vec_spanek_ukazka <-
+  c(
+    12.1 # Cheetah
+  )
+
+vec_spanek_ukazka
+```
+:::
+
+::: {.column width="48%"}
+<br>
+
+::: {.panel-data}
+[Vektor (*vector*)]{.panel-title}
+
+Vektor je uspořádaná řada hodnot stejného typu.
+:::
+:::
+
+::::
+
+:::::
+
+## Druhý řádek přidá druhou hodnotu
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-center}
+
+::: {.column width="48%"}
+```{r}
+#| label: vytvorit-vektor-dve-hodnoty
+#| echo: true
+#| eval: true
+vec_spanek_ukazka <-
+  c(
+    12.1, # Cheetah
+    17.0  # Owl monkey
+  )
+
+vec_spanek_ukazka
+```
+:::
+
+::: {.column width="48%"}
+<br>
+
+::: {.panel-result}
+[Co znamená pořadí?]{.panel-title}
+
+První hodnota vektoru patří prvnímu řádku tabulky, druhá druhému řádku.
+:::
+:::
+
+::::
+
+:::::
+
+## Stejné čtyři hodnoty zapíšeme do vektoru
+
+<br>
+
+```{r}
+#| label: vytvorit-vektor-spanku
+#| echo: true
+#| eval: true
+vec_spanek_ukazka <-
+  c(
+    12.1, # Cheetah
+    17.0, # Owl monkey
+    14.4, # Mountain beaver
+    14.9  # Greater short-tailed shrew
+  )
+```
+
+::: {.fragment}
+::: {.strip-olive}
+Tabulka uchovává i jména druhů. Samotný vektor uchovává jen hodnoty a jejich pořadí.
+:::
+:::
+
+## Co zkontrolujeme dřív, než počítáme?
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+```{r}
+#| label: zkontrolovat-delku-vektoru
+#| echo: true
+#| eval: true
+length(
+  x = vec_spanek_ukazka
 )
+```
 
-vec_range_pocet_tucnaku <-
-  range(data_poctu_tucnaku$pocet_tucnaku)
+::: {.panel-result}
+`length()` říká, kolik hodnot máme.
+:::
+:::
 
-vec_frame_files <-
-  purrr::map_chr(
-    .x = seq_len(nrow(data_poctu_tucnaku)),
-    .f = function(i) {
-      file_temp <-
-        tempfile(fileext = ".png")
+::: {.column width="48%"}
+```{r}
+#| label: zkontrolovat-hlavu-vektoru
+#| echo: true
+#| eval: true
+head(
+  x = vec_spanek_ukazka,
+  n = 2
+)
+```
 
+::: {.panel-result}
+`head()` ukáže první hodnoty (2 hodnoty v našem případě).
+:::
+:::
+
+::::
+
+:::::
+
+## Celá tabulka přidává další proměnné
+
+::: {.panel-data}
+[Dataset `msleep`]{.panel-title}
+
+- **`r nrow(data_savci)` řádků:** zastoupené druhy savců;
+- **`r ncol(data_savci)` sloupců:** například spánek, hmotnost, potrava nebo taxonomický řád;
+:::
+
+<br>
+
+```{r}
+#| label: zobrazit-prvni-radky-dat
+#| echo: false
+#| message: false
+#| warning: false
+data_savci |>
+  dplyr::slice_head(n = 3) |>
+  knitr::kable(
+    align = c("l", "l", "l", "r", "r")
+  )
+```
+
+::: {.takeaway-strip}
+Než popisujeme čísla, vždy si ujasníme **jednotku pozorování**, význam proměnné a jednotky měření.
+:::
+
+# Od tabulky ke grafu
+
+## Data přibývají druh po druhu
+
+```{r}
+#| label: vytvorit-animaci-pribyvani-druhu
+#| include: false
+#| message: false
+#| warning: false
+path_gif_spanek <-
+  here::here(
+    path_materials,
+    "spanek_pribyvani_druhu.gif"
+  )
+
+if (!file.exists(path_gif_spanek)) {
+  set.seed(20260727)
+
+  plot_pozice_animace <-
+    ggplot2::ggplot(
+      data = data_spanek,
+      mapping = ggplot2::aes(
+        x = spanek_h,
+        y = 1
+      )
+    ) +
+    ggbeeswarm::geom_quasirandom(
+      width = 0.34,
+      orientation = "y"
+    )
+
+  data_pozice_animace <-
+    ggplot2::ggplot_build(
+      plot = plot_pozice_animace
+    )$data[[1]] |>
+    dplyr::transmute(
+      x = x,
+      y = y
+    ) |>
+    dplyr::bind_cols(
+      data_spanek |>
+        dplyr::select(druh)
+    )
+
+  vec_pocet_druhu <-
+    unique(
+      c(
+        1:5,
+        seq(
+          from = 7,
+          to = nrow(data_pozice_animace),
+          by = 2
+        ),
+        nrow(data_pozice_animace)
+      )
+    )
+
+  path_frames <-
+    file.path(
+      tempdir(),
+      stringr::str_glue(
+        "spanek-frame-{seq_along(vec_pocet_druhu)}.png"
+      )
+    )
+
+  purrr::walk2(
+    .x = vec_pocet_druhu,
+    .y = path_frames,
+    .f = function(pocet_druhu, path_frame) {
       plot_frame <-
         ggplot2::ggplot(
-          data = data_poctu_tucnaku[seq_len(i), ],
+          data = data_pozice_animace |>
+            dplyr::slice_head(n = pocet_druhu),
           mapping = ggplot2::aes(
-            y = pocet_tucnaku,
-            x = 1
+            x = x,
+            y = y
           )
         ) +
-        ggbeeswarm::geom_beeswarm(
-          cex = 1.5,
-          dodge.width = 0.5,
-          color = col_data
+        ggplot2::geom_point(
+          color = biostat_cols[["grey_olive"]],
+          alpha = 0.85,
+          size = 4
+        ) +
+        ggplot2::coord_cartesian(
+          xlim = range(data_pozice_animace$x),
+          ylim = c(0.55, 1.45)
+        ) +
+        ggplot2::scale_y_continuous(
+          breaks = NULL,
+          name = NULL
         ) +
         ggplot2::labs(
-          y = "Počet tučňáků (na průzkum)",
-          x = "",
-          title = stringr::str_glue("Průzkum č. {i} z 15")
+          title = stringr::str_glue(
+            "{pocet_druhu} z {nrow(data_pozice_animace)} zastoupených druhů"
+          ),
+          x = "Celkový spánek za den (h)"
         ) +
-        ggplot2::theme_minimal() +
-        ggplot2::scale_y_continuous(
-          breaks = seq(0, 55, by = 5),
-          limits = vec_range_pocet_tucnaku
-        ) +
+        theme_biostat(base_size = 18) +
         ggplot2::theme(
-          axis.text.y = ggplot2::element_blank(),
-          axis.ticks.y = ggplot2::element_blank(),
           panel.grid.major.y = ggplot2::element_blank(),
-          panel.grid.minor.y = ggplot2::element_blank()
-        ) +
-        ggplot2::coord_flip(
-          xlim = c(0.8, 1.2),
-          ylim = c(10, 45)
-        ) +
-        ggview::canvas(
-          width = 1600,
-          height = 800,
-          units = "px"
+          plot.title = ggplot2::element_text(
+            hjust = 0.5,
+            size = 20
+          ),
+          axis.title.x = ggplot2::element_text(
+            size = 18
+          ),
+          axis.text.x = ggplot2::element_text(
+            size = 14
+          )
         )
 
-      ggview::save_ggplot(
+      ggplot2::ggsave(
+        filename = path_frame,
         plot = plot_frame,
-        file = file_temp
+        width = 10,
+        height = 4.3,
+        units = "in",
+        dpi = 120,
+        bg = "white"
       )
-
-      file_temp
     }
   )
 
-magick::image_read(vec_frame_files) |>
-  magick::image_animate(fps = 5) |>
-  magick::image_write(
-    path = here::here(
-      path_materials,
-      "pocet_tucnaku.gif"
+  vec_frames_s_dozvukem <-
+    c(
+      path_frames,
+      rep(
+        tail(path_frames, n = 1),
+        times = 8
+      )
     )
-  )
 
-unlink(vec_frame_files)
+  magick::image_read(
+    path = vec_frames_s_dozvukem
+  ) |>
+    magick::image_animate(
+      fps = 10
+    ) |>
+    magick::image_write(
+      path = path_gif_spanek
+    )
+
+  unlink(path_frames)
+}
 ```
 
 ```{r}
-#| label: zobrazit animaci
-include_local_figure("pocet_tucnaku.gif")
-```
-
-
-## Naše data
-
-```{r}
-#| label: zobrazit staticky graf
-include_local_figure("pocet_tucnaku.png")
-```
-
-## Co vidíme v datech?
-
-```{r}
-#| ref.label: "zobrazit staticky graf"
+#| label: zobrazit-animaci-pribyvani-druhu
 #| echo: false
+#| out-width: 92%
+include_local_figure("spanek_pribyvani_druhu.gif")
 ```
 
-*Než pokračujeme — zapište si jednu věc, co z grafu vidíte.*
-
-::: {.incremental}
-- Kde jsou průzkumy nejkoncentrovanější?
-- Jsou v datech nějaké neobvyklé hodnoty?
-- Jsou všechny průzkumy podobně velké, nebo jsou velké rozdíly?
+::: {.takeaway-strip}
+Graf nevzniká místo dat. Vzniká postupným zobrazením hodnot, které jsme vložili do tabulky a vektoru.
 :::
-
-## Naše data
-
-Nyní máme data. Jak je **vizualizovat**?
-
-# Vizualizace dat
-
-## Proč nejdřív vizualizovat?
-
-Dva vědci zkoumají kolonie tučňáků na dvou různých ostrovech. **Oba naměřili průměrný počet 7 tučňáků na průzkum. Jsou ostrovy biologicky stejné?**
+## Jak vypadá spánek všech zastoupených druhů?
 
 ```{r}
-#| label: motivace statistiky
-#| echo: true
-#| eval: true
-# Průměr – ostrov A
-mean(c(5, 6, 6, 7, 7, 7, 8, 8, 9))
-
-# Průměr – ostrov B
-mean(c(4, 4, 5, 5, 7, 9, 9, 10, 10))
-```
-
-## Proč nejdřív vizualizovat?
-
-```{r}
-#| label: motivace data
-#| echo: false
-#| eval: true
+#| label: vytvorit-bodovy-graf-spanku
+#| include: false
 #| message: false
 #| warning: false
-data_motivace <-
-  tibble::tibble(
-    pocet_tucnaku = c(5, 6, 6, 7, 7, 7, 8, 8, 9, 4, 4, 5, 5, 7, 9, 9, 10, 10),
-    skupina = rep(c("Ostrov A", "Ostrov B"), each = 9)
-  )
-
-plot_motivace <-
+plot_spanek_body <-
   ggplot2::ggplot(
-    data = data_motivace,
+    data = data_spanek,
     mapping = ggplot2::aes(
-      x = pocet_tucnaku,
+      x = spanek_h,
       y = 1
     )
   ) +
-  ggbeeswarm::geom_beeswarm(
-    mapping = ggplot2::aes(color = skupina),
-    cex = 1,
-    size = 5
+  ggbeeswarm::geom_quasirandom(
+    width = 0.38,
+    orientation = "y",
+    color = biostat_cols[["grey_olive"]],
+    alpha = 0.8,
+    size = 4
   ) +
-  ggplot2::facet_wrap(~skupina) +
-  ggplot2::scale_x_continuous(breaks = 1:12) +
-  ggplot2::scale_color_manual(
-    values = c("Ostrov A" = col_median_line, "Ostrov B" = col_highlight)
+  ggplot2::scale_y_continuous(
+    breaks = NULL,
+    name = NULL
+  ) +
+  ggplot2::coord_cartesian(
+    ylim = c(0.55, 1.45)
   ) +
   ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "",
-    title = "Stejný průměr — ale úplně jiný tvar dat"
+    x = "Celkový spánek za den (h)"
   ) +
-  ggplot2::coord_cartesian(ylim = c(0.9, 1.1)) +
-  ggplot2::theme_minimal() +
+  theme_biostat(base_size = 19) +
   ggplot2::theme(
-    axis.text.y = ggplot2::element_blank(),
-    axis.ticks.y = ggplot2::element_blank(),
-    panel.grid.major.y = ggplot2::element_blank(),
-    legend.position = "none"
+    panel.grid.major.y = ggplot2::element_blank()
   ) +
   ggview::canvas(
     width = 1600,
-    height = 800,
+    height = 700,
     units = "px"
   )
 
 ggview::save_ggplot(
-  plot = plot_motivace,
+  plot = plot_spanek_body,
   file = here::here(
     path_materials,
-    "motivace.png"
+    "spanek_bodovy_graf.png"
   )
 )
 ```
 
 ```{r}
-#| label: zobrazit motivace
+#| label: zobrazit-bodovy-graf-spanku
 #| echo: false
-include_local_figure("motivace.png")
+include_local_figure("spanek_bodovy_graf.png")
 ```
 
-::: {.fragment}
-Ostrov A má průzkumy soustředěné kolem 7 – symetrická, stabilní kolonie. Ostrov B má průzkumy buď velmi malé, nebo velmi velké – to může signalizovat sezónní rozdíly nebo nestabilitu kolonie. **Stejné číslo, zásadně odlišná biologie.**
-:::
+*Kde leží nejkratší a nejdelší doba spánku? Kde se body hromadí?*
 
-## Proč nejdřív vizualizovat?
-
-::: {.blockquote}
-Vždy nejdřív vizualizujte.
-:::
-
-## Bodový graf (beeswarm)
-
-Každý bod = jeden průzkum. Vidíme **všechna data** najednou.
+## Stejná data, seskupená do intervalů
 
 ```{r}
-#| ref.label: "zobrazit staticky graf"
-#| echo: false
-```
-
-::: {.incremental}
-- vidíme **každou hodnotu** zvlášť
-- odhaluje **tvar distribuce** (kde jsou hodnoty nahloučené)
-- snadno odhalí **odlehlé hodnoty**
-:::
-
-## Otázka k zamyšlení
-
-Bodový graf ukazuje každý průzkum zvlášť.
-Kdybychom průzkumy seskupili do „košů" po 5 tučňácích, co by znázorňovala výška sloupce?
-
-- A) Průměrný počet tučňáků v daném koši
-- B) Počet průzkumů, které spadají do daného koše
-- C) Celkový počet tučňáků v daném koši
-
-## Histogram
-
-Skupinujeme průzkumy do „košů“ podle počtu tučňáků. Výška sloupce = počet průzkumů v daném koši.
-
-```{r}
-#| label: vytvorit histogram
-#| echo: false
-#| eval: true
+#| label: vytvorit-histogram-spanku
+#| include: false
 #| message: false
 #| warning: false
-plot_pocet_tucnaku_histogram <-
+plot_spanek_histogram <-
   ggplot2::ggplot(
-    data = data_poctu_tucnaku,
-    mapping = ggplot2::aes(
-      x = pocet_tucnaku
-    )
+    data = data_spanek,
+    mapping = ggplot2::aes(x = spanek_h)
   ) +
   ggplot2::geom_histogram(
-    binwidth = 1,
-    fill = col_data,
-    color = "white"
+    binwidth = 2,
+    boundary = 0,
+    fill = biostat_cols[["amethyst"]],
+    color = biostat_cols[["parchment"]],
+    alpha = 0.65
   ) +
   ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "Počet průzkumů"
+    x = "Celkový spánek za den (h)",
+    y = "Počet druhů"
   ) +
-  ggplot2::theme_minimal() +
-  ggplot2::scale_x_continuous(
-    breaks = seq(0, 55, by = 5)
-  ) +
+  theme_biostat(base_size = 19) +
   ggview::canvas(
     width = 1600,
     height = 800,
@@ -630,55 +1188,47 @@ plot_pocet_tucnaku_histogram <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_histogram,
+  plot = plot_spanek_histogram,
   file = here::here(
     path_materials,
-    "pocet_tucnaku_histogram.png"
-  ))
+    "spanek_histogram.png"
+  )
+)
 ```
 
 ```{r}
-#| label: zobrazit histogram
+#| label: zobrazit-histogram-spanku
 #| echo: false
-include_local_figure("pocet_tucnaku_histogram.png")
+include_local_figure("spanek_histogram.png")
 ```
 
-::: {.incremental}
-- ukazuje, kde jsou hodnoty **nahloučené**
-- odhaluje **symetrii** nebo asymetrii distribuce
-- závisí na šířce koše (`binwidth`) – vyzkoušejte různé hodnoty
+::: {.strip-amethyst}
+**Histogram** ukazuje počty v intervalech, ale skrývá přesné hodnoty jednotlivých druhů.
 :::
 
-## Graf hustoty
-
-Graf hustoty (density plot) je „vyhlazený“ histogram – neukazuje počty, ale **relativní četnost** hodnot.
+## Stejná data, ale jako hladký tvar
 
 ```{r}
-#| label: vytvorit hustotu
-#| echo: false
-#| eval: true
+#| label: vytvorit-graf-hustoty-spanku
+#| include: false
 #| message: false
 #| warning: false
-plot_pocet_tucnaku_hustota <-
+plot_spanek_hustota <-
   ggplot2::ggplot(
-    data = data_poctu_tucnaku,
-    mapping = ggplot2::aes(
-      x = pocet_tucnaku
-    )
+    data = data_spanek,
+    mapping = ggplot2::aes(x = spanek_h)
   ) +
   ggplot2::geom_density(
-    fill = col_data,
-    alpha = 0.4,
-    color = col_data
+    fill = biostat_cols[["amethyst"]],
+    color = biostat_cols[["indigo_velvet"]],
+    alpha = 0.28,
+    linewidth = 1.4
   ) +
   ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
+    x = "Celkový spánek za den (h)",
     y = "Hustota"
   ) +
-  ggplot2::theme_minimal() +
-  ggplot2::scale_x_continuous(
-    breaks = seq(0, 55, by = 5)
-  ) +
+  theme_biostat(base_size = 19) +
   ggview::canvas(
     width = 1600,
     height = 800,
@@ -686,702 +1236,1013 @@ plot_pocet_tucnaku_hustota <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_hustota,
+  plot = plot_spanek_hustota,
   file = here::here(
     path_materials,
-    "pocet_tucnaku_hustota.png"
-  ))
+    "spanek_hustota.png"
+  )
+)
 ```
 
 ```{r}
-#| label: zobrazit hustotu
+#| label: zobrazit-graf-hustoty-spanku
 #| echo: false
-include_local_figure("pocet_tucnaku_hustota.png")
+include_local_figure("spanek_hustota.png")
 ```
 
-::: {.incremental}
-- „vyhlazená" verze histogramu – nezávisí na šířce koše
-- ukazuje **relativní četnost**: kde jsou hodnoty pravděpodobnější
-- vhodný pro porovnání **více skupin** najednou
+::: {.strip-amethyst}
+**Graf hustoty** zvýrazní tvar, ale neukazuje konkrétní počty ani jednotlivé druhy.
 :::
 
-## Jak interpretujeme tento graf?
+## Který graf byste použili?
 
-```{r}
-#| label: interpretace-histogramu
-#| echo: false
-include_local_figure("pocet_tucnaku_histogram.png")
-```
+::::: {.slide-margin-top-15}
 
-*Co o datech sděluje tento histogram?*
+::: {.box-question}
+[Potřebujete zjistit, zda některý druh spí téměř 20 hodin denně.]{.panel-lead}
+:::
 
-::: {.incremental}
-- Kde jsou průzkumy nejčastější?
-- Je distribuce symetrická nebo asymetrická?
-- Který graf (bodový / histogram / hustota) byl pro vás nejinformativnější?
+<br>
+
+:::: {.columns .align-top}
+
+::: {.column width="31%"}
+::: {.card-question}
+[A]{.card-title}
+
+[Bodový graf]{.rn-circle-indigo}
+:::
+:::
+
+::: {.column width="31%"}
+::: {.card-question}
+[B]{.card-title}
+
+[Histogram]{.rn-circle-indigo}
+:::
+:::
+
+::: {.column width="31%"}
+::: {.card-question}
+[C]{.card-title}
+
+Graf hustoty
+:::
+:::
+
+::::
+
+<br>
+
+::: {.takeaway-strip}
+Když nehlasujeme: napište si, který graf zachovává jednotlivé hodnoty a proč je to pro tuto otázku důležité.
+:::
+
+:::::
+
+## Tři grafy, tři různé otázky
+
+| Graf | Nejlépe ukáže | Co skrývá |
+|---|---|---|
+| Bodový graf | jednotlivé hodnoty | (při velkém počtu může být přeplněný) |
+| Histogram | počty v intervalech | přesné hodnoty |
+| Graf hustoty | hladký tvar | počty a konkrétní druhy |
+
+<br>
+
+::: {.takeaway-strip}
+Graf vybíráme podle otázky.
 :::
 
 # Deskriptivní statistiky
 
-## Čísla místo obrázků
-
-Grafy jsou skvělé — ale v publikaci nebo při srovnání desítek skupin potřebujeme data popsat **jedním číslem**. Jaké číslo zvolit?
-
-## Deskriptivní statistiky
-
-### Minimum 
-
-Minimum nám říká, kolik tučňáků měl průzkum s nejnižším počtem tučňáků.
-
-<br>
-
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r}
-#| label: minimum
-#| echo: true
-min(pocet_tucnaku)
-```
-
-:::
-
-::: {.column width="50%" .fragment}
+## Devět druhů, devět dob spánku
 
 ```{r}
-#| label: minimum v grafu
-#| echo: false
-plot_pocet_tucnaku_minimum <-
-plot_pocet_tucnaku_full +
-  ggplot2::geom_hline(
-    yintercept = min(pocet_tucnaku),
-    color = col_highlight,
-    linetype = "dashed"
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Minimum: {min(pocet_tucnaku)} tučňáků"
-    )
-  )
-
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_minimum,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku_minimum.png"
-  ))
-```
-
-
-```{r}
-#| label: zobrazit minimum v grafu
-#| echo: false
-include_local_figure("pocet_tucnaku_minimum.png")
-```
-:::
-
-::::
-
-
-## Deskriptivní statistiky
-
-### Maximum 
-
-Maximum nám říká, kolik tučňáků měl průzkum s nejvyšším počtem tučňáků.
-
-<br>
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r}
-#| label: maximum
-#| echo: true
-max(pocet_tucnaku)
-```
-
-:::
-
-::: {.column width="50%"}
-
-```{r}
-#| label: maximum v grafu
-#| echo: false
-plot_pocet_tucnaku_maximum <-
-  plot_pocet_tucnaku_full +
-  ggplot2::geom_hline(
-    yintercept = max(pocet_tucnaku),
-    color = col_highlight,
-    linetype = "dashed"
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Maximum: {max(pocet_tucnaku)} tučňáků"
-    )
-  )
-
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_maximum,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku_maximum.png"
-  ))
-```
-
-
-```{r}
-#| label: zobrazit maximum v grafu
-#| echo: false
-include_local_figure("pocet_tucnaku_maximum.png")
-```
-:::
-
-::::
-
-## Percentily
-
-Percentil říká, jakou hodnotu nepřesahuje dané procento dat.
-
-::: {.incremental}
-
-- **0. percentil** = minimum
-- **50. percentil** = polovina průzkumů má méně, polovina více
-- **100. percentil** = maximum
-
-:::
-
-::: {.fragment}
-
-```{r}
-#| label: percentily priklad
-#| echo: true
-quantile(pocet_tucnaku, probs = c(0, 0.25, 0.50, 0.75, 1))
-```
-
-:::
-
-::: {.fragment}
-
-::: {.blockquote}
-Percentily rozdělují data na části – 25. a 75. percentil jsou zvláště důležité.
-:::
-
-:::
-
-## Deskriptivní statistiky
-
-### Medián
-
-Medián je **50. percentil** – polovina průzkumů má méně tučňáků, polovina více.
-
-<br>
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r}
-#| label: median
-#| echo: true
-median(pocet_tucnaku)
-```
-:::
-
-::: {.column width="50%"}
-
-```{r}
-#| label: median v grafu
-#| echo: false
-plot_pocet_tucnaku_median <-
-  plot_pocet_tucnaku_full +
-  ggplot2::geom_hline(
-    yintercept = median(pocet_tucnaku),
-    color = col_median_line,
-    linetype = "dashed"
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Medián: {median(pocet_tucnaku)} tučňáků"
-    )
-  )
-
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_median,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku_median.png"
-  ))
-```
-
-```{r}
-#| label: zobrazit median v grafu
-#| echo: false
-include_local_figure("pocet_tucnaku_median.png")
-```
-:::
-
-::::
-
-## Mezikvartilové rozpětí (IQR)
-
-**Q1** = 25. percentil, **Q3** = 75. percentil.
-
-IQR = Q3 - Q1 – rozpětí prostřední poloviny dat.
-
-<br>
-
-:::: {.columns}
-
-::: {.column width="50%"}
-
-```{r}
-#| label: iqr priklad
-#| echo: true
-quantile(pocet_tucnaku, 0.25) # Q1
-quantile(pocet_tucnaku, 0.75) # Q3
-IQR(pocet_tucnaku) # Q3 - Q1
-```
-
-:::
-
-::: {.column width="50%"}
-
-```{r}
-#| label: iqr v grafu
-#| echo: false
-#| eval: true
+#| label: pripravit-maly-vzorek-spanku
+#| include: false
 #| message: false
 #| warning: false
-plot_pocet_tucnaku_iqr <-
-  plot_pocet_tucnaku_full +
-  ggplot2::annotate(
-    geom = "rect",
-    xmin = -Inf,
-    xmax = Inf,
-    ymin = quantile(pocet_tucnaku, 0.25),
-    ymax = quantile(pocet_tucnaku, 0.75),
-    fill = col_data,
-    alpha = 0.2
-  ) +
-  ggplot2::geom_hline(
-    yintercept = quantile(pocet_tucnaku, 0.25),
-    color = col_data,
-    linetype = "dashed"
-  ) +
-  ggplot2::geom_hline(
-    yintercept = quantile(pocet_tucnaku, 0.75),
-    color = col_data,
-    linetype = "dashed"
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Q1: {quantile(pocet_tucnaku, 0.25)},  Q3: {quantile(pocet_tucnaku, 0.75)},  IQR: {IQR(pocet_tucnaku)}"
+data_maly_spanek <-
+  data_spanek |>
+  dplyr::filter(
+    druh %in% c(
+      "Rabbit",
+      "Domestic cat",
+      "Dog",
+      "Chimpanzee",
+      "Sheep",
+      "Human",
+      "Pig",
+      "Horse",
+      "Cow"
     )
-  )
-
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_iqr,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku_iqr.png"
-  ))
-```
-
-```{r}
-#| label: zobrazit iqr v grafu
-#| echo: false
-include_local_figure("pocet_tucnaku_iqr.png")
-```
-
-:::
-
-::::
-
-::: {.fragment}
-
-::: {.blockquote}
-IQR je odolný vůči odlehlým hodnotám – popisuje **prostřední 50 %** dat.
-:::
-
-:::
-
-## Deskriptivní statistiky
-
-### Průměr
-
-Průměr (mean) nám říká, jaký je typický počet tučňáků přes všechny průzkumy.
-
-<br>
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r}
-#| label: prumer
-#| echo: true
-mean(pocet_tucnaku)
-```
-:::
-
-::: {.column width="50%"}
-
-```{r}
-#| label: prumer v grafu
-#| echo: false
-plot_pocet_tucnaku_prumer <-
-  plot_pocet_tucnaku_full +
-  ggplot2::geom_hline(
-    yintercept = mean(pocet_tucnaku),
-    color = col_highlight,
-    linetype = "dashed"
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Průměr: {round(mean(pocet_tucnaku), 1)} tučňáků"
+  ) |>
+  dplyr::mutate(
+    druh_cz = dplyr::recode(
+      druh,
+      "Rabbit" = "králík",
+      "Domestic cat" = "kočka domácí",
+      "Dog" = "pes",
+      "Chimpanzee" = "šimpanz",
+      "Sheep" = "ovce",
+      "Human" = "člověk",
+      "Pig" = "prase",
+      "Horse" = "kůň",
+      "Cow" = "kráva"
+    ),
+    druh_cz = forcats::fct_reorder(
+      .f = druh_cz,
+      .x = spanek_h
     )
+  ) |>
+  dplyr::arrange(spanek_h)
+
+vec_maly_spanek <-
+  data_maly_spanek |>
+  dplyr::pull(spanek_h)
+
+vec_spanek_deviti <-
+  vec_maly_spanek
+
+prumer_maly <-
+  mean(vec_maly_spanek)
+
+median_maly <-
+  median(vec_maly_spanek)
+
+txt_prumer_maly <-
+  formatC(
+    prumer_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
   )
 
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_prumer,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku_prumer.png"
-  ))
-```
-
-```{r}
-#| label: zobrazit prumer v grafu
-#| echo: false
-include_local_figure("pocet_tucnaku_prumer.png")
-```
-:::
-
-::::
-
-## Otázka k zamyšlení
-
-Přidáme do dat jeden průzkum s **90 tučňáky**. Jak se změní průměr a medián?
-
-- A) Oba se zvýší přibližně stejně
-- B) Průměr se zvýší výrazně, medián jen mírně
-- C) Medián se zvýší výrazně, průměr jen mírně
-
-## Průměr vs. Medián
-
-Průměr a medián mohou být velmi odlišné, pokud jsou v datech **odlehlé hodnoty** (outliers).
-
-::: {.fragment}
-
-Co kdybychom přidali neobyčlý průzkum s 90 tučňáky?
-
-:::
-
-```{r}
-#| label: vytvorit dataset s outlierem
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-pocet_tucnaku_outlier <-
-  c(pocet_tucnaku, 90L)
-```
-
-:::: {.columns .fragment}
-
-::: {.column width="50%"}
-
-```{r}
-#| label: prumer vs median bez outlieru
-#| echo: true
-mean(pocet_tucnaku)
-median(pocet_tucnaku)
-```
-
-**Bez odlehlé hodnoty**
-:::
-
-::: {.column width="50%"}
-
-```{r}
-#| label: prumer vs median s outlierem
-#| echo: true
-mean(pocet_tucnaku_outlier)
-median(pocet_tucnaku_outlier)
-```
-
-**S odlehlou hodnotou**
-:::
-
-::::
-
-::: {.fragment}
-
-::: {.blockquote}
-Průměr je citlivý na odlehlé hodnoty. Medián je odolnejší – popisuje „typický“ případ lépe, pokud data nejsou symetrická.
-:::
-
-:::
-
-## Rozptyl a směrodatná odchylka
-
-Min, max, průměr a medián nám říkají, kde jsou data. Ale jak moc jsou data **rozptýlena**?
-
-::: {.fragment}
-
-Směrodatná odchylka (standard deviation) nám říká, jak daleko jsou typicky hodnoty od průměru.
-
-:::
-
-<br>
-
-:::: {.columns .fragment}
-
-::: {.column width="50%"}
-```{r}
-#| label: sd a var
-#| echo: true
-sd(pocet_tucnaku)
-var(pocet_tucnaku)
-```
-
-::: {.fragment}
-Rozptyl (variance) = SD². V praxi se většinou používá SD – je ve stejných jednotkách jako data.
-:::
-
-:::
-
-::: {.column width="50%"}
-
-```{r}
-#| label: sd v grafu
-#| echo: false
-plot_pocet_tucnaku_sd <-
-  plot_pocet_tucnaku_full +
-  ggplot2::annotate(
-    geom = "rect",
-    xmin = -Inf,
-    xmax = Inf,
-    ymin = mean(pocet_tucnaku) - sd(pocet_tucnaku),
-    ymax = mean(pocet_tucnaku) + sd(pocet_tucnaku),
-    fill = col_highlight,
-    alpha = 0.15
-  ) +
-  ggplot2::geom_hline(
-    yintercept = mean(pocet_tucnaku),
-    color = col_highlight,
-    linetype = "dashed"
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Průměr: {round(mean(pocet_tucnaku), 1)},  SD: {round(sd(pocet_tucnaku), 1)}"
-    )
+txt_median_maly <-
+  formatC(
+    median_maly,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
   )
 
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_sd,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku_sd.png"
-  ))
-```
-
-```{r}
-#| label: zobrazit sd v grafu
-#| echo: false
-include_local_figure("pocet_tucnaku_sd.png")
-```
-
-:::
-
-::::
-
-## Proč je SD důležité?
-
-Dvě skupiny průzkumů mohou mít **stejný průměr**, ale velmi **různě rozptýlená** data.
-
-```{r}
-#| label: data porovnani sd
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-set.seed(900723)
-
-mean_val <- 8  # pevný průměr pro obe skupiny
-
-sim_mala_sd <- rnorm(n = 100, mean = 8, sd = 0.8) 
-
-sim_mala_sd <- sim_mala_sd - mean(sim_mala_sd) + mean_val
-
-sim_velka_sd <- rnorm(n = 100, mean = 8, sd = 3)  
-
-sim_velka_sd <- sim_velka_sd - mean(sim_velka_sd) + mean_val
-
-data_mala_sd <-
-  tibble::tibble(
-    pocet_tucnaku_sim = sim_mala_sd,
-    skupina = "Malé SD"
+q1_maly <-
+  quantile(
+    vec_maly_spanek,
+    probs = 0.25,
+    names = FALSE
   )
 
-data_velka_sd <-
-  tibble::tibble(
-    pocet_tucnaku_sim = sim_velka_sd,
-    skupina = "Velké SD"
+q3_maly <-
+  quantile(
+    vec_maly_spanek,
+    probs = 0.75,
+    names = FALSE
   )
 
-data_porovnani_sd <-
-  dplyr::bind_rows(
-    data_mala_sd,
-    data_velka_sd
-  )
-```
+sd_maly <-
+  sd(vec_maly_spanek)
 
-```{r}
-#| label: graf porovnani sd
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-plot_porovnani_sd <-
+plot_maly_spanek <-
   ggplot2::ggplot(
-    data = data_porovnani_sd,
+    data = data_maly_spanek,
     mapping = ggplot2::aes(
-      x = pocet_tucnaku_sim,
-      fill = skupina
+      x = spanek_h,
+      y = druh_cz
     )
   ) +
-  ggplot2::geom_histogram(
-    binwidth = 1,
-    color = "white",
-    alpha = 0.8
+  ggplot2::geom_point(
+    color = biostat_cols[["grey_olive"]],
+    size = 4.5,
+    alpha = 0.9
   ) +
-  ggplot2::scale_fill_manual(
-    values = c("Malé SD" = col_median_line, "Velké SD" = col_highlight)
+  ggplot2::geom_text(
+    mapping = ggplot2::aes(label = spanek_h),
+    color = biostat_cols[["graphite"]],
+    hjust = -0.45,
+    size = 5
   ) +
-  ggplot2::facet_wrap(
-    ~skupina,
-    ncol = 2
+  ggplot2::scale_x_continuous(
+    limits = c(2, 15)
+  ) +
+  ggplot2::labs(
+    x = "Celkový spánek za den (h)",
+    y = NULL
+  ) +
+  theme_biostat(base_size = 18) +
+  ggview::canvas(
+    width = 1500,
+    height = 850,
+    units = "px"
+  )
+
+ggview::save_ggplot(
+  plot = plot_maly_spanek,
+  file = here::here(
+    path_materials,
+    "devet_druhu_spanek.png"
+  )
+)
+```
+
+```{r}
+#| label: zobrazit-maly-vzorek-spanku
+#| echo: false
+include_local_figure("devet_druhu_spanek.png")
+```
+
+*Kam byste umístili jeden bod, který má zastoupit všech devět hodnot?*
+
+## Minimum: nejmenší pozorovaná hodnota
+
+```{r}
+#| label: vytvorit-graf-minima-a-maxima
+#| include: false
+#| message: false
+#| warning: false
+minimum_maly <-
+  min(vec_maly_spanek)
+
+maximum_maly <-
+  max(vec_maly_spanek)
+
+plot_maly_minimum <-
+  plot_maly_spanek +
+  ggplot2::geom_vline(
+    xintercept = minimum_maly,
+    color = biostat_cols[["orange"]],
+    linewidth = 1.8
+  )
+
+plot_maly_maximum <-
+  plot_maly_spanek +
+  ggplot2::geom_vline(
+    xintercept = maximum_maly,
+    color = biostat_cols[["orange"]],
+    linewidth = 1.8
+  )
+
+ggview::save_ggplot(
+  plot = plot_maly_minimum,
+  file = here::here(
+    path_materials,
+    "devet_druhu_minimum.png"
+  )
+)
+
+ggview::save_ggplot(
+  plot = plot_maly_maximum,
+  file = here::here(
+    path_materials,
+    "devet_druhu_maximum.png"
+  )
+)
+```
+
+:::: {.columns .align-center}
+
+::: {.column width="64%"}
+```{r}
+#| label: zobrazit-graf-minima
+#| echo: false
+include_local_figure("devet_druhu_minimum.png")
+```
+:::
+
+::: {.column width="32%"}
+<br>
+
+```{r}
+#| label: spocitat-minimum-v-r
+#| echo: true
+#| eval: true
+min(
+  x = vec_spanek_deviti
+)
+```
+
+::: {.panel-result}
+Minimum (*minimum*) je zde **`r minimum_maly` h**.
+:::
+:::
+
+::::
+
+## Maximum: největší pozorovaná hodnota
+
+:::: {.columns .align-center}
+
+::: {.column width="64%"}
+```{r}
+#| label: zobrazit-graf-maxima
+#| echo: false
+include_local_figure("devet_druhu_maximum.png")
+```
+:::
+
+::: {.column width="32%"}
+<br>
+
+```{r}
+#| label: spocitat-maximum-v-r
+#| echo: true
+#| eval: true
+max(
+  x = vec_spanek_deviti
+)
+```
+
+::: {.panel-result}
+Maximum (*maximum*) je zde **`r maximum_maly` h**.
+:::
+:::
+
+::::
+
+::: {.takeaway-strip}
+Minimum a maximum ukazují krajní pozorované hodnoty. Neříkají, kde leží většina dat.
+:::
+
+## Průměr: hodnoty sečteme a rozdělíme
+
+```{r}
+#| label: vytvorit-graf-prumeru
+#| include: false
+#| message: false
+#| warning: false
+plot_maly_prumer <-
+  plot_maly_spanek +
+  ggplot2::geom_vline(
+    xintercept = prumer_maly,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.8
+  )
+
+ggview::save_ggplot(
+  plot = plot_maly_prumer,
+  file = here::here(
+    path_materials,
+    "devet_druhu_prumer.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="62%"}
+```{r}
+#| label: zobrazit-graf-prumeru
+#| echo: false
+include_local_figure("devet_druhu_prumer.png")
+```
+:::
+
+::: {.column width="34%"}
+**Aritmetický průměr = `r txt_prumer_maly` h**
+
+```{r}
+#| label: spocitat-prumer-v-r
+#| echo: true
+#| eval: true
+vec_spanek_deviti <-
+  c(
+    2.9, 3.8, 4.0, 8.0, 8.4,
+    9.1, 9.7, 10.1, 12.5
+  )
+
+mean(
+  x = vec_spanek_deviti
+)
+```
+:::
+
+::::
+
+::: {.strip-indigo}
+**Aritmetický průměr (*mean*)** používá každou hodnotu a může být citlivý na hodnoty daleko od ostatních.
+:::
+
+## Seřadíme hodnoty a hledáme prostřední
+
+```{r}
+#| label: vytvorit-graf-medianu
+#| include: false
+#| message: false
+#| warning: false
+plot_maly_median <-
+  plot_maly_spanek +
+  ggplot2::geom_vline(
+    xintercept = median_maly,
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.8
+  )
+
+ggview::save_ggplot(
+  plot = plot_maly_median,
+  file = here::here(
+    path_materials,
+    "devet_druhu_median.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="62%"}
+```{r}
+#| label: zobrazit-graf-medianu
+#| echo: false
+include_local_figure("devet_druhu_median.png")
+```
+:::
+
+::: {.column width="34%"}
+**Medián = `r txt_median_maly` h**
+
+```{r}
+#| label: spocitat-median-v-r
+#| echo: true
+#| eval: true
+median(
+  x = vec_spanek_deviti
+)
+```
+
+::: {.panel-result}
+Čtyři hodnoty leží níže a čtyři výše.
+:::
+:::
+
+::::
+
+::: {.strip-indigo}
+**Medián (*median*)** je prostřední hodnota seřazeného souboru.
+:::
+
+## Kvartily rozdělí seřazené hodnoty na čtvrtiny
+
+```{r}
+#| label: vytvorit-graf-kvartilu-a-iqr
+#| include: false
+#| message: false
+#| warning: false
+plot_maly_kvartily <-
+  plot_maly_spanek +
+  ggplot2::geom_vline(
+    xintercept = c(q1_maly, q3_maly),
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.4,
+    linetype = "dashed"
+  )
+
+plot_maly_iqr <-
+  plot_maly_spanek +
+  ggplot2::annotate(
+    geom = "rect",
+    xmin = q1_maly,
+    xmax = q3_maly,
+    ymin = -Inf,
+    ymax = Inf,
+    fill = biostat_cols[["amethyst"]],
+    alpha = 0.18
   ) +
   ggplot2::geom_vline(
-    data = data_porovnani_sd |>
-      dplyr::group_by(skupina) |>
-      dplyr::summarise(prumer = mean(pocet_tucnaku_sim)),
-    mapping = ggplot2::aes(xintercept = prumer),
-    color = col_highlight,
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  ggplot2::labs(
-    x = "Počet tučňáků (na průzkum)",
-    y = "Počet průzkumů",
-    title = stringr::str_glue(
-      "Průměr je stejný, SD se liší"
+    xintercept = c(q1_maly, q3_maly),
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.2,
+    linetype = "dashed"
+  )
+
+ggview::save_ggplot(
+  plot = plot_maly_kvartily,
+  file = here::here(
+    path_materials,
+    "devet_druhu_kvartily.png"
+  )
+)
+
+ggview::save_ggplot(
+  plot = plot_maly_iqr,
+  file = here::here(
+    path_materials,
+    "devet_druhu_iqr.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="64%"}
+```{r}
+#| label: zobrazit-graf-kvartilu
+#| echo: false
+include_local_figure("devet_druhu_kvartily.png")
+```
+:::
+
+::: {.column width="32%"}
+<br>
+
+```{r}
+#| label: spocitat-kvartily-v-r
+#| echo: true
+#| eval: true
+quantile(
+  x = vec_spanek_deviti,
+  probs = c(0.25, 0.75)
+)
+```
+
+::: {.panel-result}
+Q1 odděluje dolní čtvrtinu, Q3 horní čtvrtinu hodnot.
+:::
+:::
+
+::::
+
+::: {.strip-amethyst}
+**Kvartily (*quartiles*) Q1 a Q3** určují hranice prostředních 50 % seřazených hodnot.
+:::
+
+## IQR je šířka prostřední poloviny
+
+:::: {.columns .align-top}
+
+::: {.column width="64%"}
+```{r}
+#| label: zobrazit-graf-iqr
+#| echo: false
+include_local_figure("devet_druhu_iqr.png")
+```
+:::
+
+::: {.column width="32%"}
+<br>
+
+```{r}
+#| label: spocitat-iqr-v-r
+#| echo: true
+#| eval: true
+IQR(
+  x = vec_spanek_deviti
+)
+```
+:::
+
+::::
+
+::: {.strip-amethyst}
+**IQR (*interquartile range*) = Q3 − Q1.** Popisuje rozptýlení prostřední poloviny hodnot.
+:::
+
+## Oba soubory mají průměr 10 hodin — jsou stejné?
+
+```{r}
+#| label: vytvorit-soubory-se-stejnym-prumerem
+#| include: false
+#| message: false
+#| warning: false
+data_stejny_prumer <-
+  tibble::tibble(
+    soubor = c(
+      rep("Soubor A", 5),
+      rep("Soubor B", 5)
+    ),
+    spanek_h = c(
+      8, 9, 10, 11, 12,
+      4, 7, 10, 13, 16
+    )
+  ) |>
+  dplyr::mutate(
+    soubor = factor(
+      soubor,
+      levels = c("Soubor A", "Soubor B")
+    )
+  )
+
+plot_stejny_prumer <-
+  ggplot2::ggplot(
+    data = data_stejny_prumer,
+    mapping = ggplot2::aes(
+      x = spanek_h,
+      y = soubor
     )
   ) +
-  ggplot2::theme_minimal() +
+  ggplot2::geom_vline(
+    xintercept = 10,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.2,
+    linetype = "dashed"
+  ) +
+  ggplot2::geom_point(
+    color = biostat_cols[["grey_olive"]],
+    fill = biostat_cols[["grey_olive"]],
+    size = 6,
+    alpha = 0.8
+  ) +
+  ggplot2::annotate(
+    geom = "label",
+    x = 10,
+    y = 2.18,
+    label = "průměr = 10 h",
+    color = biostat_cols[["indigo_velvet"]],
+    fill = biostat_cols[["parchment"]],
+    label.size = 0,
+    fontface = "bold",
+    size = 5
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(4, 16, by = 2),
+    limits = c(3.5, 16.5)
+  ) +
+  ggplot2::labs(
+    x = "Doba spánku (h)",
+    y = NULL
+  ) +
+  theme_biostat(base_size = 18) +
+  ggview::canvas(
+    width = 1600,
+    height = 700,
+    units = "px"
+  )
+
+ggview::save_ggplot(
+  plot = plot_stejny_prumer,
+  file = here::here(
+    path_materials,
+    "dva_soubory_stejny_prumer.png"
+  )
+)
+```
+
+```{r}
+#| label: zobrazit-soubory-se-stejnym-prumerem
+#| echo: false
+#| out-width: "78%"
+include_local_figure("dva_soubory_stejny_prumer.png")
+```
+
+::: {.takeaway-strip}
+**30 sekund:** IQR sleduje prostřední polovinu. Jak jedním číslem shrnout vzdálenosti všech hodnot od průměru?
+:::
+
+## Od průměru změříme odchylku každé hodnoty
+
+```{r}
+#| label: vytvorit-porovnani-sd
+#| include: false
+#| message: false
+#| warning: false
+rozptyl_maly <-
+  var(vec_maly_spanek)
+
+data_sd_vypocet <-
+  data_maly_spanek |>
+  dplyr::mutate(
+    prumer = prumer_maly,
+    odchylka = spanek_h - prumer,
+    ctverec_odchylky = odchylka^2,
+    poloha = dplyr::if_else(
+      odchylka < 0,
+      "pod průměrem",
+      "nad průměrem"
+    )
+  )
+
+soucet_odchylek_maly <-
+  sum(data_sd_vypocet$odchylka)
+
+soucet_ctvercu_maly <-
+  sum(data_sd_vypocet$ctverec_odchylky)
+
+n_maly <-
+  nrow(data_sd_vypocet)
+
+txt_soucet_odchylek_maly <-
+  formatC(
+    soucet_odchylek_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
+txt_soucet_ctvercu_maly <-
+  formatC(
+    soucet_ctvercu_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
+txt_rozptyl_maly <-
+  formatC(
+    rozptyl_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
+txt_sd_maly <-
+  formatC(
+    sd_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
+hodnota_kocka_maly <-
+  data_sd_vypocet |>
+  dplyr::filter(
+    druh_cz == "kočka domácí"
+  ) |>
+  dplyr::pull(spanek_h)
+
+odchylka_kocka_maly <-
+  hodnota_kocka_maly - prumer_maly
+
+ctverec_kocka_maly <-
+  odchylka_kocka_maly^2
+
+txt_hodnota_kocka_maly <-
+  formatC(
+    hodnota_kocka_maly,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+
+txt_odchylka_kocka_maly <-
+  formatC(
+    odchylka_kocka_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
+txt_ctverec_kocka_maly <-
+  formatC(
+    ctverec_kocka_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
+txt_hodnoty_maly <-
+  formatC(
+    vec_maly_spanek,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+
+txt_ctverce_radky_maly <-
+  vapply(
+    X = split(
+      seq_along(txt_hodnoty_maly),
+      ceiling(
+        seq_along(txt_hodnoty_maly) / 3
+      )
+    ),
+    FUN = function(index) {
+      paste0(
+        "(",
+        txt_hodnoty_maly[index],
+        " − ",
+        txt_prumer_maly,
+        ")²",
+        collapse = " + "
+      )
+    },
+    FUN.VALUE = character(1)
+  )
+
+plot_maly_vzdalenosti <-
+  ggplot2::ggplot(
+    data = data_sd_vypocet,
+    mapping = ggplot2::aes(
+      y = druh_cz
+    )
+  ) +
+  ggplot2::geom_segment(
+    mapping = ggplot2::aes(
+      x = prumer,
+      xend = spanek_h,
+      yend = druh_cz,
+      color = poloha
+    ),
+    linewidth = 3,
+    alpha = 0.55
+  ) +
+  ggplot2::geom_vline(
+    xintercept = prumer_maly,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.5
+  ) +
+  ggplot2::geom_point(
+    mapping = ggplot2::aes(
+      x = spanek_h
+    ),
+    color = biostat_cols[["graphite"]],
+    size = 4
+  ) +
+  ggplot2::scale_color_manual(
+    values = c(
+      "pod průměrem" = biostat_cols[["amethyst"]],
+      "nad průměrem" = biostat_cols[["orange"]]
+    )
+  ) +
+  ggplot2::scale_x_continuous(
+    limits = c(2, 14)
+  ) +
+  ggplot2::labs(
+    x = "Celkový spánek za den (h)",
+    y = NULL,
+    color = NULL
+  ) +
+  theme_biostat(base_size = 18) +
   ggplot2::theme(
     legend.position = "none"
   ) +
   ggview::canvas(
-    width = 1600,
-    height = 800,
+    width = 1500,
+    height = 850,
+    units = "px"
+  )
+
+plot_maly_odchylky <-
+  ggplot2::ggplot(
+    data = data_sd_vypocet,
+    mapping = ggplot2::aes(
+      x = druh_cz,
+      y = odchylka,
+      fill = poloha
+    )
+  ) +
+  ggplot2::geom_col(
+    width = 0.72,
+    alpha = 0.8
+  ) +
+  ggplot2::geom_hline(
+    yintercept = 0,
+    color = biostat_cols[["graphite"]],
+    linewidth = 1
+  ) +
+  ggplot2::scale_fill_manual(
+    values = c(
+      "pod průměrem" = biostat_cols[["amethyst"]],
+      "nad průměrem" = biostat_cols[["orange"]]
+    )
+  ) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = NULL,
+    y = "Hodnota − průměr (h)",
+    fill = NULL
+  ) +
+  theme_biostat(base_size = 18) +
+  ggplot2::theme(
+    legend.position = "none"
+  ) +
+  ggview::canvas(
+    width = 1200,
+    height = 850,
+    units = "px"
+  )
+
+plot_maly_ctverce_odchylek <-
+  ggplot2::ggplot(
+    data = data_sd_vypocet,
+    mapping = ggplot2::aes(
+      x = druh_cz,
+      y = ctverec_odchylky
+    )
+  ) +
+  ggplot2::geom_col(
+    width = 0.72,
+    fill = biostat_cols[["orange"]],
+    alpha = 0.8
+  ) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = NULL,
+    y = "Odchylka² (h²)"
+  ) +
+  theme_biostat(base_size = 18) +
+  ggview::canvas(
+    width = 1200,
+    height = 850,
     units = "px"
   )
 
 ggview::save_ggplot(
-  plot = plot_porovnani_sd,
+  plot = plot_maly_vzdalenosti,
   file = here::here(
     path_materials,
-    "porovnani_sd.png"
-  ))
-```
+    "devet_druhu_odchylky_od_prumeru.png"
+  )
+)
 
-```{r}
-#| label: zobrazit porovnani sd
-#| echo: false
-include_local_figure("porovnani_sd.png")
-```
+ggview::save_ggplot(
+  plot = plot_maly_odchylky,
+  file = here::here(
+    path_materials,
+    "devet_druhu_odchylky_soucet.png"
+  )
+)
 
-::: {.blockquote}
-Stejný průměr ≠ stejná data. Směrodatná odchylka nám říká, jak moc jsou data „roztažená“.
-:::
+ggview::save_ggplot(
+  plot = plot_maly_ctverce_odchylek,
+  file = here::here(
+    path_materials,
+    "devet_druhu_ctverce_odchylek.png"
+  )
+)
 
-# Statistiky jako vizualizace
-
-## Od statistik ke grafu
-
-Průměr – SD jsme viděli jako čísla a jako pásmo na grafu.
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r}
-#| ref.label: "zobrazit sd v grafu"
-#| echo: false
-```
-
-:::
-
-::: {.column width="50%"}
-```{r}
-#| label: prumer jako vizualizace
-#| echo: false
-#|
-
-sd_pocet_tucnaku <- sd(pocet_tucnaku)
-mean_pocet_tucnaku <- mean(pocet_tucnaku)
-range_pocet_tucnaku <- range(pocet_tucnaku)
-
-plot_pocet_tucnaku_prumer_vizualizace <-
-  ggplot2::ggplot() +
-  ggplot2::geom_pointrange(
-    data = tibble::tibble(
-      x = 1,
-      y = mean_pocet_tucnaku,
-      ymin = mean_pocet_tucnaku - sd_pocet_tucnaku,
-      ymax = mean_pocet_tucnaku + sd_pocet_tucnaku
-    ),
-    mapping = ggplot2::aes(
-      x = x,
-      y = y,
-      ymin = ymin,
-      ymax = ymax
-    ),
-    fill = col_highlight,
-    alpha = 0.15,
-    linewidth = 1,
-    size = 1
+plot_maly_sd <-
+  plot_maly_spanek +
+  ggplot2::annotate(
+    geom = "rect",
+    xmin = prumer_maly - sd_maly,
+    xmax = prumer_maly + sd_maly,
+    ymin = -Inf,
+    ymax = Inf,
+    fill = biostat_cols[["orange"]],
+    alpha = 0.2
   ) +
-  ggplot2::geom_point(
-    data = tibble::tibble(
-      x = 1,
-      y = mean_pocet_tucnaku,
+  ggplot2::geom_vline(
+    xintercept = prumer_maly,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.5
+  )
+
+ggview::save_ggplot(
+  plot = plot_maly_sd,
+  file = here::here(
+    path_materials,
+    "devet_druhu_sd_oblast.png"
+  )
+)
+
+set.seed(20260727)
+
+vec_mzda_firma_a <-
+  as.numeric(
+    scale(
+      rnorm(n = 240)
+    )
+  ) * 3 + 50
+
+vec_mzda_firma_b <-
+  as.numeric(
+    scale(
+      rnorm(n = 240)
+    )
+  ) * 12 + 50
+
+data_mzdy_sd_histogram <-
+  tibble::tibble(
+    firma = rep(
+      c(
+        "Firma A: SD 3 tis.",
+        "Firma B: SD 12 tis."
+      ),
+      each = 240
     ),
-    mapping = ggplot2::aes(x = x, y = y),
-    color = col_highlight,
-    size = 5
+    mzda_tis_kc = c(
+      vec_mzda_firma_a,
+      vec_mzda_firma_b
+    )
+  )
+
+plot_porovnani_sd_histogram <-
+  ggplot2::ggplot(
+    data = data_mzdy_sd_histogram,
+    mapping = ggplot2::aes(
+      x = mzda_tis_kc
+    )
+  ) +
+  ggplot2::geom_histogram(
+    binwidth = 3,
+    boundary = 0,
+    fill = biostat_cols[["amethyst"]],
+    color = biostat_cols[["parchment"]],
+    alpha = 0.7
+  ) +
+  ggplot2::geom_vline(
+    xintercept = 50,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.4
+  ) +
+  ggplot2::facet_wrap(
+    facets = ggplot2::vars(firma),
+    ncol = 2
   ) +
   ggplot2::labs(
-    y = "Počet tučňáků (na průzkum)",
-    x = ""
+    x = "Měsíční mzda (tis. Kč)",
+    y = "Počet zaměstnanců"
   ) +
-  ggplot2::theme_minimal() +
-  ggplot2::scale_y_continuous(
-    breaks = seq(0, 55, by = 5),
-  ) +
-  ggplot2::scale_x_continuous(
-    breaks = seq(0, 55, by = 5)
-  ) +
-  ggplot2::theme(
-    axis.text.y = ggplot2::element_blank(),
-    axis.ticks.y = ggplot2::element_blank(),
-    panel.grid.major.y = ggplot2::element_blank(),
-    panel.grid.minor.y = ggplot2::element_blank()
-  ) +
-  ggplot2::coord_flip(
-    xlim = c(0.8, 1.2),
-    ylim = c(10, 45)
-  ) +
+  theme_biostat(base_size = 16) +
   ggview::canvas(
     width = 1600,
     height = 800,
@@ -1389,850 +2250,1646 @@ plot_pocet_tucnaku_prumer_vizualizace <-
   )
 
 ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_prumer_vizualizace,
+  plot = plot_porovnani_sd_histogram,
   file = here::here(
     path_materials,
-    "plot_pocet_tucnaku_prumer_vizualizace.png"
+    "stejny_prumer_jina_sd_histogram.png"
   )
 )
 ```
 
+:::: {.columns .align-top}
 
+::: {.column width="68%"}
 ```{r}
-#| label: zobrazit prumer jako vizualizace
+#| label: zobrazit-odchylky-od-prumeru
 #| echo: false
-include_local_figure("plot_pocet_tucnaku_prumer_vizualizace.png")
-```
-
-:::
-
-::::
-
-
-## Od statistik ke grafu
-
-::: {.fragment}
-
-Co kdybychom statistiky **nakreslili jako tvar**?
-
-:::
-
-## Krabicový graf (boxplot) – krok 1
-
-Začneme s tím, co už známe: **medián**.
-
-```{r}
-#| label: boxplot krok1 graf
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-med_val <- median(pocet_tucnaku)
-q1_val <- quantile(pocet_tucnaku, 0.25)
-q3_val <- quantile(pocet_tucnaku, 0.75)
-whisker_lo <- max(min(pocet_tucnaku), q1_val - 1.5 * (q3_val - q1_val))
-whisker_hi <- min(max(pocet_tucnaku), q3_val + 1.5 * (q3_val - q1_val))
-
-plot_boxplot_krok1 <-
-  plot_pocet_tucnaku_full +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 0.8, xend = 1.2, y = med_val, yend = med_val),
-    color = col_median_line,
-    linewidth = 1.5
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue("Medián: {med_val}")
-  )
-
-ggview::save_ggplot(
-  plot = plot_boxplot_krok1,
-  file = here::here(
-    path_materials,
-    "boxplot_krok1.png"
-  ))
-```
-
-```{r}
-#| label: zobrazit boxplot krok1
-#| echo: false
-include_local_figure("boxplot_krok1.png")
-```
-
-## Krabicový graf (boxplot) – krok 2
-
-Přidáme **mezikvartilové rozpětí** (IQR): od 25. do 75. percentilu.
-
-```{r}
-#| label: boxplot krok2 graf
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-plot_boxplot_krok2 <-
-  plot_pocet_tucnaku_full +
-  ggplot2::annotate(
-    geom = "rect",
-    xmin = 0.8,
-    xmax = 1.2,
-    ymin = q1_val,
-    ymax = q3_val,
-    fill = col_data,
-    alpha = 0.4,
-    color = col_data
-  ) +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 0.8, xend = 1.2, y = med_val, yend = med_val),
-    color = col_median_line,
-    linewidth = 1.5
-  ) +
-  ggplot2::labs(
-    title = stringr::str_glue(
-      "Medián: {med_val},  Q1: {q1_val},  Q3: {q3_val},  IQR: {q3_val - q1_val}"
-    )
-  )
-
-ggview::save_ggplot(
-  plot = plot_boxplot_krok2,
-  file = here::here(
-    path_materials,
-    "boxplot_krok2.png"
-  ))
-```
-
-```{r}
-#| label: zobrazit boxplot krok2
-#| echo: false
-include_local_figure("boxplot_krok2.png")
-```
-
-## Krabicový graf (boxplot) – krok 3
-
-Přidáme **vousy** (1,5× IQR od krabice) a **odlehlé hodnoty** (body mimo vousy).
-
-```{r}
-#| label: boxplot krok3 graf
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-outlier_data <-
-  data_poctu_tucnaku |>
-  dplyr::filter(
-    pocet_tucnaku < whisker_lo | pocet_tucnaku > whisker_hi
-  )
-
-plot_boxplot_krok3 <-
-  plot_pocet_tucnaku_full +
-  ggplot2::annotate(
-    geom = "rect",
-    xmin = 0.8,
-    xmax = 1.2,
-    ymin = q1_val,
-    ymax = q3_val,
-    fill = col_data,
-    alpha = 0.4,
-    color = col_data
-  ) +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 1, xend = 1, y = q3_val, yend = whisker_hi),
-    color = col_data,
-    linewidth = 1
-  ) +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 1, xend = 1, y = q1_val, yend = whisker_lo),
-    color = col_data,
-    linewidth = 1
-  ) +
-  ggplot2::geom_segment(
-    ggplot2::aes(x = 0.8, xend = 1.2, y = med_val, yend = med_val),
-    color = col_median_line,
-    linewidth = 1.5
-  ) +
-  ggplot2::geom_point(
-    data = outlier_data,
-    ggplot2::aes(y = pocet_tucnaku, x = 1),
-    color = col_highlight,
-    size = 2,
-    shape = 1
-  ) +
-  ggplot2::labs(
-    title = "Medián + IQR + vousy + odlehlé hodnoty"
-  )
-
-ggview::save_ggplot(
-  plot = plot_boxplot_krok3,
-  file = here::here(
-    path_materials,
-    "boxplot_krok3.png"
-  ))
-```
-
-```{r}
-#| label: boxplot krok3 standardni
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-plot_pocet_tucnaku_boxplot <-
-  plot_pocet_tucnaku_full +
-  ggplot2::geom_boxplot(
-    fill = col_data,
-    alpha = 0.5,
-    width = 0.3,
-    outlier.shape = NA
-  )
-
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_boxplot,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku_boxplot.png"
-  ))
-```
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r}
-#| label: zobrazit boxplot krok3
-#| echo: false
-include_local_figure("boxplot_krok3.png")
-```
-
-:::
-
-::: {.column width="50%" .fragment}
-- Tlustá čára = **medián**
-- Krabice = **IQR** (Q1–Q3)
-- Vousy = 1,5× IQR od krabice
-- Body = **odlehlé hodnoty**
-
-::: {.fragment}
-*Toto je standardní ggplot2 boxplot – totéž, akorát nakreslený automaticky.*
-:::
-
-:::
-
-::::
-
-## Krabicový graf 
-```{r}
-#| label: vytvorit boxplot s beeswarm
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-plot_pocet_tucnaku_boxplot <-
-  ggplot2::ggplot(
-    data = data_poctu_tucnaku,
-    mapping = ggplot2::aes(
-      y = pocet_tucnaku,
-      x = 1
-    )
-  ) +
-  ggplot2::geom_boxplot(
-    fill = col_data,
-    alpha = 0.3,
-    width = 0.3
-  ) +
-  ggplot2::theme_minimal() +
-  ggplot2::scale_y_continuous(
-    breaks = seq(0, 55, by = 5)
-  ) +
-  ggplot2::theme(
-    axis.text.y = ggplot2::element_blank(),
-    axis.ticks.y = ggplot2::element_blank(),
-    panel.grid.major.y = ggplot2::element_blank(),
-    panel.grid.minor.y = ggplot2::element_blank()
-  ) +
-  ggplot2::labs(
-    y = "Počet tučňáků (na průzkum)",
-    x = ""
-  ) +
-  ggplot2::coord_flip(
-    xlim = c(0.8, 1.2),
-    ylim = c(10, 45)
-  ) +
-  ggview::canvas(
-    width = 1600,
-    height = 800,
-    units = "px"
-  )
-
-
-ggview::save_ggplot(
-  plot = plot_pocet_tucnaku_boxplot,
-  file = here::here(
-    path_materials,
-    "pocet_tucnaku_boxplot.png"
-  )
+#| out-width: "95%"
+include_local_figure(
+  "devet_druhu_odchylky_od_prumeru.png"
 )
 ```
-
-```{r}
-#| label: zobrazit boxplot s beeswarm
-#| echo: false
-include_local_figure("pocet_tucnaku_boxplot.png")
-```
-
-::: {.blockquote}
-Boxplot není nový koncept – je to jen statistiky, které znáte, nakreslený jako tvar.
 :::
 
-## Diskuze se sousedem (2 min)
+::: {.column width="28%" .fragment}
+::: {.panel-note}
+[Odchylka]{.panel-title}
 
-Kamarád říká: „Přece víme průměr a SD — proč bychom kreslili boxplot?"
+::: {.text-size-body .text-bold .text-center}
+odchylka doby spánku =
 
-*Diskutujte se sousedem. Co byste mu odpověděli?*
+doba spánku druhu −
 
-# Typy proměnných
-
-```{r}
-#| label: data pro typy promennych
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-# Spojitá: délka zobáku v mm (reálná data)
-delka_zobaku <-
-  data_tucnaci_prez[["bill_length_mm"]] |>
-  as.numeric()
-
-data_delka_zobaku <-
-  tibble::tibble(
-    delka_zobaku = delka_zobaku
-  )
-
-# Nominální: druh tučňáka
-druh_tucnaku <-
-  as.character(data_tucnaci_prez[["species"]])
-
-data_druh_tucnaku <-
-  tibble::tibble(
-    druh_tucnaku = druh_tucnaku
-  )
-
-# Ordinální: hmotnostní kategorie
-vec_thresholds <-
-  quantile(
-    data_tucnaci_prez[["body_mass_g"]],
-    probs = c(0.25, 0.8)
-  )
-
-kategorie_hmotnosti <-
-  dplyr::case_when(
-    data_tucnaci_prez[["body_mass_g"]] <= vec_thresholds[[1]] ~ "malý",
-    data_tucnaci_prez[["body_mass_g"]] <= vec_thresholds[[2]] ~ "střední",
-    TRUE ~ "velký"
-  ) |>
-  factor(
-    levels = c("malý", "střední", "velký"),
-    ordered = TRUE
-  )
-
-data_kategorie_hmotnosti <-
-  tibble::tibble(
-    kategorie_hmotnosti = kategorie_hmotnosti
-  )
-```
-
-## Proč rozlišujeme typy proměnných?
-
-Typ proměnné určuje:
-
-::: {.incremental}
-
-- jaké **statistiky** dávají smysl (průměr počtu tučňáků ano; průměr druhu tučňáka ne)
-- jakou **vizualizaci** zvolíme (beeswarm pro čísla, sloupcový graf pro kategorie)
-- jak data správně **interpretujeme**
-
+průměrná doba spánku
 :::
 
-## Kvantitativní – diskrétní
-
-::: {.incremental}
-
-- počet tučňáků na průzkum
-- počet stromů v lese
-- počet druhů ptáků na lokalitě
-- počet planet ve Sluneční soustavě
-
+[Fialová]{.text-hgl-amethyst} vede pod průměr, [oranžová]{.text-hgl-orange} nad něj.
 :::
-
-::: {.fragment}
-
-::: {.blockquote}
-Proměnná nabývající pouze **celočíselných** hodnot – nelze mít 7,3 stromu.
-:::
-
-:::
-
-## Kvantitativní – diskrétní
-
-```{r}
-#| label: diskretni priklad
-#| echo: true
-pocet_tucnaku <-
-  c(10L, 18L, 16L, 20L) # celá čísla
-```
-
-::: {.fragment}
-
-Vizualizace: beeswarm nebo histogram.
-
-```{r}
-#| label: zobrazit diskretni histogram
-#| echo: false
-include_local_figure("pocet_tucnaku_histogram.png")
-```
-
-:::
-
-## Kvantitativní – spojitá
-
-:::: {.columns}
-
-::: {.column width="50%"}
-
-::: {.incremental}
-
-- délka zobáku tučňáka v mm
-- teplota vzduchu
-- množství srážek
-- hmotnost zvířete
-
-:::
-
-::: {.fragment}
-
-::: {.blockquote}
-Proměnná nabývající **jakékoli hodnoty** v intervalu – délka může být 39,1 mm nebo 40,34 mm.
-:::
-
-:::
-
-:::
-
-::: {.column width="50%"}
-
-```{r}
-#| label: zobrazit schema zobaku
-#| echo: false
-include_local_figure("culmen_depth.png")
-```
-
 :::
 
 ::::
 
-::: {.footer}
-Artwork by [Allison Horst](https://allisonhorst.github.io/palmerpenguins/articles/art.html)
+::: {.takeaway-strip}
+Délka barevného úseku ukazuje, jak daleko je každá hodnota od [aritmetického průměru]{.text-hgl-indigo}.
 :::
 
-## Kvantitativní – spojitá
+## U kočky dosadíme dvě čísla z grafu
+
+:::: {.columns .align-top}
+
+::: {.column width="62%"}
+```{r}
+#| label: zobrazit-odchylku-kocky
+#| echo: false
+#| out-width: "95%"
+include_local_figure(
+  "devet_druhu_odchylky_od_prumeru.png"
+)
+```
+:::
+
+::: {.column width="34%"}
+::: {.panel-data}
+[Hodnoty z horního řádku]{.panel-title}
+
+Kočka domácí: **`r txt_hodnota_kocka_maly` h**
+
+Aritmetický průměr: **`r txt_prumer_maly` h**
+:::
+
+::: {.panel-result .fragment}
+[Dosazení]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+`r txt_hodnota_kocka_maly` h − `r txt_prumer_maly` h =
+
+`r txt_odchylka_kocka_maly` h
+:::
+:::
+:::
+
+::::
+
+::: {.takeaway-strip}
+Kladný výsledek říká, že kočka domácí spí déle než průměr devíti druhů.
+:::
+
+## Odchylky se navzájem vyruší
+
+:::: {.columns .align-top}
+
+::: {.column width="62%"}
+```{r}
+#| label: zobrazit-soucet-odchylek
+#| echo: false
+include_local_figure(
+  "devet_druhu_odchylky_soucet.png"
+)
+```
+:::
+
+::: {.column width="34%" .fragment}
+::: {.panel-result}
+[Součet odchylek]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+součet odchylek =
+
+kladné odchylky + záporné odchylky
+:::
+
+::: {.text-size-large .text-bold .text-center .fragment}
+= `r txt_soucet_odchylek_maly` h
+:::
+
+Kolem průměru se navzájem vyváží.
+:::
+:::
+
+::::
+
+::: {.box-question .fragment}
+[Když prostý součet vždy vyjde přibližně nula, jak zachováme velikost vzdáleností?]{.panel-lead}
+:::
+
+## Odchylky umocníme na druhou
+
+:::: {.columns .align-top}
+
+::: {.column width="62%"}
+```{r}
+#| label: zobrazit-ctverce-odchylek
+#| echo: false
+include_local_figure(
+  "devet_druhu_ctverce_odchylek.png"
+)
+```
+:::
+
+::: {.column width="34%" .fragment}
+::: {.panel-result}
+[Čtvercová odchylka]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+čtvercová odchylka =
+
+odchylka × odchylka
+:::
+
+::: {.text-size-large .text-bold .text-center .fragment}
+`r txt_odchylka_kocka_maly` h ×
+`r txt_odchylka_kocka_maly` h =
+
+`r txt_ctverec_kocka_maly` h²
+:::
+
+Všechny příspěvky jsou nezáporné.
+:::
+
+::: {.panel-note}
+Nejvíce zde přispívá kočka domácí, protože leží nejdále od průměru.
+:::
+:::
+
+::::
+
+## Stejný krok rozepíšeme pro všech devět druhů
+
+::::: {.slide-margin-top-15}
+
+::: {.panel-data}
+[Všechny hodnoty jsou převzaté z grafu]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+`r txt_ctverce_radky_maly[[1]]` +
+
+`r txt_ctverce_radky_maly[[2]]` +
+
+`r txt_ctverce_radky_maly[[3]]`
+:::
+
+::: {.text-size-large .text-bold .text-center .fragment}
+= `r txt_soucet_ctvercu_maly` h²
+:::
+:::
+
+::: {.takeaway-strip .fragment}
+Nejdřív jsme rozepsali všech devět čtvercových odchylek; teprve potom jsme jejich součet zkrátili na jedno číslo.
+:::
+
+:::::
+
+## Rozptyl rozdělí součet
+
+::::: {.slide-margin-top-15}
+
+::: {.panel-data}
+[Nejdřív slovy]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+výběrový rozptyl =
+
+[součet čtvercových odchylek]{.text-hgl-indigo} dělený
+
+[počtem hodnot]{.text-hgl-orange} [zmenšeným o jednu]{.text-hgl-amethyst}
+:::
+:::
+
+::: {.panel-result .fragment}
+[Potom dosadíme čísla]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+`r txt_soucet_ctvercu_maly` h² /
+(`r n_maly` − 1) =
+
+`r txt_soucet_ctvercu_maly` h² /
+`r n_maly - 1` =
+**`r txt_rozptyl_maly` h²**
+:::
+:::
+
+::: {.strip-orange .fragment}
+Jednotkou rozptylu jsou **hodiny na druhou**. Proto se rozptyl hůře interpretuje přímo.
+:::
+
+:::::
+
+## Zápis zkrátíme
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+::: {.panel-result}
+[Obecný vzorec]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+s² = Σ(xᵢ − x̄)² / (n − 1)
+:::
+:::
 
 ```{r}
-#| label: spojite priklad
+#| label: spocitat-rozptyl-v-r
 #| echo: true
-delka_zobaku <-
-  c(39.1, 40.3, 36.7, 42.9) # desetinná čísla
+#| eval: true
+var(
+  x = vec_spanek_deviti
+)
+```
+:::
+
+::: {.column width="48%"}
+::: {.panel-note}
+[Co znamenají symboly?]{.panel-title}
+
+- **s²** — výběrový rozptyl;
+- **xᵢ** — doba spánku jednoho druhu;
+- **x̄** — aritmetický průměr;
+- **n** — počet hodnot;
+- **Σ** — sečteme příspěvky všech druhů.
+:::
+:::
+
+::::
+
+::: {.takeaway-strip .fragment}
+Vzorec je jen krátký zápis postupu, který jsme už provedli slovy a s konkrétními čísly.
+:::
+
+## Směrodatná odchylka
+
+:::: {.columns .align-top}
+
+::: {.column width="58%"}
+```{r}
+#| label: zobrazit-sd-jako-oblast
+#| echo: false
+include_local_figure("devet_druhu_sd_oblast.png")
+```
+:::
+
+::: {.column width="38%"}
+::: {.panel-data}
+[Nejdřív slovy]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+směrodatná odchylka =
+
+druhá odmocnina z rozptylu
+:::
+:::
+
+::: {.panel-result .fragment}
+[Potom čísla]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+√`r txt_rozptyl_maly` h² =
+**`r txt_sd_maly` h**
+:::
+:::
+
+::: {.panel-note .fragment}
+[Vzorec]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+s = √s²
+:::
+
+**s** je směrodatná odchylka a **s²** výběrový rozptyl.
+:::
+:::
+
+::::
+
+::: {.takeaway-strip .fragment}
+V R stejný krok provede `sd(x = vec_spanek_deviti)`. **SD (*standard deviation*)** je zpět v [původních jednotkách]{.text-hgl-indigo}.
+:::
+
+## Stejná průměrná mzda, jiné SD
+
+```{r}
+#| label: zobrazit-histogramy-sd
+#| echo: false
+#| out-width: "80%"
+include_local_figure("stejny_prumer_jina_sd_histogram.png")
 ```
 
-::: {.fragment}
+::: {.takeaway-strip}
+V obou firmách je průměr 50 tisíc Kč. Vyšší SD ve firmě B znamená širší histogram.
+:::
 
-Různé vizualizace odhalují různé vlastnosti dat.
+## Které souhrny patří k sobě?
+
+::::: {.slide-margin-top-15}
+
+::: {.box-question}
+[Vyberte dvojici, která popisuje střed a rozptýlení podobným způsobem.]{.panel-lead}
+:::
+
+<br>
+
+:::: {.columns .align-top}
+
+::: {.column width="31%"}
+::: {.card-question}
+[A]{.card-title}
+
+průměr + IQR
+:::
+:::
+
+::: {.column width="31%"}
+::: {.card-question}
+[B]{.card-title}
+
+[průměr + SD]{.rn-circle-indigo}
+:::
+:::
+
+::: {.column width="31%"}
+::: {.card-question}
+[C]{.card-title}
+
+medián + SD
+:::
+:::
+
+::::
+
+<br>
+<br>
+
+::: {.takeaway-strip}
+Když nehlasujeme: napište si, která míra rozptýlení používá vzdálenosti od průměru.
+:::
+
+:::::
+
+## Dvě užitečné dvojice
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-top}
+
+::: {.column width="48%" .fragment}
+::: {.panel-result}
+[Průměr + SD]{.panel-title}
+
+Používají všechny hodnoty a jsou citlivější k hodnotám daleko od středu.
+:::
+:::
+
+::: {.column width="48%" .fragment}
+::: {.panel-result}
+[Medián + IQR]{.panel-title}
+
+Vycházejí z pořadí hodnot a jsou odolnější vůči vzdáleným hodnotám.
+:::
+:::
+
+::::
+
+<br>
+
+::: {.takeaway-strip .fragment}
+Volbu neurčuje zvyk. Rozhoduje tvar dat a otázka, kterou souhrnem zodpovídáme.
+:::
+
+:::::
+
+# Zpět k titulku
+
+## Malý netopýr a velký slon jsou v jedné tabulce
+
+:::: {.columns .align-center}
+
+::: {.column width="43%"}
+::: {.text-size-heading2 .text-bold}
+Co znamená „běžná“ hmotnost?
+:::
+
+<br>
+
+::: {.panel-question}
+[Biologická otázka]{.panel-title}
+
+Má jedno číslo zastoupit druhy od velmi malých savců až po slony?
+:::
+
+<br>
+
+Rozložení tělesné hmotnosti musíme vidět dřív, než vybereme souhrn.
+:::
+
+::: {.column width="53%"}
+![](Materials/mammal_elephant_illustrative.png){fig-alt="Humorná ilustrace slona stojícího na malé osobní váze." width="100%"}
+
+::: {style="font-size: 0.45em; text-align: right;"}
+Ilustrace vytvořená pomocí AI.
+:::
+:::
+
+::::
+
+## Vracíme se k tělesné hmotnosti
 
 ```{r}
-#| label: vytvorit tri grafy spojite
-#| echo: false
-#| eval: true
+#| label: vytvorit-hmotnost-linear
+#| include: false
 #| message: false
 #| warning: false
-plot_delka_beeswarm <-
+data_hmotnost <-
+  data_savci |>
+  tidyr::drop_na(hmotnost_kg)
+
+plot_hmotnost_linear <-
   ggplot2::ggplot(
-    data = data_delka_zobaku,
+    data = data_hmotnost,
     mapping = ggplot2::aes(
-      x = delka_zobaku,
+      x = hmotnost_kg,
       y = 1
     )
   ) +
-  ggbeeswarm::geom_beeswarm(
-    cex = 0.8,
-    color = col_data,
-    alpha = 0.7
+  ggbeeswarm::geom_quasirandom(
+    width = 0.28,
+    orientation = "y",
+    color = biostat_cols[["grey_olive"]],
+    alpha = 0.75,
+    size = 3.6
   ) +
-  ggplot2::labs(
-    x = "Délka zobáku (mm)",
-    y = "",
-    title = "Bodový graf"
+  ggplot2::geom_vline(
+    xintercept = prumer_hmotnosti,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.5
   ) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    axis.text.y = ggplot2::element_blank(),
-    axis.ticks.y = ggplot2::element_blank()
-  )
-
-plot_delka_histogram <-
-  ggplot2::ggplot(
-    data = data_delka_zobaku,
-    mapping = ggplot2::aes(
-      x = delka_zobaku
+  ggplot2::geom_vline(
+    xintercept = median_hmotnosti,
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.5,
+    linetype = "dashed"
+  ) +
+  ggplot2::scale_x_continuous(
+    labels = scales::label_number(
+      big.mark = " ",
+      decimal.mark = ","
     )
-  ) +
-  ggplot2::geom_histogram(
-    binwidth = 1,
-    fill = col_data,
-    color = "white"
-  ) +
-  ggplot2::labs(
-    x = "Délka zobáku (mm)",
-    y = "Počet",
-    title = "Histogram"
-  ) +
-  ggplot2::theme_minimal()
-
-plot_delka_hustota <-
-  ggplot2::ggplot(
-    data = data_delka_zobaku,
-    mapping = ggplot2::aes(
-      x = delka_zobaku
-    )
-  ) +
-  ggplot2::geom_density(
-    fill = col_data,
-    alpha = 0.4,
-    color = col_data
-  ) +
-  ggplot2::labs(
-    x = "Délka zobáku (mm)",
-    y = "Hustota",
-    title = "Graf hustoty"
-  ) +
-  ggplot2::theme_minimal()
-
-plot_delka_zobaku_tri <-
-  cowplot::plot_grid(
-    plot_delka_beeswarm,
-    plot_delka_histogram,
-    plot_delka_hustota,
-    ncol = 3
-  ) +
-  ggview::canvas(
-    width = 1600,
-    height = 600,
-    units = "px"
-  )
-
-ggview::save_ggplot(
-  plot = plot_delka_zobaku_tri,
-  file = here::here(
-    path_materials,
-    "delka_zobaku_tri.png"
-  ))
-```
-
-```{r}
-#| label: zobrazit tri grafy spojite
-#| echo: false
-include_local_figure("delka_zobaku_tri.png")
-```
-
-:::
-
-## Otázka k zamyšlení
-
-Vědci zapsali **druh tučňáka** u každého jedince: *Adelie*, *Chinstrap*, *Gentoo*.
-Má smysl spočítat **průměrný druh tučňáka**?
-
-- A) Ano — průměr funguje pro jakákoliv data
-- B) Ne — druh tučňáka je kategorie, průměr nedává smysl
-- C) Záleží na tom, kolik druhů máme
-
-::: {.fragment}
-
-::: {.blockquote}
-Průměr lze spočítat jen pro **kvantitativní** proměnné. Pro kategorické proměnné používáme četnosti, podíly nebo modus.
-:::
-
-:::
-
-## Kategorická – nominální
-
-::: {.incremental}
-
-- druh tučňáka (Adelie, Chinstrap, Gentoo)
-- druh hmyzu (včela, čmelák, motýl)
-- typ stanoviště (les, louka, mokřad)
-- krevní skupina (A, B, AB, 0)
-
-:::
-
-::: {.fragment}
-
-::: {.blockquote}
-Proměnná, jejíž hodnoty **nelze seřadit** – „Adelie“ není více ani méně než „Chinstrap“.
-:::
-
-:::
-
-## Kategorická – nominální
-
-```{r}
-#| label: nominalni priklad
-#| echo: true
-druh_tucnaku <-
-  c("Adelie", "Chinstrap", "Adelie", "Gentoo")
-```
-
-::: {.fragment}
-
-Každá kategorie dostane vlastní barvu – vizuální kód odpovídá realitě.
-
-```{r}
-#| label: definovat barvy kvetin
-#| echo: false
-#| eval: true
-barvy_druhu <-
-  c(
-    "Adelie" = "darkorange",
-    "Chinstrap" = "mediumpurple",
-    "Gentoo" = "cyan4"
-  )
-```
-
-```{r}
-#| label: vytvorit bar nominalni
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-plot_druh_tucnaku <-
-  ggplot2::ggplot(
-    data = data_druh_tucnaku,
-    mapping = ggplot2::aes(
-      x = druh_tucnaku,
-      fill = druh_tucnaku
-    )
-  ) +
-  ggplot2::geom_bar(
-    color = "#2E2E2E"
-  ) +
-  ggplot2::scale_fill_manual(
-    values = barvy_druhu
-  ) +
-  ggplot2::labs(
-    x = "Druh tučňáka",
-    y = "Počet průzkumů"
-  ) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    legend.position = "none"
-  ) +
-  ggview::canvas(
-    width = 1600,
-    height = 800,
-    units = "px"
-  )
-
-ggview::save_ggplot(
-  plot = plot_druh_tucnaku,
-  file = here::here(
-    path_materials,
-    "druh_tucnaku.png"
-  ))
-```
-
-```{r}
-#| label: zobrazit bar nominalni
-#| echo: false
-include_local_figure("druh_tucnaku.png")
-```
-
-:::
-
-## Kategorická – nominální
-
-Chceme ukázat **proporce** (ne počty)? Použijeme složený sloupcový graf nebo waffle.
-
-```{r}
-#| label: vytvorit proporce nominalni
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-plot_barva_stacked <-
-  ggplot2::ggplot(
-    data = data_druh_tucnaku,
-    mapping = ggplot2::aes(
-      x = "",
-      fill = druh_tucnaku
-    )
-  ) +
-  ggplot2::geom_bar(
-    position = "fill",
-    color = "#2E2E2E"
-  ) +
-  ggplot2::scale_fill_manual(
-    values = barvy_druhu,
-    name = "Druh tučňáka"
   ) +
   ggplot2::scale_y_continuous(
-    labels = scales::percent
+    breaks = NULL,
+    name = NULL
+  ) +
+  ggplot2::coord_cartesian(
+    ylim = c(0.6, 1.4)
   ) +
   ggplot2::labs(
-    x = "",
-    y = "Podíl",
-    title = "Složený sloupcový graf"
+    x = "Tělesná hmotnost druhu (kg)",
+    title = "Lineární osa"
   ) +
-  ggplot2::theme_minimal()+
+  theme_biostat(base_size = 18) +
   ggplot2::theme(
-    legend.position = "left"
-  ) 
-
-pocty_barev <-
-  table(data_druh_tucnaku[["druh_tucnaku"]])
-
-plot_barva_waffle <-
-  waffle::waffle(
-    parts = pocty_barev,
-    rows = 10,
-    color = barvy_druhu[names(pocty_barev)],
-  ) +
-  ggplot2::theme(
-    legend.position = "none"
-  ) +
-  ggplot2::labs(
-    subtitle = "(1 čtverec = 1 tučňák)"
-  )
-
-plot_proporce_combined <-
-  cowplot::plot_grid(
-    plot_barva_stacked,
-    NULL,
-    plot_barva_waffle, 
-    ncol = 3,
-    rel_widths = c(0.4, 0.1, 0.5)
+    panel.grid.major.y = ggplot2::element_blank()
   ) +
   ggview::canvas(
     width = 1600,
-    height = 800,
+    height = 700,
     units = "px"
   )
 
 ggview::save_ggplot(
-  plot = plot_proporce_combined,
+  plot = plot_hmotnost_linear,
   file = here::here(
     path_materials,
-    "druh_tucnaku_proporce.png"
+    "hmotnost_linearni_osa.png"
   )
 )
 ```
 
 ```{r}
-#| label: zobrazit proporce nominalni
+#| label: zobrazit-hmotnost-linear
 #| echo: false
-include_local_figure("druh_tucnaku_proporce.png")
+include_local_figure("hmotnost_linearni_osa.png")
 ```
 
-## Kategorická – ordinální
-
-::: {.incremental}
-
-- hmotnostní kategorie tučňáka (malý, střední, velký)
-- školní klasifikace (1, 2, 3, 4, 5)
-- souhlas s výrokem (zcela souhlasím – zcela nesouhlasím)
-- fáze měsíce (nový – úplněk)
-
+::: {.strip-orange}
+Několik velmi těžkých druhů roztáhne osu tak silně, že většina bodů splývá u nuly.
 :::
 
-::: {.fragment}
-
-::: {.blockquote}
-Proměnná s **pořadím**, ale vzdálenost mezi stupni **není nutně stejná** – „velký“ není přesně dvakrát víc než „malý“.
-:::
-
-:::
-
-## Kategorická – ordinální
+## Stejná data na logaritmické ose
 
 ```{r}
-#| label: ordinalni priklad
-#| echo: true
-kategorie_hmotnosti <-
-  factor(
-    c("střední", "velký", "malý", "velký"),
-    levels = c("malý", "střední", "velký"),
-    ordered = TRUE
-  )
-```
-
-::: {.fragment}
-
-Vizualizace: sloupcový graf s **seřazenou** osou.
-
-```{r}
-#| label: vytvorit bar ordinalni
-#| echo: false
-#| eval: true
+#| label: vytvorit-hmotnost-log
+#| include: false
 #| message: false
 #| warning: false
-plot_kategorie_hmotnosti <-
+plot_hmotnost_log <-
   ggplot2::ggplot(
-    data = data_kategorie_hmotnosti,
+    data = data_hmotnost,
     mapping = ggplot2::aes(
-      x = kategorie_hmotnosti
+      x = hmotnost_kg,
+      y = 1
     )
   ) +
-  ggplot2::geom_bar(
-    fill = col_data
+  ggbeeswarm::geom_quasirandom(
+    width = 0.34,
+    orientation = "y",
+    color = biostat_cols[["grey_olive"]],
+    alpha = 0.75,
+    size = 3.6
+  ) +
+  ggplot2::geom_vline(
+    xintercept = prumer_hmotnosti,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.5
+  ) +
+  ggplot2::geom_vline(
+    xintercept = median_hmotnosti,
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.5,
+    linetype = "dashed"
+  ) +
+  ggplot2::scale_x_log10(
+    breaks = c(
+      0.01,
+      0.1,
+      1,
+      10,
+      100,
+      1000
+    ),
+    labels = c(
+      "0,01",
+      "0,1",
+      "1",
+      "10",
+      "100",
+      "1 000"
+    )
+  ) +
+  ggplot2::scale_y_continuous(
+    breaks = NULL,
+    name = NULL
+  ) +
+  ggplot2::coord_cartesian(
+    ylim = c(0.55, 1.45)
   ) +
   ggplot2::labs(
-    x = "Kategorie hmotnosti tučňáka",
-    y = "Počet tučňáků"
+    x = "Tělesná hmotnost (kg; logaritmická osa)"
   ) +
-  ggplot2::theme_minimal() +
+  theme_biostat(base_size = 18) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank()
+  ) +
   ggview::canvas(
     width = 1600,
-    height = 600,
+    height = 700,
     units = "px"
   )
 
 ggview::save_ggplot(
-  plot = plot_kategorie_hmotnosti,
+  plot = plot_hmotnost_log,
   file = here::here(
     path_materials,
-    "kategorie_hmotnosti.png"
-  ))
+    "hmotnost_logaritmicka_osa.png"
+  )
+)
 ```
 
 ```{r}
-#| label: zobrazit bar ordinalni
+#| label: zobrazit-hmotnost-log
 #| echo: false
-include_local_figure("kategorie_hmotnosti.png")
+include_local_figure("hmotnost_logaritmicka_osa.png")
 ```
 
+::: {.takeaway-strip}
+Graf nezměnil data. Jen nám dovolil vidět lehké i těžké druhy současně.
+:::
+
+## Jak dvě redakce počítaly?
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+::: {.card-data}
+[Titulek A]{.card-title}
+
+Průměr: [**`r txt_prumer_hmotnosti` kg**]{.text-hgl-indigo_velvet}
+:::
+
+::: {.card-question}
+**A)** Pouze A.
+:::
+
+::: {.card-question}
+[**C) Oba mohou být správně.**]{.rn-circle-indigo}
+:::
+:::
+
+::: {.column width="48%"}
+::: {.card-data}
+[Titulek B]{.card-title}
+
+Medián: [**`r txt_median_hmotnosti` kg**]{.text-hgl-amethyst}
+:::
+
+::: {.card-question}
+**B)** Pouze B.
+:::
+
+::: {.card-question}
+**D)** Nemáme dost informací.
+:::
+:::
+
+::::
+
+::: {.takeaway-strip}
+Obě čísla jsou správně vypočtená. Ani jedno však není univerzální „typický savec“.
+:::
+
+:::::
+
+## Statistická redakce: opravte titulek
+
+::: {.panel-data}
+[Důkazy]{.panel-title}
+
+- řádek představuje zastoupený **druh**
+- rozdělení hmotnosti je ovlivněno několika velmi těžkými druhy;
+- průměr = `r txt_prumer_hmotnosti` kg, medián = `r txt_median_hmotnosti` kg.
+:::
+
+<br>
+
+::: {.text-size-heading2 .text-bold .text-center}
+Přepište jeden titulek tak, aby byl pravdivý i po přečtení grafu.
+:::
+
+<br>
+
+::: {.takeaway-strip}
+Když nepracujeme ve skupině: napište jednu větu, která uvádí souhrn, jednotku pozorování a omezení tabulky.
+:::
+
+## Co z tabulky smíme tvrdit?
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+::: {.panel-result}
+[Poctivý závěr]{.panel-title}
+
+V této tabulce je medián hmotnosti zastoupeného druhu
+[**`r txt_median_hmotnosti` kg**]{.text-hgl-amethyst}, ale několik velmi těžkých
+druhů posouvá průměr na [**`r txt_prumer_hmotnosti` kg**]{.text-hgl-indigo_velvet}.
+:::
+:::
+
+::: {.column width="48%" .fragment}
+::: {.panel-warning}
+[Pozor!]{.panel-title}
+
+Tabulka [není náhodným výběrem]{.text-hgl-orange} všech druhů ani všech
+jednotlivých savců. Čísla proto nepopisují „náhodného savce na Zemi“.
+:::
+:::
+
+::::
+
+:::::
+
+# Statistiky jako vizualizace
+
+## Správný titulek můžeme doplnit grafem
+
+```{r}
+#| label: pripravit-konstrukci-boxplotu
+#| include: false
+#| message: false
+#| warning: false
+q1_hmotnost <-
+  quantile(
+    vec_hmotnost_kg,
+    probs = 0.25,
+    names = FALSE
+  )
+
+q3_hmotnost <-
+  quantile(
+    vec_hmotnost_kg,
+    probs = 0.75,
+    names = FALSE
+  )
+
+stat_boxplot_hmotnost <-
+  boxplot.stats(log10(vec_hmotnost_kg))
+
+vous_dolni_hmotnost <-
+  10^stat_boxplot_hmotnost$stats[[1]]
+
+vous_horni_hmotnost <-
+  10^stat_boxplot_hmotnost$stats[[5]]
+
+plot_hmotnost_body <-
+  ggplot2::ggplot(
+    data = data_hmotnost,
+    mapping = ggplot2::aes(
+      x = hmotnost_kg,
+      y = 1
+    )
+  ) +
+  ggbeeswarm::geom_quasirandom(
+    width = 0.34,
+    orientation = "y",
+    color = biostat_cols[["grey_olive"]],
+    alpha = 0.75,
+    size = 3.6
+  ) +
+  ggplot2::scale_x_log10(
+    breaks = c(
+      0.01,
+      0.1,
+      1,
+      10,
+      100,
+      1000,
+      10000
+    ),
+    labels = c(
+      "0,01",
+      "0,1",
+      "1",
+      "10",
+      "100",
+      "1 000",
+      "10 000"
+    ),
+    limits = c(0.004, 20000)
+  ) +
+  ggplot2::scale_y_continuous(
+    breaks = NULL,
+    name = NULL
+  ) +
+  ggplot2::coord_cartesian(
+    ylim = c(0.55, 1.45)
+  ) +
+  ggplot2::labs(
+    x = "Tělesná hmotnost (kg; logaritmická osa)"
+  ) +
+  theme_biostat(base_size = 18) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank()
+  ) +
+  ggview::canvas(
+    width = 1600,
+    height = 700,
+    units = "px"
+  )
+
+plot_box_krok1 <-
+  plot_hmotnost_body +
+  ggplot2::geom_vline(
+    xintercept = median_hmotnosti,
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.8
+  )
+
+ggview::save_ggplot(
+  plot = plot_box_krok1,
+  file = here::here(
+    path_materials,
+    "hmotnost_boxplot_krok_1_median.png"
+  )
+)
+```
+
+```{r}
+#| label: zobrazit-boxplot-krok1
+#| echo: false
+include_local_figure("hmotnost_boxplot_krok_1_median.png")
+```
+
+::: {.takeaway-strip}
+„Běžný zastoupený druh váží **`r txt_median_hmotnosti` kg**.“ Graf ukazuje data i medián za tímto titulkem.
+:::
+
+## Přidáme prostřední polovinu
+
+```{r}
+#| label: vytvorit-boxplot-krok2
+#| include: false
+#| message: false
+#| warning: false
+plot_box_krok2 <-
+  plot_hmotnost_body +
+  ggplot2::annotate(
+    geom = "rect",
+    xmin = q1_hmotnost,
+    xmax = q3_hmotnost,
+    ymin = 0.82,
+    ymax = 1.18,
+    fill = biostat_cols[["amethyst"]],
+    color = biostat_cols[["indigo_velvet"]],
+    alpha = 0.28,
+    linewidth = 1.3
+  ) +
+  ggplot2::geom_vline(
+    xintercept = median_hmotnosti,
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.8
+  )
+
+ggview::save_ggplot(
+  plot = plot_box_krok2,
+  file = here::here(
+    path_materials,
+    "hmotnost_boxplot_krok_2_iqr.png"
+  )
+)
+```
+
+```{r}
+#| label: zobrazit-boxplot-krok2
+#| echo: false
+include_local_figure("hmotnost_boxplot_krok_2_iqr.png")
+```
+
+::: {.strip-amethyst}
+Šířka krabice je [**IQR**]{.text-hgl-amethyst}: prostředních 50 % hodnot.
+:::
+
+## Přidáme vousy
+
+```{r}
+#| label: vytvorit-boxplot-krok3
+#| include: false
+#| message: false
+#| warning: false
+plot_box_krok3 <-
+  plot_hmotnost_body +
+  ggplot2::annotate(
+    geom = "rect",
+    xmin = q1_hmotnost,
+    xmax = q3_hmotnost,
+    ymin = 0.82,
+    ymax = 1.18,
+    fill = biostat_cols[["amethyst"]],
+    color = biostat_cols[["indigo_velvet"]],
+    alpha = 0.28,
+    linewidth = 1.3
+  ) +
+  ggplot2::annotate(
+    geom = "segment",
+    x = vous_dolni_hmotnost,
+    xend = q1_hmotnost,
+    y = 1,
+    yend = 1,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.3
+  ) +
+  ggplot2::annotate(
+    geom = "segment",
+    x = q3_hmotnost,
+    xend = vous_horni_hmotnost,
+    y = 1,
+    yend = 1,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.3
+  ) +
+  ggplot2::annotate(
+    geom = "segment",
+    x = c(
+      vous_dolni_hmotnost,
+      vous_horni_hmotnost
+    ),
+    xend = c(
+      vous_dolni_hmotnost,
+      vous_horni_hmotnost
+    ),
+    y = 0.9,
+    yend = 1.1,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.3
+  ) +
+  ggplot2::geom_vline(
+    xintercept = median_hmotnosti,
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.8
+  )
+
+ggview::save_ggplot(
+  plot = plot_box_krok3,
+  file = here::here(
+    path_materials,
+    "hmotnost_boxplot_krok_3_vousy.png"
+  )
+)
+```
+
+```{r}
+#| label: zobrazit-boxplot-krok3
+#| echo: false
+include_local_figure("hmotnost_boxplot_krok_3_vousy.png")
+```
+
+::: {.strip-orange}
+[Body za vousy]{.text-hgl-orange} mohou být zajímavé nebo neobvyklé,
+ale nejsou automaticky chybné.
+:::
+
+## Z bodů vznikl krabicový graf
+
+```{r}
+#| label: vytvorit-finalni-boxplot
+#| include: false
+#| message: false
+#| warning: false
+plot_hmotnost_boxplot <-
+  ggplot2::ggplot(
+    data = data_hmotnost,
+    mapping = ggplot2::aes(
+      x = hmotnost_kg,
+      y = 1
+    )
+  ) +
+  ggplot2::geom_boxplot(
+    orientation = "y",
+    width = 0.5,
+    color = biostat_cols[["indigo_velvet"]],
+    fill = biostat_cols[["amethyst"]],
+    alpha = 0.35,
+    linewidth = 1.3
+  ) +
+  ggplot2::scale_x_log10(
+    breaks = c(
+      0.01,
+      1,
+      100,
+      10000
+    ),
+    labels = c(
+      "0,01",
+      "1",
+      "100",
+      "10 000"
+    ),
+    limits = c(0.004, 20000)
+  ) +
+  ggplot2::scale_y_continuous(
+    breaks = NULL,
+    name = NULL
+  ) +
+  ggplot2::labs(
+    x = "Hmotnost (kg; logaritmická osa)"
+  ) +
+  theme_biostat(base_size = 19) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank()
+  ) +
+  ggview::canvas(
+    width = 1600,
+    height = 700,
+    units = "px"
+  )
+
+ggview::save_ggplot(
+  plot = plot_hmotnost_boxplot,
+  file = here::here(
+    path_materials,
+    "hmotnost_boxplot.png"
+  )
+)
+```
+
+```{r}
+#| label: zobrazit-finalni-boxplot
+#| echo: false
+include_local_figure("hmotnost_boxplot.png")
+```
+
+::: {.takeaway-strip}
+[**Krabicový graf (*boxplot*)**]{.text-hgl-indigo_velvet} je mapa několika
+souhrnů, ne fotografie všech hodnot.
+:::
+
+## Co krabice schovala?
+
+```{r}
+#| label: vytvorit-porovnani-boxplot-housle
+#| include: false
+#| message: false
+#| warning: false
+plot_hmotnost_housle <-
+  ggplot2::ggplot(
+    data = data_hmotnost,
+    mapping = ggplot2::aes(
+      x = hmotnost_kg,
+      y = 1
+    )
+  ) +
+  ggplot2::geom_violin(
+    orientation = "y",
+    fill = biostat_cols[["amethyst"]],
+    color = biostat_cols[["indigo_velvet"]],
+    alpha = 0.35,
+    linewidth = 1.2,
+    trim = FALSE
+  ) +
+  ggplot2::geom_boxplot(
+    orientation = "y",
+    width = 0.18,
+    color = biostat_cols[["indigo_velvet"]],
+    fill = biostat_cols[["parchment"]],
+    outlier.shape = NA,
+    linewidth = 1
+  ) +
+  ggplot2::geom_vline(
+    xintercept = prumer_hmotnosti,
+    color = biostat_cols[["orange"]],
+    linewidth = 1.6
+  ) +
+  ggplot2::scale_x_log10(
+    breaks = c(
+      0.01,
+      1,
+      100,
+      10000
+    ),
+    labels = c(
+      "0,01",
+      "1",
+      "100",
+      "10 000"
+    ),
+    limits = c(0.004, 20000)
+  ) +
+  ggplot2::scale_y_continuous(
+    breaks = NULL,
+    name = NULL
+  ) +
+  ggplot2::labs(
+    x = "Hmotnost (kg; logaritmická osa)"
+  ) +
+  theme_biostat(base_size = 19) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank()
+  ) +
+  ggview::canvas(
+    width = 1600,
+    height = 700,
+    units = "px"
+  )
+
+ggview::save_ggplot(
+  plot = plot_hmotnost_housle,
+  file = here::here(
+    path_materials,
+    "hmotnost_houslovy_boxplot.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+**Krabicový graf**
+
+```{r}
+#| label: zopakovat-finalni-boxplot
+#| echo: false
+include_local_figure("hmotnost_boxplot.png")
+```
+:::
+
+::: {.column width="48%"}
+**Krabicový + houslový graf**
+
+```{r}
+#| label: zobrazit-houslovy-boxplot
+#| echo: false
+include_local_figure("hmotnost_houslovy_boxplot.png")
+```
+
+::: {.text-center style="font-size: 0.70em; line-height: 1.15;"}
+[oranžová čára = průměr]{.text-hgl-orange}<br>
+[čára v krabici = medián]{.text-hgl-indigo_velvet}
+:::
+:::
+
+::::
+
+::: {.takeaway-strip}
+Když nehlasujeme: napište si jednu vlastnost rozdělení, kterou housle ukazují lépe než samotná krabice.
+:::
+
+## Houslový graf vrací tvar
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+::: {.panel-result}
+[Krabicový graf]{.panel-title}
+
+Rychle porovná medián, IQR, vousy a možné odlehlé hodnoty.
+:::
+:::
+
+::: {.column width="48%" .fragment}
+::: {.panel-result}
+[Houslový graf]{.panel-title}
+
+Ukáže, kde se hodnoty hromadí, ale přesná četnost se z jeho šířky čte obtížně.
+:::
+:::
+
+::::
+
+::: {.takeaway-strip .fragment}
+Housle mohou být informativnější, když je důležitý
+[tvar]{.text-hgl-amethyst}; [body]{.text-hgl-graphite} zůstávají
+nejtransparentnější první kontrolou.
+:::
+
+:::::
+
+# Typy proměnných
+
+## Jeden netopýr, různé typy údajů
+
+:::: {.columns .align-center}
+
+::: {.column width="44%"}
+::: {.text-size-heading2 .text-bold}
+U netopýra můžeme zaznamenat:
+:::
+
+::: {.incremental}
+- dobu spánku v hodinách;
+- váhu v kilogramech;
+- počet pozorovaných jedinců;
+- typ potravy;
+- velikostní kategorii.
+:::
+
+::: {.takeaway-strip}
+Typ neurčuje vzhled čísla. Určuje jej [význam proměnné]{.text-hgl-orange}.
+:::
+:::
+
+::: {.column width="52%"}
+![](Materials/mammal_bat_illustrative.png){fig-alt="Humorná ilustrace netopýra zapisujícího údaje do terénního formuláře." width="100%"}
+
+::: {style="font-size: 0.45em; text-align: right;"}
+Ilustrace vytvořená pomocí AI.
+:::
+:::
+
+::::
+
+## Číslo 37 může znamenat čtyři různé věci
+
+:::: {.slide-margin-top-15}
+
+| Zápis | Co znamená | Jak vznikl |
+|---|---|---|
+| 37,0 | tělesná teplota | měření |
+| 37 | počet mláďat | počítání |
+| 37 | číselný kód lokality | název kategorie |
+| 3 | stupeň poškození | uspořádaná kategorie |
+
+<br>
+
+::: {.box-question}
+::: {.panel-lead}
+Rozhoduje vzhled hodnoty, nebo její [význam]{.text-hgl-orange}?
+:::
+:::
+
+::::
+
+## Typ určuje význam a možné operace
+
+:::: {.slide-margin-top-15}
+
+::: {.incremental}
+- [**spojitá numerická**]{.text-hgl-indigo_velvet}: měření na číselné škále;
+- [**diskrétní numerická**]{.text-hgl-indigo_velvet}: výsledek počítání;
+- [**nominální kategoriální**]{.text-hgl-indigo_velvet}: názvy bez přirozeného pořadí;
+- [**ordinální kategoriální**]{.text-hgl-indigo_velvet}: kategorie s přirozeným pořadím.
+:::
+
+<br>
+
+::: {.takeaway-strip .fragment}
+Technická třída objektu v R pomáhá s kontrolou, ale
+[statistický typ]{.text-hgl-orange} určuje význam hodnot a způsob jejich vzniku.
+:::
+
+::::
+
+## Doba spánku vznikla měřením
+
+::::: {.slide-margin-top-15}
+
+:::: {.columns .align-top}
+
+::: {.column width="58%"}
+::: {.panel-result}
+[**Spojitá numerická proměnná**]{.text-hgl-indigo_velvet}: mezi dvěma
+hodnotami mohou být další [měření]{.text-hgl-orange}.
+:::
+
+```{r}
+#| label: zobrazit-spojitou-promennou
+#| echo: false
+include_local_figure("spanek_bodovy_graf.png")
+```
+:::
+
+::: {.column width="38%" .fragment}
+```{r}
+#| label: zkontrolovat-spojitou-v-r
+#| echo: true
+#| eval: true
+vec_spanek_h <-
+  ggplot2::msleep[["sleep_total"]]
+
+class(x = vec_spanek_h)
+typeof(x = vec_spanek_h)
+```
+:::
+
+::::
+
+:::::
+
+## Počet druhů v řádu jsme spočítali
+
+```{r}
+#| label: vytvorit-graf-diskretni-promenne
+#| include: false
+#| message: false
+#| warning: false
+data_pocet_druhu <-
+  data_savci |>
+  dplyr::count(
+    rad,
+    name = "pocet_druhu"
+  ) |>
+  dplyr::arrange(
+    dplyr::desc(pocet_druhu)
+  )
+
+plot_pocet_druhu <-
+  data_pocet_druhu |>
+  dplyr::slice_head(n = 12) |>
+  ggplot2::ggplot(
+    mapping = ggplot2::aes(
+      x = pocet_druhu,
+      y = forcats::fct_reorder(
+        rad,
+        pocet_druhu
+      )
+    )
+  ) +
+  ggplot2::geom_segment(
+    mapping = ggplot2::aes(
+      x = 0,
+      xend = pocet_druhu,
+      yend = forcats::fct_reorder(
+        rad,
+        pocet_druhu
+      )
+    ),
+    color = biostat_cols[["grey_olive"]],
+    linewidth = 1.2
+  ) +
+  ggplot2::geom_point(
+    color = biostat_cols[["indigo_velvet"]],
+    size = 4.5
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = scales::breaks_width(2)
+  ) +
+  ggplot2::labs(
+    x = "Počet zastoupených druhů",
+    y = "Taxonomický řád"
+  ) +
+  theme_biostat(base_size = 16) +
+  ggview::canvas(
+    width = 1500,
+    height = 850,
+    units = "px"
+  )
+
+ggview::save_ggplot(
+  plot = plot_pocet_druhu,
+  file = here::here(
+    path_materials,
+    "pocet_druhu_v_radu.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="58%"}
+```{r}
+#| label: zobrazit-diskretni-promennou
+#| echo: false
+include_local_figure("pocet_druhu_v_radu.png")
+```
+:::
+
+::: {.column width="38%" .fragment}
+::: {.panel-result}
+[**Diskrétní numerická proměnná**]{.text-hgl-indigo_velvet}: vznikla
+[počítáním]{.text-hgl-orange}; zde měníme jednotku pozorování na taxonomický řád.
+:::
+
+```{r}
+#| label: zkontrolovat-diskretni-v-r
+#| echo: true
+#| eval: true
+vec_pocet_druhu <-
+  as.integer(
+    x = table(
+      ggplot2::msleep[["order"]]
+    )
+  )
+
+class(x = vec_pocet_druhu)
+str(object = vec_pocet_druhu)
+```
+
+
+:::
+
+::::
+
+## Typ potravy je název bez pořadí
+
+```{r}
+#| label: vytvorit-graf-nominalni-promenne
+#| include: false
+#| message: false
+#| warning: false
+data_potrava <-
+  data_savci |>
+  dplyr::count(
+    typ_potravy,
+    name = "pocet_druhu"
+  ) |>
+  dplyr::arrange(
+    dplyr::desc(pocet_druhu)
+  )
+
+plot_potrava <-
+  ggplot2::ggplot(
+    data = data_potrava,
+    mapping = ggplot2::aes(
+      x = pocet_druhu,
+      y = forcats::fct_reorder(
+        typ_potravy,
+        pocet_druhu
+      )
+    )
+  ) +
+  ggplot2::geom_col(
+    fill = biostat_cols[["amethyst"]],
+    alpha = 0.65
+  ) +
+  ggplot2::labs(
+    x = "Počet zastoupených druhů",
+    y = "Typ potravy"
+  ) +
+  theme_biostat(base_size = 17) +
+  ggview::canvas(
+    width = 1500,
+    height = 800,
+    units = "px"
+  )
+
+ggview::save_ggplot(
+  plot = plot_potrava,
+  file = here::here(
+    path_materials,
+    "typ_potravy_sloupce.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="58%"}
+```{r}
+#| label: zobrazit-nominalni-promennou
+#| echo: false
+include_local_figure("typ_potravy_sloupce.png")
+```
+:::
+
+::: {.column width="38%" .fragment}
+::: {.panel-result}
+[**Nominální kategoriální proměnná**]{.text-hgl-indigo_velvet}: smysl dávají
+[četnosti a podíly]{.text-hgl-orange}, ne průměr kódů.
+:::
+
+```{r}
+#| label: zkontrolovat-nominalni-v-r
+#| echo: true
+#| eval: true
+vec_typ_potravy <-
+  ggplot2::msleep[["vore"]]
+
+vec_chybi <-
+  is.na(vec_typ_potravy)
+
+vec_typ_potravy[vec_chybi] <-
+  "neuvedeno"
+
+vec_typ_potravy <-
+  factor(x = vec_typ_potravy)
+
+class(x = vec_typ_potravy)
+str(object = vec_typ_potravy)
+```
+
+:::
+
+::::
+
+## Velikostní kategorie: lehký–střední–těžký
+
+```{r}
+#| label: vytvorit-graf-ordinalni-promenne
+#| include: false
+#| message: false
+#| warning: false
+hranice_hmotnosti <-
+  quantile(
+    data_hmotnost |>
+      dplyr::pull(hmotnost_kg),
+    probs = c(0, 1 / 3, 2 / 3, 1),
+    names = FALSE
+  )
+
+data_velikost <-
+  data_hmotnost |>
+  dplyr::mutate(
+    velikost = cut(
+      hmotnost_kg,
+      breaks = hranice_hmotnosti,
+      labels = c(
+        "lehký",
+        "střední",
+        "těžký"
+      ),
+      include.lowest = TRUE,
+      ordered_result = TRUE
+    )
+  ) |>
+  dplyr::count(
+    velikost,
+    name = "pocet_druhu"
+  )
+
+plot_velikost <-
+  ggplot2::ggplot(
+    data = data_velikost,
+    mapping = ggplot2::aes(
+      x = velikost,
+      y = pocet_druhu
+    )
+  ) +
+  ggplot2::geom_col(
+    fill = biostat_cols[["amethyst"]],
+    alpha = 0.65
+  ) +
+  ggplot2::labs(
+    x = "Velikostní kategorie",
+    y = "Počet zastoupených druhů"
+  ) +
+  theme_biostat(base_size = 17) +
+  ggview::canvas(
+    width = 1500,
+    height = 800,
+    units = "px"
+  )
+
+ggview::save_ggplot(
+  plot = plot_velikost,
+  file = here::here(
+    path_materials,
+    "hmotnostni_kategorie.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="58%"}
+```{r}
+#| label: zobrazit-ordinalni-promennou
+#| echo: false
+include_local_figure("hmotnostni_kategorie.png")
+```
+:::
+
+::: {.column width="38%" .fragment}
+::: {.panel-warning}
+[**Ordinální kategoriální proměnná**]{.text-hgl-indigo_velvet}: pořadí je
+součástí objektu: [lehký < střední < těžký]{.text-hgl-orange}.
+:::
+
+```{r}
+#| label: zkontrolovat-ordinalni-v-r
+#| echo: true
+#| eval: true
+poradi <-
+  c("lehký", "střední", "těžký")
+
+vec_velikost <-
+  ordered(
+    x = poradi,
+    levels = poradi
+  )
+
+class(x = vec_velikost)
+str(object = vec_velikost)
+```
+
+:::
+
+::::
+
+## Určete typ proměnné
+
+::: {.panel-note}
+[Možnosti]{.panel-title}
+
+**spojitá numerická · diskrétní numerická · nominální kategoriální · ordinální kategoriální**
+:::
+
+| Proměnná | Jak vznikla? |
+|---|---|
+| pH vody v rybníce | měřením |
+| počet mláďat ve vrhu | počítáním |
+| druh stanoviště | názvem kategorie |
+| stupeň poškození listu | uspořádanou kategorií |
+
+::: {.box-question}
+[Přiřaďte ke každé proměnné jeden ze čtyř typů.]{.panel-lead}
+:::
+
+## Od typu proměnné k prvnímu popisu
+
+| Typ proměnné | Vhodný první souhrn | Vhodný první graf |
+|---|---|---|
+| numerická spojitá | medián + IQR nebo průměr + SD | body, histogram, hustota, boxplot |
+| numerická diskrétní | četnosti; někdy medián/průměr | body nebo sloupce počtů |
+| kategoriální nominální | četnosti a podíly | sloupcový graf |
+| kategoriální ordinální | četnosti; někdy medián pořadí | uspořádaný sloupcový graf |
+
+::: {.takeaway-strip}
+Typ proměnné zužuje, které grafy, souhrny a později i modely dávají smysl.
 :::
 
 # Závěr
 
 ## Shrnutí
 
-::: {.incremental}
-- **Na tučňácích jsme viděli**: stejný průměr může skrývat zásadně odlišnou biologii — proto vždy nejdřív vizualizujeme
-- **Vždy nejdřív vizualizujte** — grafy odhalují, co čísla skrývají
-- **Průměr je citlivý na odlehlé hodnoty** — medián je odolnější
-- **Boxplot** shrnuje medián, IQR, vousy a odlehlé hodnoty najednou
-- **Typ proměnné** určuje správnou statistiku i vizualizaci
-- **Střed ≠ popis variability** — potřebujeme obojí
-:::
-
-## Závěrečná otázka
-
-Kdy byste **nepoužili průměr**?
+:::: {.slide-margin-top-15}
 
 ::: {.incremental}
-- Kdy data obsahují odlehlé hodnoty
-- Kdy je distribuce silně asymetrická
-- Kdy chcete popsat „typický" případ ve zkosených datech
+- [Každý řádek]{.text-hgl-graphite} nejdřív spojíme s jeho skutečnou jednotkou pozorování.
+- Nejdříve data ohodnotíme [graficky]{.text-hgl-indigo_velvet}, než data nahradíme souhrnem (jedním číslem).
+- [Průměr + SD]{.text-hgl-orange}; [medián + IQR]{.text-hgl-amethyst}.
+- [Význam proměnné]{.text-hgl-orange} určuje její typ. Podle toho vybereme vhodný graf a vhodný souhrn.
 :::
 
+::::
+
+## Co potřebujete vědět, než řeknete „typický“?
+
+:::: {.slide-margin-top-15}
+
+::: {.text-size-heading2 .text-bold .text-center}
+Jaké tři otázky položíte člověku, který vám ukáže
+[jedno souhrnné číslo]{.text-hgl-indigo_velvet}
+bez grafu?
+:::
+
+<br>
+
+::: {.fragment}
+::: {.takeaway-strip}
+V následující lekci přidáme druhou proměnnou a zeptáme se, zda spolu dvě měření souvisejí.
+:::
+:::
+
+::::

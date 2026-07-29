@@ -87,7 +87,10 @@ $headingMargin:          0 0 10px 0 !default;
 // Code blocks
 // ---------------------------------------------------------------------------
 .reveal pre {
-  box-shadow: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+  border: 1.5px solid rgba(0, 0, 0, 0.09);
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 
 .reveal pre code {
@@ -103,11 +106,28 @@ $headingMargin:          0 0 10px 0 !default;
 .reveal pre code::-webkit-scrollbar { display: none; }
 
 // ---------------------------------------------------------------------------
+// Figures — ggplot and other cell output images
+// ---------------------------------------------------------------------------
+.reveal .cell-output-display img {
+  border-radius: 6px;
+  display: block;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+// ---------------------------------------------------------------------------
 // Tables
 // ---------------------------------------------------------------------------
 .reveal table th {
   background-color: $tableHeaderBackground !important;
   color: $tableHeaderColor !important;
+  padding: 0.6rem;
+  border-bottom: 2px solid $tableBorderColor;
+}
+
+.reveal table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid rgba($tableBorderColor, 0.25);
 }
 
 .reveal table tr:nth-child(even) td {
@@ -138,9 +158,11 @@ $headingMargin:          0 0 10px 0 !default;
 .text-font-body      { font-family: $mainFont; }
 .text-font-heading   { font-family: $headingFont; }
 .text-font-monospace { font-family: $monospaceFont; }
-.text-smaller { font-size: calc($mainFontSize * 0.7) !important; }
-.text-tiny    { font-size: calc($mainFontSize * 0.5) !important; }
-.text-larger  { font-size: calc($mainFontSize * 1.3) !important; }
+.text-size-heading  { font-size: calc($mainFontSize * 1.4) !important; }
+.text-size-large    { font-size: calc($mainFontSize * 1.3) !important; }
+.text-size-body     { font-size: calc($mainFontSize * 1.0) !important; }
+.text-size-smaller  { font-size: calc($mainFontSize * 0.82) !important; }
+.text-size-tiny     { font-size: calc($mainFontSize * 0.65) !important; }
 .text-bold    { font-weight: bold; }
 .text-center  { text-align: center; }
 .text-right   { text-align: right; }
