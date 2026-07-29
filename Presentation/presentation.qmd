@@ -75,11 +75,11 @@ slides_url <-
   )
 ```
 
-## Co váží „typický“ savec?
+## Úvod do biostatistiky a kolik asi váží „typický“ savec?
 
 <br>
 
-::: {.text-color-white .text-font-heading .text-size-heading1 .text-bold}
+::: {.text-font-heading .text-size-heading1 .text-bold}
 `r display_name`
 :::
 
@@ -89,8 +89,262 @@ slides_url <-
 
 [Moodle](https://dl2.cuni.cz/course/view.php?id=106)
 
-## Kolik váží běžný savec?
+## Ondřej Mottl
 
+:::: {.columns .align-center}
+
+::: {.column width="38%"}
+
+![](Materials/instructor_ondrej_mottl.png){fig-alt="Portrét vyučujícího Ondřeje Mottla v terénu." width="92%"}
+
+:::
+
+::: {.column width="60%" .text-center}
+
+<br>
+
+🌿 [Vegetační ekolog]{.text-hgl-indigo_velvet} na katedře botaniky
+
+🧑‍💻 vedoucí [Laboratoře kvantitativní ekologie]{.text-hgl-amethyst}
+
+♻️ zastánce [otevřené a reprodukovatelné vědy]{.text-hgl-orange}
+
+<br>
+
+::: {.takeaway-strip}
+Jak z velkého množství biologických dat "vyždímat" nové informace
+:::
+
+:::
+
+::::
+
+::: {.footer}
+Foto: Vladimír Šigut, Univerzita Karlova
+:::
+
+## Co mě zajímá? {.text-center}
+
+<br>
+
+:::: {.columns .align-top .text-center}
+
+::: {.column .fragment .text-center width="31%"}
+
+#### Biodiverzita
+
+napříč měřítky
+
+![](Materials/research_biodiversity_scales_transparent.png){fig-alt="Ilustrace biodiverzity od jednotlivého organismu přes vegetační plochu po krajinu." width="88%"}
+
+:::
+
+::: {.column .fragment .text-center width="31%"}
+
+#### Velká data
+
+nové metody
+
+![](Materials/research_big_data_methods_transparent.png){fig-alt="Ilustrace ekologických pozorování, která vstupují do statistické analýzy." width="88%"}
+
+:::
+
+::: {.column .fragment .text-center width="31%"}
+
+#### Otevřená věda
+
+reprodukovatelnost
+
+![](Materials/research_open_science_transparent.png){fig-alt="Ilustrace otevřeného a opakovatelného výzkumného postupu od terénu přes analýzu ke sdílenému výsledku." width="88%"}
+
+:::
+
+::::
+
+::: {.footer}
+Ilustrace vytvořené pomocí OpenAI, 2026
+:::
+
+## Každý týden propojí tři způsoby práce
+
+::::: {.slide-margin-top-15}
+
+::: {.takeaway-strip}
+**Příprava → společné přemýšlení → vlastní práce s daty**
+:::
+
+<br>
+
+:::: {.columns .align-top}
+
+::: {.column .fragment width="31%"}
+
+### Před výukou
+
+Krátce projdete materiály a zkusíte si položené otázky.
+
+:::
+
+::: {.column .fragment width="31%"}
+
+### 90 minut přednášky
+
+Budeme hlasovat, číst grafy a společně obhajovat interpretace.
+
+:::
+
+::: {.column .fragment width="31%"}
+
+### 90 minut praktika
+
+V menší skupině budete analyzovat data v R s podporou vyučujících.
+
+:::
+
+::::
+
+:::::
+
+## Materiály najdete na Moodle {.text-center}
+
+::::: {.slide-margin-top-15}
+
+::: {.takeaway-strip}
+[Moodle je závazný rozcestník kurzu.](https://dl2.cuni.cz/course/view.php?id=106){.text-hgl-indigo_velvet}
+:::
+
+<br>
+
+:::: {.columns .align-top}
+
+::: {.column width="31%"}
+
+### Skripta
+
+[HTML]{.text-hgl-indigo_velvet} pro interaktivní čtení<br>
+[PDF]{.text-hgl-graphite} pro tisk
+
+:::
+
+::: {.column width="31%"}
+
+### Prezentace
+
+[HTML]{.text-hgl-indigo_velvet} pro prohlížení v prohlížeči<br>
+[PDF]{.text-hgl-graphite} pro tisk
+
+:::
+
+::: {.column width="31%"}
+
+### R skripty
+
+Kód pro praktickou práci s daty v R.
+
+:::
+
+::::
+
+:::::
+
+## Výuka je dobrovolná, kompetence povinné
+
+::::: {.slide-margin-top-15}
+
+::: {.text-size-heading2 .text-bold .text-center}
+[Na přednášky a praktika chodit nemusíte.]{.text-hgl-indigo_velvet}
+:::
+
+<br>
+
+:::: {.columns .align-top .text-center}
+
+::: {.column width="31%" .fragment}
+
+### Ve výuce
+
+Získáte vysvětlení, podporu a zpětnou vazbu.
+
+:::
+
+::: {.column width="31%" .fragment}
+
+### Při samostudiu
+
+Všechny požadované znalosti najdete ve skriptech a R skriptech.
+
+:::
+
+::: {.column width="31%" .fragment}
+
+### Povinně
+
+Absolvujete praktický zápočet a závěrečnou zkoušku.
+
+:::
+
+::::
+
+<br>
+
+::: {.takeaway-strip .fragment}
+Učit se můžete prezenčně i doma — [stejné kompetence]{.text-hgl-indigo_velvet} však musí prokázat každý.
+:::
+
+:::::
+
+## Zápočet a zkouška ověřují jiné dovednosti
+
+<br>
+
+::::: {.slide-margin-top-10}
+
+:::: {.columns .align-stretch}
+
+::: {.column width="48%" .fragment}
+::: {.panel-data}
+[Praktický zápočet]{.panel-title}
+
+**Dokážete samostatně provést a vysvětlit základní analýzu v R?**
+
+- malý dataset a biologická otázka
+- částečně připravený R skript
+- kontrola dat, graf, model a biologický závěr
+:::
+:::
+
+::: {.column width="48%" .fragment}
+::: {.panel-indigo}
+[Závěrečná zkouška]{.panel-title}
+
+**Rozumíte analytickým rozhodnutím a interpretaci výsledků?**
+
+- dodaný R kód, grafy a modelové výstupy
+- interpretace, diagnostika a nejistota
+- ne psaní syntaxe zpaměti
+:::
+:::
+
+::::
+
+<br>
+
+::: {.takeaway-strip .fragment}
+[AI můžete používat při učení.]{.text-hgl-indigo_velvet}<br>
+U zápočtu a zkoušky pracujete [samostatně bez internetu a AI]{.text-hgl-orange}.
+:::
+
+::: {.footer}
+Závazný formát, bodové hranice, povolené zdroje, termíny a opravné možnosti jsou uvedeny na Moodle.
+:::
+
+:::::
+
+# Kolik váží běžný savec?
+
+##
+
+<br>
 <br>
 
 ```{r}
@@ -126,12 +380,14 @@ txt_median_hmotnosti <-
 
 :::: {.columns .align-top}
 
+<br>
+
 ::: {.column width="48%"}
 ::: {.card-data}
 [Smyšlený titulek A]{.card-title}
 
 **Vědci spočítali:**<br>
-„Průměrný (*mean*) savec váží
+„Průměrný savec váží
 [**`r txt_prumer_hmotnosti` kg**]{.text-hgl-indigo_velvet}.“
 :::
 :::
@@ -141,14 +397,16 @@ txt_median_hmotnosti <-
 [Smyšlený titulek B]{.card-title}
 
 **Jiná analýza tvrdí:**<br>
-„Běžný savec (*median*) váží jen
+„Běžný savec váží jen
 [**`r txt_median_hmotnosti` kg**]{.text-hgl-amethyst}.“
 :::
 :::
 
 ::::
 
-::: {.fragment}
+<br>
+
+::: {.fragment .text-center}
 *Stejná tabulka. Dvě dramaticky odlišná čísla.*
 :::
 
@@ -198,7 +456,7 @@ HTML nabízí záložky a rozbalovací otázky; PDF je vhodné pro souvislé čt
 
 :::::
 
-## Hlasování: který titulek je správný?
+##
 
 ::::: {style="height: 510px; display: flex; flex-direction: column; justify-content: space-between;"}
 
@@ -223,7 +481,7 @@ HTML nabízí záložky a rozbalovací otázky; PDF je vhodné pro souvislé čt
 ::::
 
 ::: {.box-question}
-[Nejdřív hlasujte sami. Potom svoji volbu obhajte sousedovi.]{.panel-lead}
+Hlasování: který titulek je správný?
 :::
 
 :::: {.columns .align-stretch}
@@ -242,7 +500,7 @@ HTML nabízí záložky a rozbalovací otázky; PDF je vhodné pro souvislé čt
 
 ::: {.column width="23%"}
 ::: {.panel-question}
-[**C)** Oba mohou být správně.]{.rn-circle-indigo}
+**C)** Oba mohou být správně.
 :::
 :::
 
@@ -255,12 +513,12 @@ HTML nabízí záložky a rozbalovací otázky; PDF je vhodné pro souvislé čt
 ::::
 
 ::: {.takeaway-strip}
-Když nehlasujeme: napište si jednu informaci, kterou potřebujete znát, než titulku uvěříte.
+Nejdřív hlasujte sami. Potom svoji volbu obhajte sousedovi.
 :::
 
 :::::
 
-## Přesvědčte souseda
+## Přesvědčte souseda {.text-center}
 
 <br>
 
@@ -274,15 +532,14 @@ Proč jste vybrali právě svoji možnost?
 [Důkaz, který máte k dispozici]{.panel-title}
 
 - stejná tabulka savců;
-- `r txt_prumer_hmotnosti` kg versus `r txt_median_hmotnosti` kg;
-- zatím nevíme, jak hodnoty vypadají.
+- `r txt_prumer_hmotnosti` kg versus `r txt_median_hmotnosti` kg
 :::
 
 ::: {.notes}
 Nechám přibližně 20 sekund na individuální volbu a 60–90 sekund na obhajobu ve dvojici. Správnou možnost zatím neodhalím.
 :::
 
-## Odpověď zatím odložíme
+## Odpověď zatím odložíme {.text-center}
 
 :::: {.slide-margin-top-15}
 
@@ -291,6 +548,9 @@ Nejdřív zjistíme, [co bylo změřeno]{.text-hgl-graphite}
 a [jak hodnoty vypadají]{.text-hgl-orange}.
 :::
 
+<br>
+<br>
+
 ::: {.fragment}
 ::: {.takeaway-strip}
 Správný výpočet ještě nezaručuje správnou interpretaci.
@@ -298,6 +558,11 @@ Správný výpočet ještě nezaručuje správnou interpretaci.
 :::
 
 ::::
+
+
+# Od organismu k datům
+
+## Začneme jedním savcem
 
 ```{r}
 #| label: pripravit-data-savcu
@@ -330,13 +595,9 @@ vec_spanek_h <-
   dplyr::pull(spanek_h)
 ```
 
-# Od organismu k datům
-
-## Začneme jedním savcem
-
 :::: {.columns .align-center}
 
-::: {.column width="43%"}
+::: {.column width="50%"}
 ::: {.text-size-heading2 .text-bold}
 Gepard (*Cheetah*)
 :::
@@ -355,7 +616,10 @@ Výsledek pro jeden zastoupený druh zapíšeme do jednoho řádku tabulky.
 :::
 :::
 
-::: {.column width="53%"}
+::: {.column width="50%"}
+
+<br>
+
 ![](Materials/mammal_cheetah_illustrative.png){fig-alt="Humorná ilustrace geparda spícího v pyžamu." width="100%"}
 
 ::: {style="font-size: 0.45em; text-align: right;"}
@@ -441,7 +705,11 @@ data_spanek |>
   )
 ```
 
+<br>
+
+:::{.panel-question .fragment}
 *Na co přesně se vztahuje hodnota 12,1 hodiny v prvním řádku?*
+:::
 
 ## Co představuje jeden řádek?
 
@@ -475,6 +743,8 @@ Jednu hodinu měření.
 
 ::::
 
+<br>
+
 ::: {.takeaway-strip}
 Když nehlasujeme: doplňte větu „Jeden řádek této tabulky představuje …“
 :::
@@ -499,7 +769,7 @@ Každá hodnota spánku patří jednomu **druhu**, který je v tabulce zastoupen
 ::: {.panel-warning}
 [Co z toho neplyne]{.panel-title}
 
-Tabulka neobsahuje hmotnosti nebo spánek všech jednotlivých savců na Zemi.
+Tabulka neobsahuje data o spánku všech jednotlivých savců na Zemi.
 :::
 :::
 
@@ -630,12 +900,13 @@ length(
 #| echo: true
 #| eval: true
 head(
-  x = vec_spanek_ukazka
+  x = vec_spanek_ukazka,
+  n = 2
 )
 ```
 
 ::: {.panel-result}
-`head()` ukáže první hodnoty.
+`head()` ukáže první hodnoty (2 hodnoty v našem případě).
 :::
 :::
 
@@ -650,10 +921,21 @@ head(
 
 - **`r nrow(data_savci)` řádků:** zastoupené druhy savců;
 - **`r ncol(data_savci)` sloupců:** například spánek, hmotnost, potrava nebo taxonomický řád;
-- některé údaje chybějí, protože zdrojová tabulka není úplná.
 :::
 
 <br>
+
+```{r}
+#| label: zobrazit-prvni-radky-dat
+#| echo: false
+#| message: false
+#| warning: false
+data_savci |>
+  dplyr::slice_head(n = 3) |>
+  knitr::kable(
+    align = c("l", "l", "l", "r", "r")
+  )
+```
 
 ::: {.takeaway-strip}
 Než popisujeme čísla, vždy si ujasníme **jednotku pozorování**, význam proměnné a jednotky měření.
@@ -816,71 +1098,6 @@ include_local_figure("spanek_pribyvani_druhu.gif")
 ::: {.takeaway-strip}
 Graf nevzniká místo dat. Vzniká postupným zobrazením hodnot, které jsme vložili do tabulky a vektoru.
 :::
-
-## Dva soubory vypadají jinak
-
-```{r}
-#| label: vytvorit-graf-stejneho-prumeru
-#| include: false
-#| message: false
-#| warning: false
-data_stejny_prumer <-
-  tibble::tibble(
-    soubor = rep(
-      c("Soubor A", "Soubor B"),
-      each = 6
-    ),
-    hodnota = c(
-      8, 9, 9, 10, 11, 13,
-      6, 6, 8, 10, 14, 16
-    )
-  )
-
-plot_stejny_prumer <-
-  ggplot2::ggplot(
-    data = data_stejny_prumer,
-    mapping = ggplot2::aes(
-      x = hodnota,
-      y = soubor
-    )
-  ) +
-  ggplot2::geom_point(
-    color = biostat_cols[["grey_olive"]],
-    size = 5,
-    alpha = 0.85,
-    position = ggplot2::position_jitter(
-      height = 0.08,
-      width = 0
-    )
-  ) +
-  ggplot2::labs(
-    x = "Hodnota",
-    y = NULL
-  ) +
-  theme_biostat(base_size = 19) +
-  ggview::canvas(
-    width = 1600,
-    height = 700,
-    units = "px"
-  )
-
-ggview::save_ggplot(
-  plot = plot_stejny_prumer,
-  file = here::here(
-    path_materials,
-    "dva_soubory_stejny_prumer.png"
-  )
-)
-```
-
-```{r}
-#| label: zobrazit-graf-stejneho-prumeru
-#| echo: false
-include_local_figure("dva_soubory_stejny_prumer.png")
-```
-
-*Ve kterém souboru jsou hodnoty rozptýlenější?*
-
 ## Jak vypadá spánek všech zastoupených druhů?
 
 ```{r}
@@ -939,38 +1156,6 @@ include_local_figure("spanek_bodovy_graf.png")
 ```
 
 *Kde leží nejkratší a nejdelší doba spánku? Kde se body hromadí?*
-
-## Body zachovají každý druh
-
-<br>
-
-:::: {.columns .align-top}
-
-::: {.column width="58%"}
-```{r}
-#| label: zopakovat-bodovy-graf-spanku
-#| echo: false
-include_local_figure("spanek_bodovy_graf.png")
-```
-:::
-
-::: {.column width="38%"}
-::: {.panel-result}
-[Co vidíme]{.panel-title}
-
-- jednotlivé hodnoty;
-- mezery a shluky;
-- nejmenší a největší hodnotu.
-:::
-
-::: {.panel-question}
-[Co může být problém]{.panel-title}
-
-Ve velmi velkém souboru se body mohou překrývat.
-:::
-:::
-
-::::
 
 ## Stejná data, seskupená do intervalů
 
@@ -1077,6 +1262,8 @@ include_local_figure("spanek_hustota.png")
 [Potřebujete zjistit, zda některý druh spí téměř 20 hodin denně.]{.panel-lead}
 :::
 
+<br>
+
 :::: {.columns .align-top}
 
 ::: {.column width="31%"}
@@ -1091,7 +1278,7 @@ include_local_figure("spanek_hustota.png")
 ::: {.card-question}
 [B]{.card-title}
 
-Histogram
+[Histogram]{.rn-circle-indigo}
 :::
 :::
 
@@ -1105,6 +1292,8 @@ Graf hustoty
 
 ::::
 
+<br>
+
 ::: {.takeaway-strip}
 Když nehlasujeme: napište si, který graf zachovává jednotlivé hodnoty a proč je to pro tuto otázku důležité.
 :::
@@ -1115,12 +1304,14 @@ Když nehlasujeme: napište si, který graf zachovává jednotlivé hodnoty a pr
 
 | Graf | Nejlépe ukáže | Co skrývá |
 |---|---|---|
-| Bodový graf | jednotlivé hodnoty | při velkém počtu může být přeplněný |
-| Histogram | počty v intervalech | přesné hodnoty; závisí na šířce koše |
+| Bodový graf | jednotlivé hodnoty | (při velkém počtu může být přeplněný) |
+| Histogram | počty v intervalech | přesné hodnoty |
 | Graf hustoty | hladký tvar | počty a konkrétní druhy |
 
+<br>
+
 ::: {.takeaway-strip}
-Graf vybíráme podle otázky, ne podle toho, který vypadá nejmoderněji.
+Graf vybíráme podle otázky.
 :::
 
 # Deskriptivní statistiky
@@ -1605,6 +1796,97 @@ IQR(
 **IQR (*interquartile range*) = Q3 − Q1.** Popisuje rozptýlení prostřední poloviny hodnot.
 :::
 
+## Oba soubory mají průměr 10 hodin — jsou stejné?
+
+```{r}
+#| label: vytvorit-soubory-se-stejnym-prumerem
+#| include: false
+#| message: false
+#| warning: false
+data_stejny_prumer <-
+  tibble::tibble(
+    soubor = c(
+      rep("Soubor A", 5),
+      rep("Soubor B", 5)
+    ),
+    spanek_h = c(
+      8, 9, 10, 11, 12,
+      4, 7, 10, 13, 16
+    )
+  ) |>
+  dplyr::mutate(
+    soubor = factor(
+      soubor,
+      levels = c("Soubor A", "Soubor B")
+    )
+  )
+
+plot_stejny_prumer <-
+  ggplot2::ggplot(
+    data = data_stejny_prumer,
+    mapping = ggplot2::aes(
+      x = spanek_h,
+      y = soubor
+    )
+  ) +
+  ggplot2::geom_vline(
+    xintercept = 10,
+    color = biostat_cols[["indigo_velvet"]],
+    linewidth = 1.2,
+    linetype = "dashed"
+  ) +
+  ggplot2::geom_point(
+    color = biostat_cols[["grey_olive"]],
+    fill = biostat_cols[["grey_olive"]],
+    size = 6,
+    alpha = 0.8
+  ) +
+  ggplot2::annotate(
+    geom = "label",
+    x = 10,
+    y = 2.18,
+    label = "průměr = 10 h",
+    color = biostat_cols[["indigo_velvet"]],
+    fill = biostat_cols[["parchment"]],
+    label.size = 0,
+    fontface = "bold",
+    size = 5
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(4, 16, by = 2),
+    limits = c(3.5, 16.5)
+  ) +
+  ggplot2::labs(
+    x = "Doba spánku (h)",
+    y = NULL
+  ) +
+  theme_biostat(base_size = 18) +
+  ggview::canvas(
+    width = 1600,
+    height = 700,
+    units = "px"
+  )
+
+ggview::save_ggplot(
+  plot = plot_stejny_prumer,
+  file = here::here(
+    path_materials,
+    "dva_soubory_stejny_prumer.png"
+  )
+)
+```
+
+```{r}
+#| label: zobrazit-soubory-se-stejnym-prumerem
+#| echo: false
+#| out-width: "78%"
+include_local_figure("dva_soubory_stejny_prumer.png")
+```
+
+::: {.takeaway-strip}
+**30 sekund:** IQR sleduje prostřední polovinu. Jak jedním číslem shrnout vzdálenosti všech hodnot od průměru?
+:::
+
 ## Od průměru změříme odchylku každé hodnoty
 
 ```{r}
@@ -1904,66 +2186,66 @@ ggview::save_ggplot(
 
 set.seed(20260727)
 
-vec_uzky <-
+vec_mzda_firma_a <-
   as.numeric(
     scale(
       rnorm(n = 240)
     )
-  ) * 1.2 + 10
+  ) * 3 + 50
 
-vec_siroky <-
+vec_mzda_firma_b <-
   as.numeric(
     scale(
       rnorm(n = 240)
     )
-  ) * 3.2 + 10
+  ) * 12 + 50
 
-data_sd_histogram <-
+data_mzdy_sd_histogram <-
   tibble::tibble(
-    soubor = rep(
+    firma = rep(
       c(
-        "Soubor A: SD = 1,2",
-        "Soubor B: SD = 3,2"
+        "Firma A: SD 3 tis.",
+        "Firma B: SD 12 tis."
       ),
       each = 240
     ),
-    hodnota = c(
-      vec_uzky,
-      vec_siroky
+    mzda_tis_kc = c(
+      vec_mzda_firma_a,
+      vec_mzda_firma_b
     )
   )
 
 plot_porovnani_sd_histogram <-
   ggplot2::ggplot(
-    data = data_sd_histogram,
+    data = data_mzdy_sd_histogram,
     mapping = ggplot2::aes(
-      x = hodnota
+      x = mzda_tis_kc
     )
   ) +
   ggplot2::geom_histogram(
-    binwidth = 0.8,
+    binwidth = 3,
     boundary = 0,
     fill = biostat_cols[["amethyst"]],
     color = biostat_cols[["parchment"]],
     alpha = 0.7
   ) +
   ggplot2::geom_vline(
-    xintercept = 10,
+    xintercept = 50,
     color = biostat_cols[["indigo_velvet"]],
     linewidth = 1.4
   ) +
   ggplot2::facet_wrap(
-    facets = ggplot2::vars(soubor),
-    ncol = 1
+    facets = ggplot2::vars(firma),
+    ncol = 2
   ) +
   ggplot2::labs(
-    x = "Hodnota",
-    y = "Počet pozorování"
+    x = "Měsíční mzda (tis. Kč)",
+    y = "Počet zaměstnanců"
   ) +
-  theme_biostat(base_size = 18) +
+  theme_biostat(base_size = 16) +
   ggview::canvas(
     width = 1600,
-    height = 900,
+    height = 800,
     units = "px"
   )
 
@@ -2167,9 +2449,9 @@ Nejdřív jsme rozepsali všech devět čtvercových odchylek; teprve potom jsme
 ::: {.text-size-large .text-bold .text-center}
 výběrový rozptyl =
 
-součet čtvercových odchylek dělený
+[součet čtvercových odchylek]{.text-hgl-indigo} dělený
 
-počtem hodnot zmenšeným o jednu
+[počtem hodnot]{.text-hgl-orange} [zmenšeným o jednu]{.text-hgl-amethyst}
 :::
 :::
 
@@ -2192,7 +2474,7 @@ Jednotkou rozptylu jsou **hodiny na druhou**. Proto se rozptyl hůře interpretu
 
 :::::
 
-## Teprve teď zápis zkrátíme
+## Zápis zkrátíme
 
 :::: {.columns .align-top}
 
@@ -2233,7 +2515,7 @@ var(
 Vzorec je jen krátký zápis postupu, který jsme už provedli slovy a s konkrétními čísly.
 :::
 
-## Odmocnina vrátí výsledek do hodin
+## Směrodatná odchylka
 
 :::: {.columns .align-top}
 
@@ -2266,7 +2548,7 @@ druhá odmocnina z rozptylu
 :::
 
 ::: {.panel-note .fragment}
-[Nakonec krátký vzorec]{.panel-title}
+[Vzorec]{.panel-title}
 
 ::: {.text-size-large .text-bold .text-center}
 s = √s²
@@ -2282,16 +2564,17 @@ s = √s²
 V R stejný krok provede `sd(x = vec_spanek_deviti)`. **SD (*standard deviation*)** je zpět v [původních jednotkách]{.text-hgl-indigo}.
 :::
 
-## Stejný průměr, jiné SD
+## Stejná průměrná mzda, jiné SD
 
 ```{r}
 #| label: zobrazit-histogramy-sd
 #| echo: false
+#| out-width: "80%"
 include_local_figure("stejny_prumer_jina_sd_histogram.png")
 ```
 
 ::: {.takeaway-strip}
-Oba simulované soubory mají průměr 10. Větší SD odpovídá širšímu histogramu.
+V obou firmách je průměr 50 tisíc Kč. Vyšší SD ve firmě B znamená širší histogram.
 :::
 
 ## Které souhrny patří k sobě?
@@ -2301,6 +2584,8 @@ Oba simulované soubory mají průměr 10. Větší SD odpovídá širšímu his
 ::: {.box-question}
 [Vyberte dvojici, která popisuje střed a rozptýlení podobným způsobem.]{.panel-lead}
 :::
+
+<br>
 
 :::: {.columns .align-top}
 
@@ -2329,6 +2614,9 @@ medián + SD
 :::
 
 ::::
+
+<br>
+<br>
 
 ::: {.takeaway-strip}
 Když nehlasujeme: napište si, která míra rozptýlení používá vzdálenosti od průměru.
@@ -2359,6 +2647,8 @@ Vycházejí z pořadí hodnot a jsou odolnější vůči vzdáleným hodnotám.
 :::
 
 ::::
+
+<br>
 
 ::: {.takeaway-strip .fragment}
 Volbu neurčuje zvyk. Rozhoduje tvar dat a otázka, kterou souhrnem zodpovídáme.
@@ -2573,7 +2863,7 @@ include_local_figure("hmotnost_logaritmicka_osa.png")
 Graf nezměnil data. Jen nám dovolil vidět lehké i těžké druhy současně.
 :::
 
-## Obě redakce počítaly správně
+## Jak dvě redakce počítaly?
 
 ::::: {.slide-margin-top-15}
 
@@ -2624,8 +2914,8 @@ Obě čísla jsou správně vypočtená. Ani jedno však není univerzální „
 ::: {.panel-data}
 [Důkazy]{.panel-title}
 
-- řádek představuje zastoupený **druh**, ne jednotlivého savce;
-- rozdělení hmotnosti je silně pravostranně zešikmené;
+- řádek představuje zastoupený **druh**
+- rozdělení hmotnosti je ovlivněno několika velmi těžkými druhy;
 - průměr = `r txt_prumer_hmotnosti` kg, medián = `r txt_median_hmotnosti` kg.
 :::
 
@@ -2634,6 +2924,8 @@ Obě čísla jsou správně vypočtená. Ani jedno však není univerzální „
 ::: {.text-size-heading2 .text-bold .text-center}
 Přepište jeden titulek tak, aby byl pravdivý i po přečtení grafu.
 :::
+
+<br>
 
 ::: {.takeaway-strip}
 Když nepracujeme ve skupině: napište jednu větu, která uvádí souhrn, jednotku pozorování a omezení tabulky.
@@ -2657,7 +2949,7 @@ druhů posouvá průměr na [**`r txt_prumer_hmotnosti` kg**]{.text-hgl-indigo_v
 
 ::: {.column width="48%" .fragment}
 ::: {.panel-warning}
-[Hranice závěru]{.panel-title}
+[Pozor!]{.panel-title}
 
 Tabulka [není náhodným výběrem]{.text-hgl-orange} všech druhů ani všech
 jednotlivých savců. Čísla proto nepopisují „náhodného savce na Zemi“.
@@ -2670,55 +2962,105 @@ jednotlivých savců. Čísla proto nepopisují „náhodného savce na Zemi“.
 
 # Statistiky jako vizualizace
 
-## Začneme jednotlivými hodnotami a mediánem
+## Správný titulek můžeme doplnit grafem
 
 ```{r}
 #| label: pripravit-konstrukci-boxplotu
 #| include: false
 #| message: false
 #| warning: false
-q1_spanek <-
+q1_hmotnost <-
   quantile(
-    vec_spanek_h,
+    vec_hmotnost_kg,
     probs = 0.25,
     names = FALSE
   )
 
-median_spanek <-
-  median(vec_spanek_h)
-
-q3_spanek <-
+q3_hmotnost <-
   quantile(
-    vec_spanek_h,
+    vec_hmotnost_kg,
     probs = 0.75,
     names = FALSE
   )
 
-stat_boxplot <-
-  boxplot.stats(vec_spanek_h)
+stat_boxplot_hmotnost <-
+  boxplot.stats(log10(vec_hmotnost_kg))
 
-vous_dolni <-
-  stat_boxplot$stats[[1]]
+vous_dolni_hmotnost <-
+  10^stat_boxplot_hmotnost$stats[[1]]
 
-vous_horni <-
-  stat_boxplot$stats[[5]]
+vous_horni_hmotnost <-
+  10^stat_boxplot_hmotnost$stats[[5]]
 
-plot_box_krok1 <-
-  plot_spanek_body +
-  ggplot2::geom_vline(
-    xintercept = median_spanek,
-    color = biostat_cols[["indigo_velvet"]],
-    linewidth = 1.8
+plot_hmotnost_body <-
+  ggplot2::ggplot(
+    data = data_hmotnost,
+    mapping = ggplot2::aes(
+      x = hmotnost_kg,
+      y = 1
+    )
+  ) +
+  ggbeeswarm::geom_quasirandom(
+    width = 0.34,
+    orientation = "y",
+    color = biostat_cols[["grey_olive"]],
+    alpha = 0.75,
+    size = 3.6
+  ) +
+  ggplot2::scale_x_log10(
+    breaks = c(
+      0.01,
+      0.1,
+      1,
+      10,
+      100,
+      1000,
+      10000
+    ),
+    labels = c(
+      "0,01",
+      "0,1",
+      "1",
+      "10",
+      "100",
+      "1 000",
+      "10 000"
+    ),
+    limits = c(0.004, 20000)
+  ) +
+  ggplot2::scale_y_continuous(
+    breaks = NULL,
+    name = NULL
+  ) +
+  ggplot2::coord_cartesian(
+    ylim = c(0.55, 1.45)
   ) +
   ggplot2::labs(
-    x = "Celkový spánek za den (h)"
+    x = "Tělesná hmotnost (kg; logaritmická osa)"
+  ) +
+  theme_biostat(base_size = 18) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank()
+  ) +
+  ggview::canvas(
+    width = 1600,
+    height = 700,
+    units = "px"
+  )
+
+plot_box_krok1 <-
+  plot_hmotnost_body +
+  ggplot2::geom_vline(
+    xintercept = median_hmotnosti,
+    color = biostat_cols[["amethyst"]],
+    linewidth = 1.8
   )
 
 ggview::save_ggplot(
   plot = plot_box_krok1,
   file = here::here(
     path_materials,
-    "boxplot_krok_1_median.png"
+    "hmotnost_boxplot_krok_1_median.png"
   )
 )
 ```
@@ -2726,8 +3068,12 @@ ggview::save_ggplot(
 ```{r}
 #| label: zobrazit-boxplot-krok1
 #| echo: false
-include_local_figure("boxplot_krok_1_median.png")
+include_local_figure("hmotnost_boxplot_krok_1_median.png")
 ```
+
+::: {.takeaway-strip}
+„Běžný zastoupený druh váží **`r txt_median_hmotnosti` kg**.“ Graf ukazuje data i medián za tímto titulkem.
+:::
 
 ## Přidáme prostřední polovinu
 
@@ -2737,11 +3083,11 @@ include_local_figure("boxplot_krok_1_median.png")
 #| message: false
 #| warning: false
 plot_box_krok2 <-
-  plot_spanek_body +
+  plot_hmotnost_body +
   ggplot2::annotate(
     geom = "rect",
-    xmin = q1_spanek,
-    xmax = q3_spanek,
+    xmin = q1_hmotnost,
+    xmax = q3_hmotnost,
     ymin = 0.82,
     ymax = 1.18,
     fill = biostat_cols[["amethyst"]],
@@ -2750,19 +3096,16 @@ plot_box_krok2 <-
     linewidth = 1.3
   ) +
   ggplot2::geom_vline(
-    xintercept = median_spanek,
-    color = biostat_cols[["indigo_velvet"]],
+    xintercept = median_hmotnosti,
+    color = biostat_cols[["amethyst"]],
     linewidth = 1.8
-  ) +
-  ggplot2::labs(
-    x = "Celkový spánek za den (h)"
   )
 
 ggview::save_ggplot(
   plot = plot_box_krok2,
   file = here::here(
     path_materials,
-    "boxplot_krok_2_iqr.png"
+    "hmotnost_boxplot_krok_2_iqr.png"
   )
 )
 ```
@@ -2770,7 +3113,7 @@ ggview::save_ggplot(
 ```{r}
 #| label: zobrazit-boxplot-krok2
 #| echo: false
-include_local_figure("boxplot_krok_2_iqr.png")
+include_local_figure("hmotnost_boxplot_krok_2_iqr.png")
 ```
 
 ::: {.strip-amethyst}
@@ -2785,11 +3128,11 @@ include_local_figure("boxplot_krok_2_iqr.png")
 #| message: false
 #| warning: false
 plot_box_krok3 <-
-  plot_spanek_body +
+  plot_hmotnost_body +
   ggplot2::annotate(
     geom = "rect",
-    xmin = q1_spanek,
-    xmax = q3_spanek,
+    xmin = q1_hmotnost,
+    xmax = q3_hmotnost,
     ymin = 0.82,
     ymax = 1.18,
     fill = biostat_cols[["amethyst"]],
@@ -2799,8 +3142,8 @@ plot_box_krok3 <-
   ) +
   ggplot2::annotate(
     geom = "segment",
-    x = vous_dolni,
-    xend = q1_spanek,
+    x = vous_dolni_hmotnost,
+    xend = q1_hmotnost,
     y = 1,
     yend = 1,
     color = biostat_cols[["indigo_velvet"]],
@@ -2808,8 +3151,8 @@ plot_box_krok3 <-
   ) +
   ggplot2::annotate(
     geom = "segment",
-    x = q3_spanek,
-    xend = vous_horni,
+    x = q3_hmotnost,
+    xend = vous_horni_hmotnost,
     y = 1,
     yend = 1,
     color = biostat_cols[["indigo_velvet"]],
@@ -2817,27 +3160,30 @@ plot_box_krok3 <-
   ) +
   ggplot2::annotate(
     geom = "segment",
-    x = c(vous_dolni, vous_horni),
-    xend = c(vous_dolni, vous_horni),
+    x = c(
+      vous_dolni_hmotnost,
+      vous_horni_hmotnost
+    ),
+    xend = c(
+      vous_dolni_hmotnost,
+      vous_horni_hmotnost
+    ),
     y = 0.9,
     yend = 1.1,
     color = biostat_cols[["indigo_velvet"]],
     linewidth = 1.3
   ) +
   ggplot2::geom_vline(
-    xintercept = median_spanek,
-    color = biostat_cols[["indigo_velvet"]],
+    xintercept = median_hmotnosti,
+    color = biostat_cols[["amethyst"]],
     linewidth = 1.8
-  ) +
-  ggplot2::labs(
-    x = "Celkový spánek za den (h)"
   )
 
 ggview::save_ggplot(
   plot = plot_box_krok3,
   file = here::here(
     path_materials,
-    "boxplot_krok_3_vousy.png"
+    "hmotnost_boxplot_krok_3_vousy.png"
   )
 )
 ```
@@ -2845,7 +3191,7 @@ ggview::save_ggplot(
 ```{r}
 #| label: zobrazit-boxplot-krok3
 #| echo: false
-include_local_figure("boxplot_krok_3_vousy.png")
+include_local_figure("hmotnost_boxplot_krok_3_vousy.png")
 ```
 
 ::: {.strip-orange}
@@ -2860,11 +3206,11 @@ ale nejsou automaticky chybné.
 #| include: false
 #| message: false
 #| warning: false
-plot_spanek_boxplot <-
+plot_hmotnost_boxplot <-
   ggplot2::ggplot(
-    data = data_spanek,
+    data = data_hmotnost,
     mapping = ggplot2::aes(
-      x = spanek_h,
+      x = hmotnost_kg,
       y = 1
     )
   ) +
@@ -2876,12 +3222,27 @@ plot_spanek_boxplot <-
     alpha = 0.35,
     linewidth = 1.3
   ) +
+  ggplot2::scale_x_log10(
+    breaks = c(
+      0.01,
+      1,
+      100,
+      10000
+    ),
+    labels = c(
+      "0,01",
+      "1",
+      "100",
+      "10 000"
+    ),
+    limits = c(0.004, 20000)
+  ) +
   ggplot2::scale_y_continuous(
     breaks = NULL,
     name = NULL
   ) +
   ggplot2::labs(
-    x = "Celkový spánek za den (h)"
+    x = "Hmotnost (kg; logaritmická osa)"
   ) +
   theme_biostat(base_size = 19) +
   ggplot2::theme(
@@ -2894,10 +3255,10 @@ plot_spanek_boxplot <-
   )
 
 ggview::save_ggplot(
-  plot = plot_spanek_boxplot,
+  plot = plot_hmotnost_boxplot,
   file = here::here(
     path_materials,
-    "spanek_boxplot.png"
+    "hmotnost_boxplot.png"
   )
 )
 ```
@@ -2905,7 +3266,7 @@ ggview::save_ggplot(
 ```{r}
 #| label: zobrazit-finalni-boxplot
 #| echo: false
-include_local_figure("spanek_boxplot.png")
+include_local_figure("hmotnost_boxplot.png")
 ```
 
 ::: {.takeaway-strip}
@@ -2920,11 +3281,11 @@ souhrnů, ne fotografie všech hodnot.
 #| include: false
 #| message: false
 #| warning: false
-plot_spanek_housle <-
+plot_hmotnost_housle <-
   ggplot2::ggplot(
-    data = data_spanek,
+    data = data_hmotnost,
     mapping = ggplot2::aes(
-      x = spanek_h,
+      x = hmotnost_kg,
       y = 1
     )
   ) +
@@ -2944,12 +3305,32 @@ plot_spanek_housle <-
     outlier.shape = NA,
     linewidth = 1
   ) +
+  ggplot2::geom_vline(
+    xintercept = prumer_hmotnosti,
+    color = biostat_cols[["orange"]],
+    linewidth = 1.6
+  ) +
+  ggplot2::scale_x_log10(
+    breaks = c(
+      0.01,
+      1,
+      100,
+      10000
+    ),
+    labels = c(
+      "0,01",
+      "1",
+      "100",
+      "10 000"
+    ),
+    limits = c(0.004, 20000)
+  ) +
   ggplot2::scale_y_continuous(
     breaks = NULL,
     name = NULL
   ) +
   ggplot2::labs(
-    x = "Celkový spánek za den (h)"
+    x = "Hmotnost (kg; logaritmická osa)"
   ) +
   theme_biostat(base_size = 19) +
   ggplot2::theme(
@@ -2962,10 +3343,10 @@ plot_spanek_housle <-
   )
 
 ggview::save_ggplot(
-  plot = plot_spanek_housle,
+  plot = plot_hmotnost_housle,
   file = here::here(
     path_materials,
-    "spanek_houslovy_boxplot.png"
+    "hmotnost_houslovy_boxplot.png"
   )
 )
 ```
@@ -2978,7 +3359,7 @@ ggview::save_ggplot(
 ```{r}
 #| label: zopakovat-finalni-boxplot
 #| echo: false
-include_local_figure("spanek_boxplot.png")
+include_local_figure("hmotnost_boxplot.png")
 ```
 :::
 
@@ -2988,8 +3369,13 @@ include_local_figure("spanek_boxplot.png")
 ```{r}
 #| label: zobrazit-houslovy-boxplot
 #| echo: false
-include_local_figure("spanek_houslovy_boxplot.png")
+include_local_figure("hmotnost_houslovy_boxplot.png")
 ```
+
+::: {.text-center style="font-size: 0.70em; line-height: 1.15;"}
+[oranžová čára = průměr]{.text-hgl-orange}<br>
+[čára v krabici = medián]{.text-hgl-indigo_velvet}
+:::
 :::
 
 ::::
@@ -3041,16 +3427,13 @@ nejtransparentnější první kontrolou.
 U netopýra můžeme zaznamenat:
 :::
 
-<br>
-
 ::: {.incremental}
 - dobu spánku v hodinách;
+- váhu v kilogramech;
 - počet pozorovaných jedinců;
 - typ potravy;
-- uměle vytvořenou velikostní kategorii.
+- velikostní kategorii.
 :::
-
-<br>
 
 ::: {.takeaway-strip}
 Typ neurčuje vzhled čísla. Určuje jej [význam proměnné]{.text-hgl-orange}.
@@ -3078,6 +3461,8 @@ Ilustrace vytvořená pomocí AI.
 | 37 | číselný kód lokality | název kategorie |
 | 3 | stupeň poškození | uspořádaná kategorie |
 
+<br>
+
 ::: {.box-question}
 ::: {.panel-lead}
 Rozhoduje vzhled hodnoty, nebo její [význam]{.text-hgl-orange}?
@@ -3097,7 +3482,9 @@ Rozhoduje vzhled hodnoty, nebo její [význam]{.text-hgl-orange}?
 - [**ordinální kategoriální**]{.text-hgl-indigo_velvet}: kategorie s přirozeným pořadím.
 :::
 
-::: {.takeaway-strip}
+<br>
+
+::: {.takeaway-strip .fragment}
 Technická třída objektu v R pomáhá s kontrolou, ale
 [statistický typ]{.text-hgl-orange} určuje význam hodnot a způsob jejich vzniku.
 :::
@@ -3111,6 +3498,11 @@ Technická třída objektu v R pomáhá s kontrolou, ale
 :::: {.columns .align-top}
 
 ::: {.column width="58%"}
+::: {.panel-result}
+[**Spojitá numerická proměnná**]{.text-hgl-indigo_velvet}: mezi dvěma
+hodnotami mohou být další [měření]{.text-hgl-orange}.
+:::
+
 ```{r}
 #| label: zobrazit-spojitou-promennou
 #| echo: false
@@ -3129,11 +3521,6 @@ vec_spanek_h <-
 class(x = vec_spanek_h)
 typeof(x = vec_spanek_h)
 ```
-
-::: {.panel-result}
-[**Spojitá numerická proměnná**]{.text-hgl-indigo_velvet}: mezi dvěma
-hodnotami mohou být další [měření]{.text-hgl-orange}.
-:::
 :::
 
 ::::
@@ -3219,6 +3606,11 @@ include_local_figure("pocet_druhu_v_radu.png")
 :::
 
 ::: {.column width="38%" .fragment}
+::: {.panel-result}
+[**Diskrétní numerická proměnná**]{.text-hgl-indigo_velvet}: vznikla
+[počítáním]{.text-hgl-orange}; zde měníme jednotku pozorování na taxonomický řád.
+:::
+
 ```{r}
 #| label: zkontrolovat-diskretni-v-r
 #| echo: true
@@ -3234,10 +3626,7 @@ class(x = vec_pocet_druhu)
 str(object = vec_pocet_druhu)
 ```
 
-::: {.panel-result}
-[**Diskrétní numerická proměnná**]{.text-hgl-indigo_velvet}: vznikla
-[počítáním]{.text-hgl-orange}; zde měníme jednotku pozorování na taxonomický řád.
-:::
+
 :::
 
 ::::
@@ -3305,6 +3694,11 @@ include_local_figure("typ_potravy_sloupce.png")
 :::
 
 ::: {.column width="38%" .fragment}
+::: {.panel-result}
+[**Nominální kategoriální proměnná**]{.text-hgl-indigo_velvet}: smysl dávají
+[četnosti a podíly]{.text-hgl-orange}, ne průměr kódů.
+:::
+
 ```{r}
 #| label: zkontrolovat-nominalni-v-r
 #| echo: true
@@ -3325,15 +3719,11 @@ class(x = vec_typ_potravy)
 str(object = vec_typ_potravy)
 ```
 
-::: {.panel-result}
-[**Nominální kategoriální proměnná**]{.text-hgl-indigo_velvet}: smysl dávají
-[četnosti a podíly]{.text-hgl-orange}, ne průměr kódů.
-:::
 :::
 
 ::::
 
-## Umělé pořadí: lehký–střední–těžký
+## Velikostní kategorie: lehký–střední–těžký
 
 ```{r}
 #| label: vytvorit-graf-ordinalni-promenne
@@ -3381,7 +3771,7 @@ plot_velikost <-
     alpha = 0.65
   ) +
   ggplot2::labs(
-    x = "Uměle vytvořená hmotnostní kategorie",
+    x = "Velikostní kategorie",
     y = "Počet zastoupených druhů"
   ) +
   theme_biostat(base_size = 17) +
@@ -3411,6 +3801,11 @@ include_local_figure("hmotnostni_kategorie.png")
 :::
 
 ::: {.column width="38%" .fragment}
+::: {.panel-warning}
+[**Ordinální kategoriální proměnná**]{.text-hgl-indigo_velvet}: pořadí je
+součástí objektu: [lehký < střední < těžký]{.text-hgl-orange}.
+:::
+
 ```{r}
 #| label: zkontrolovat-ordinalni-v-r
 #| echo: true
@@ -3428,16 +3823,17 @@ class(x = vec_velikost)
 str(object = vec_velikost)
 ```
 
-::: {.panel-warning}
-[**Ordinální kategoriální proměnná**]{.text-hgl-indigo_velvet}: pořadí je
-součástí objektu, ale kategorie jsou pouze
-[didaktická pomůcka]{.text-hgl-orange}.
-:::
 :::
 
 ::::
 
-## Určete typ a první graf
+## Určete typ proměnné
+
+::: {.panel-note}
+[Možnosti]{.panel-title}
+
+**spojitá numerická · diskrétní numerická · nominální kategoriální · ordinální kategoriální**
+:::
 
 | Proměnná | Jak vznikla? |
 |---|---|
@@ -3447,11 +3843,7 @@ součástí objektu, ale kategorie jsou pouze
 | stupeň poškození listu | uspořádanou kategorií |
 
 ::: {.box-question}
-[Pro každou proměnnou určete typ a navrhněte první graf.]{.panel-lead}
-:::
-
-::: {.takeaway-strip}
-Když nepracujeme ve skupině: vyberte jednu proměnnou a napište typ, vhodný souhrn a vhodný první graf.
+[Přiřaďte ke každé proměnné jeden ze čtyř typů.]{.panel-lead}
 :::
 
 ## Od typu proměnné k prvnímu popisu
@@ -3474,11 +3866,10 @@ Typ proměnné zužuje, které grafy, souhrny a později i modely dávají smysl
 :::: {.slide-margin-top-15}
 
 ::: {.incremental}
-- [Jeden řádek]{.text-hgl-graphite} nejdřív spojíme s jeho skutečnou jednotkou pozorování.
-- [Graf čteme dříve]{.text-hgl-indigo_velvet}, než data nahradíme jedním číslem.
+- [Každý řádek]{.text-hgl-graphite} nejdřív spojíme s jeho skutečnou jednotkou pozorování.
+- Nejdříve data ohodnotíme [graficky]{.text-hgl-indigo_velvet}, než data nahradíme souhrnem (jedním číslem).
 - [Průměr + SD]{.text-hgl-orange}; [medián + IQR]{.text-hgl-amethyst}.
-- [Krabicový graf]{.text-hgl-indigo_velvet} je mapa souhrnů a může skrýt tvar.
-- [Význam proměnné]{.text-hgl-orange} určuje její typ, vhodný graf a vhodný souhrn.
+- [Význam proměnné]{.text-hgl-orange} určuje její typ. Podle toho vybereme vhodný graf a vhodný souhrn.
 :::
 
 ::::
