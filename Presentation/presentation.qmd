@@ -197,7 +197,7 @@ Budeme hlasovat, číst grafy a společně obhajovat interpretace.
 
 ### 90 minut praktika
 
-V menší skupině budete analyzovat data v R s podporou vyučujících.
+V jedné z pěti paralelních skupin (přibližně 26 studentů) budete analyzovat data v R s podporou vyučujících.
 
 :::
 
