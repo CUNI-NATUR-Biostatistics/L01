@@ -54,6 +54,15 @@ sync_brand_file <- function(
   )
 
   if (!is.na(local_src) && file.exists(local_src)) {
+    source_path <- normalizePath(local_src, mustWork = TRUE)
+    destination_path <- normalizePath(path_dest, mustWork = FALSE)
+
+    if (identical(tolower(source_path), tolower(destination_path))) {
+      message("  Using canonical local file: ", file_label, "\n")
+      theme_sync_status[[file_label]] <<- "canonical-local"
+      return(invisible("canonical-local"))
+    }
+
     copied <-
       file.copy(local_src, path_dest, overwrite = TRUE)
     if (!copied) {
@@ -219,6 +228,16 @@ sync_brand_file(
   local_src = file.path(local_brand_root, "lua", "rn-shorthand.lua")
 )
 
+sync_brand_file(
+  file_label = "theme/semantic-boxes.lua",
+  url_src = paste0(
+    "https://raw.githubusercontent.com/",
+    "CUNI-NATUR-Biostatistics/_brand/main/lua/semantic-boxes.lua"
+  ),
+  path_dest = here::here("theme", "semantic-boxes.lua"),
+  local_src = file.path(local_brand_root, "lua", "semantic-boxes.lua")
+)
+
 message("\n")
 
 # Source helper functions -----
@@ -260,6 +279,7 @@ tryCatch(
         "theme/fonts.json",
         "theme/custom_theme.json",
         "theme/rn-shorthand.lua",
+        "theme/semantic-boxes.lua",
         "R/cache/generate_theme_canonical.R",
         paste0(
           "R/Functions/Theme_generation/",

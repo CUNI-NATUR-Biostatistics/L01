@@ -56,6 +56,8 @@ generate_skripta_typst_theme <- function(
   code_bg_hex <- resolve_hex("codeBackgroundColor")
   grey_olive_hex <- colors_data$primary[["grey_olive"]]
   orange_hex <- colors_data$primary[["orange"]]
+  amethyst_hex <- colors_data$primary[["amethyst"]]
+  warning_red_hex <- "#C94C4C"
   table_header_hex <- colors_data$primary[["indigo_velvet"]]
   table_header_text_hex <- colors_data$primary[["parchment"]]
   table_border_hex <- colors_data$primary[["grey_olive"]]
@@ -195,6 +197,7 @@ generate_skripta_typst_theme <- function(
       "// Quarto passes these background_color values per type:",
       "//   note     #dae6fb   tip      #ccf1e3",
       "//   warning  #fcefdc   caution  #ffe5d0   important  #f7dddc",
+      "//   custom semantic question type uses the fallback #dddddd",
       "// ---------------------------------------------------------------------------",
       paste0(
         "#let callout(",
@@ -207,12 +210,16 @@ generate_skripta_typst_theme <- function(
         "\n) = {",
         "\n  let accent = if background_color == rgb(\"#ccf1e3\") {",
         "\n    rgb(\"", grey_olive_hex, "\")  // tip \u2192 grey_olive",
-        "\n  } else if (background_color == rgb(\"#fcefdc\") or background_color == rgb(\"#ffe5d0\")) {",
-        "\n    rgb(\"", orange_hex, "\")  // warning / caution \u2192 orange",
+        "\n  } else if background_color == rgb(\"#fcefdc\") {",
+        "\n    rgb(\"", orange_hex, "\")  // warning \u2192 orange",
+        "\n  } else if background_color == rgb(\"#ffe5d0\") {",
+        "\n    rgb(\"", warning_red_hex, "\")  // caution \u2192 warning red",
         "\n  } else if background_color == rgb(\"#f7dddc\") {",
         "\n    rgb(\"", heading_color_hex, "\")  // important \u2192 indigo_velvet",
+        "\n  } else if background_color == rgb(\"#dae6fb\") {",
+        "\n    rgb(\"", amethyst_hex, "\")  // note \u2192 amethyst",
         "\n  } else {",
-        "\n    rgb(\"", heading_color_hex, "\")  // note + fallback \u2192 indigo_velvet",
+        "\n    rgb(\"", orange_hex, "\")  // semantic question \u2192 orange",
         "\n  }",
         "\n  block(",
         "\n    breakable: false,",

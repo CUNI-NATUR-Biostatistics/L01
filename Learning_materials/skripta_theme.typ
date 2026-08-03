@@ -85,6 +85,7 @@
 // Quarto passes these background_color values per type:
 //   note     #dae6fb   tip      #ccf1e3
 //   warning  #fcefdc   caution  #ffe5d0   important  #f7dddc
+//   custom semantic question type uses the fallback #dddddd
 // ---------------------------------------------------------------------------
 #let callout(
   body: [],
@@ -96,12 +97,16 @@
 ) = {
   let accent = if background_color == rgb("#ccf1e3") {
     rgb("#8A8A8A")  // tip → grey_olive
-  } else if (background_color == rgb("#fcefdc") or background_color == rgb("#ffe5d0")) {
-    rgb("#F3A712")  // warning / caution → orange
+  } else if background_color == rgb("#fcefdc") {
+    rgb("#F3A712")  // warning → orange
+  } else if background_color == rgb("#ffe5d0") {
+    rgb("#C94C4C")  // caution → warning red
   } else if background_color == rgb("#f7dddc") {
     rgb("#5D2890")  // important → indigo_velvet
+  } else if background_color == rgb("#dae6fb") {
+    rgb("#86579E")  // note → amethyst
   } else {
-    rgb("#5D2890")  // note + fallback → indigo_velvet
+    rgb("#F3A712")  // semantic question → orange
   }
   block(
     breakable: false,

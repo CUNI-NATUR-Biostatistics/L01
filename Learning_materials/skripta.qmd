@@ -2,6 +2,8 @@
 title: "Co váží „typický“ savec?"
 subtitle: "První setkání s daty a popisem jedné proměnné"
 lang: cs
+filters:
+  - ../theme/semantic-boxes.lua
 format:
   html:
     toc: true
@@ -184,7 +186,7 @@ ve skriptech a R skriptech. **Stejné kompetence však musí prokázat každý.*
 - **Závěrečná zkouška** ověřuje porozumění analytickým rozhodnutím,
   interpretaci, diagnostice a nejistotě, nikoli psaní syntaxe zpaměti.
 
-::: {.callout-important title="AI při učení a hodnocení"}
+::: {.box-rule title="AI při učení a hodnocení"}
 Při učení můžete AI používat. U zápočtu a zkoušky pracujete samostatně bez
 internetu a AI.
 :::
@@ -252,8 +254,7 @@ vytištěné postupně za sebou.
 Význam nese především nadpis rámečku. Barva pomáhá s orientací, ale není nutné
 si ji pamatovat.
 
-::: {.callout-tip collapse="true"}
-## Doplňující
+::: {.box-data collapse="true" title="Doplňující: rozbalovací rámeček"}
 
 Tento rámeček obsahuje volitelné rozšíření. V HTML jej můžete rozbalit; v PDF
 je vytištěný celý.
@@ -312,16 +313,14 @@ Chceme odpovědět na zdánlivě jednoduchou otázku:
 
 Představte si, že ze stejných dat vyšly dva smyšlené novinové články.
 
-::: {.callout-note}
-## Smyšlený titulek A
+::: {.box-question title="Smyšlený titulek A"}
 
 **Vědci spočítali: „Průměrný savec váží
 `r formatC(prumer_hmotnost_pro_titulky, format = "f", digits = 0, decimal.mark = ",")`
 kg.“**
 :::
 
-::: {.callout-note}
-## Smyšlený titulek B
+::: {.box-question title="Smyšlený titulek B"}
 
 **Jiná analýza stejných dat tvrdí: „Běžný savec váží jen
 `r formatC(median_hmotnost_pro_titulky, format = "f", digits = 2, decimal.mark = ",")`
@@ -341,8 +340,7 @@ Než budete pokračovat, vyberte jednu odpověď a napište si **jednu větu**, 
 ji zdůvodňuje. Zatím nepotřebujete znát názvy výpočtů. Potřebujete pouze
 rozpoznat, jaké informace vám chybějí.
 
-::: {.callout-tip}
-## Odpověď zatím odložíme
+::: {.box-result title="Odpověď zatím odložíme"}
 
 Nejdříve se naučíme sledovat cestu od měření přes tabulku a graf až k číselnému
 shrnutí. K oběma titulkům se vrátíme ve chvíli, kdy budeme umět posoudit nejen
@@ -497,8 +495,7 @@ Argument `n = 10` říká, že chceme zobrazit **prvních deset hodnot**; jiné 
 za `n =` by změnilo počet zobrazených hodnot. Ani jedna kontrola ale ještě
 neukazuje tvar celého souboru hodnot.
 
-::: {.callout-tip collapse="true"}
-## `integer` a `double`: dva způsoby uložení čísel
+::: {.box-data collapse="true" title="Doplňující: integer a double jako dva způsoby uložení čísel"}
 
 R ukládá `5L` jako celé číslo typu `integer` a `5` jako číslo typu `double`:
 
@@ -537,8 +534,7 @@ head(ggplot2::msleep, n = 6)
 | Co představuje sloupec `bodywt`? | tělesnou hmotnost druhu v kilogramech |
 | Je jeden řádek jeden jedinec? | ne; druh je zde shrnut jednou hodnotou |
 
-::: {.callout-important}
-## Druh není jedinec
+::: {.box-rule title="Druh není jedinec"}
 
 Řádek reprezentuje hodnotu vybranou pro **druh**. Slon africký a drobný rejsek
 mají v tabulce každý právě jeden řádek. Výsledek proto popisuje zastoupené
@@ -546,8 +542,7 @@ druhy, nikoli `r render_glossary_term("cetnost", display = "četnost")` nebo
 hmotnost všech savčích jedinců na Zemi.
 :::
 
-::: {.callout-tip collapse="true"}
-## Odkud data pocházejí a co v nich chybí
+::: {.box-data collapse="true" title="Doplňující: odkud data pocházejí a co v nich chybí"}
 
 Dataset `msleep` má podle
 [dokumentace balíčku ggplot2](https://ggplot2.tidyverse.org/reference/msleep.html)
@@ -580,8 +575,7 @@ zobrazit jednotlivé hodnoty**. Graf může odhalit shluky, mezery, asymetrii ne
 hodnoty daleko od ostatních. Teprve potom dokážeme posoudit, který číselný popis
 bude pro daná data smysluplný.
 
-::: {.callout-warning}
-## Nikdy nepracujte jen s čísly bez grafu
+::: {.box-warning title="Nikdy nepracujte jen s čísly bez grafu"}
 
 Samotný výpis hodnot se čte obtížně a souhrnné číslo část informace vždy skryje.
 **Graf není ozdoba výsledku. Je to první kontrola toho, co se číselný popis
@@ -740,8 +734,7 @@ hist(
 ```
 :::
 
-::: {.callout-tip collapse="true"}
-## Doplňující: jak volit šířku koše?
+::: {.box-data collapse="true" title="Doplňující: jak volit šířku koše?"}
 
 Volba šířky koše (anglicky *bin width*) mění míru detailu, ale nemění původní
 hodnoty. Příliš úzké koše vytvoří zubatý graf; příliš široké koše mohou skrýt
@@ -1446,16 +1439,14 @@ Obě čísla jsou vypočtena správně. Průměr ale silně posunulo několik ve
 těžkých druhů. Medián lépe popisuje prostřední řádek této výrazně asymetrické
 tabulky.
 
-::: {.callout-important}
-## Vyřešení úvodního hlasování
+::: {.box-result title="Vyřešení úvodního hlasování"}
 
 Nejpřesnější odpověď byla **C) Obě čísla mohou být vypočtena správně.**
 Správný výpočet však ještě nezaručuje poctivý titulek. Musíme také uvést, jaké
 shrnutí jsme použili, jak vypadá graf a co představuje jeden řádek.
 :::
 
-::: {.callout-tip collapse="true"}
-## Doplňující: kdy může být průměr užitečnější?
+::: {.box-data collapse="true" title="Doplňující: kdy může být průměr užitečnější?"}
 
 `r render_glossary_term("prumer", display = "Průměr")` je přirozený pro
 přibližně symetrická číselná data bez mimořádně
@@ -1527,8 +1518,7 @@ plot_spanek_body +
   )
 ```
 
-::: {.callout-tip collapse="true"}
-## Doplňující: proč kvartil nemusí být přímo v datech?
+::: {.box-data collapse="true" title="Doplňující: proč kvartil nemusí být přímo v datech?"}
 
 U malého souboru může požadovaná procentní pozice ležet mezi dvěma
 pozorovanými hodnotami. R pak podle zvolené metody provede interpolaci. Proto
@@ -1740,7 +1730,7 @@ Soubor A je soustředěný kolem
 hodin. Soubor B má více hodnot na obou okrajích a méně hodnot poblíž středu.
 Stejný průměr tuto odlišnost skryl.
 
-::: {.callout-note title="Potřebujeme ještě jedno číslo"}
+::: {.box-question title="Potřebujeme ještě jedno číslo"}
 Jak bychom jedním číslem popsali vzdálenosti **všech hodnot od průměru**?
 Odpověď budeme hledat v následující části.
 :::
@@ -2224,8 +2214,7 @@ Ve firmě A leží mzdy blíže průměru a SD je 3 tisíce Kč. Ve firmě B jso
 rozptýlenější a SD je 12 tisíc Kč. **Vyšší SD znamená větší typickou vzdálenost
 hodnot od průměru**, nikoli automaticky vyšší nebo nižší mzdu.
 
-::: {.callout-tip collapse="true"}
-## Doplňující: co může míra rozptýlení znamenat biologicky?
+::: {.box-data collapse="true" title="Doplňující: co může míra rozptýlení znamenat biologicky?"}
 
 Představte si dvě populace ptáků se stejnou
 `r render_glossary_term("prumer", display = "průměrnou")` délkou křídla. Jedna
@@ -2516,7 +2505,7 @@ ggplot2::ggplot() +
   )
 ```
 
-::: {.callout-tip collapse="true" title="Doplňující: jak určíme bod za vousy?"}
+::: {.box-data collapse="true" title="Doplňující: jak určíme bod za vousy?"}
 Nejdříve pravidlo zapíšeme slovy:
 
 $$
@@ -2583,8 +2572,7 @@ Vous nekončí přímo na vypočtené hranici, ale na nejkrajnější **skutečn
 pozorované hodnotě**, která ještě leží uvnitř hranice.
 :::
 
-::: {.callout-warning}
-## Bod za vousy není automaticky chyba
+::: {.box-warning title="Bod za vousy není automaticky chyba"}
 
 Pravidlo 1,5 × `r render_glossary_term("iqr", display = "IQR")` označuje hodnotu
 k bližšímu prozkoumání. Bod může být
@@ -2796,7 +2784,7 @@ plot_housle_hmotnost
 #pagebreak()
 ```
 
-::: {.callout-tip collapse="true" title="Doplňující: úplný kód kombinovaného grafu"}
+::: {.box-data collapse="true" title="Doplňující: úplný kód kombinovaného grafu"}
 Tento kód navazuje na výpočet kvartilů, vousů, možných odlehlých hodnot a
 průměru v předchozí části.
 
@@ -2846,8 +2834,7 @@ viděli oba způsoby popisu středu. Houslový graf ale také vyhlazuje data. U
 malého souboru proto mohou být poctivější jednotlivé body; žádný typ grafu není
 nejlepší ve všech situacích.
 
-::: {.callout-tip collapse="true"}
-## Doplňující: co tento souhrnný graf skrývá?
+::: {.box-data collapse="true" title="Doplňující: co tento souhrnný graf skrývá?"}
 
 Krabicový graf je kompaktní a dobře se skládá vedle dalších skupin, ale skrývá
 jednotlivé hodnoty i podrobný tvar rozdělení. Dva různé soubory mohou mít stejný
@@ -2885,12 +2872,12 @@ koho nebo co jeden řádek reprezentuje.
 | 37 | číselný kód lokality | `r render_glossary_term("nominalni-promenna", display = "kategoriální nominální")` |
 | 3 | hodnocení na škále 1–5 | `r render_glossary_term("ordinalni-promenna", display = "kategoriální ordinální")` |
 
-::: {.callout-important title="Typ proměnné neurčuje vzhled hodnoty"}
+::: {.box-rule title="Typ proměnné neurčuje vzhled hodnoty"}
 O typu proměnné rozhoduje **význam hodnot a způsob jejich vzniku**, ne to, zda
 jsou v tabulce zapsány číslem nebo slovem.
 :::
 
-::: {.callout-note title="Statistický typ není totéž co třída objektu v R"}
+::: {.box-rule title="Statistický typ není totéž co třída objektu v R"}
 R popisuje technickou podobu objektu pomocí `class()` a `typeof()`. Funkce `str()` ukáže jeho stručnou strukturu a několik hodnot. Tyto kontroly jsou velmi užitečné, ale samy nerozhodnou, zda je proměnná spojitá, diskrétní, nominální nebo ordinální. K tomu stále potřebujeme vědět, co hodnoty znamenají a jak vznikly.
 :::
 
@@ -3265,7 +3252,7 @@ ggplot2::ggplot(
 
 :::
 
-::: {.callout-warning title="Číselný kód není měření"}
+::: {.box-warning title="Číselný kód není měření"}
 Když lokalitám přidělíme kódy 1, 2 a 3, nevznikne tím numerická proměnná.
 Výpočet průměru těchto kódů by závisel jen na našem libovolném číslování.
 :::
@@ -3343,7 +3330,7 @@ ggplot2::ggplot(
   )
 ```
 
-::: {.callout-important title="U ordinální proměnné zachováváme pořadí"}
+::: {.box-rule title="U ordinální proměnné zachováváme pořadí"}
 Kategorie nejsou zaměnitelné: **lehký < střední < těžký**. Toto pořadí musí
 zůstat zachované v objektu v R, v tabulce i v grafu.
 :::
@@ -3365,7 +3352,7 @@ Určete typ každé proměnné. Zatím nemusíte vybírat graf:
 4. stupeň napadení rostliny: žádný – mírný – silný,
 5. identifikační číslo jedince.
 
-::: {.callout-note collapse="true" title="Řešení"}
+::: {.box-result collapse="true" title="Řešení: určete typ proměnné"}
 1. pH: numerická spojitá.
 2. Počet žab: numerická diskrétní.
 3. Druh stanoviště: kategoriální nominální.
@@ -3382,7 +3369,7 @@ Určete typ každé proměnné. Zatím nemusíte vybírat graf:
 | kategoriální nominální | typ potravy | četnosti a podíly | sloupcový graf | *nominal categorical* |
 | kategoriální ordinální | stupeň poškození | četnosti; medián pořadí jen opatrně | uspořádaný sloupcový graf | *ordinal categorical* |
 
-::: {.callout-tip title="Pořadí rozhodování"}
+::: {.box-rule title="Pořadí rozhodování"}
 1. Co představuje jeden řádek?
 2. Co proměnná znamená a jak vznikla?
 3. Jakého je typu?
