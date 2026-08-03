@@ -40,6 +40,9 @@ library(tidyverse)
 library(ggbeeswarm)
 library(glossary)
 
+# Načteme společný kurzový vzhled grafů před úpravami pro tuto lekci.
+source(here::here("R", "set_r_theme.R"))
+
 # Slovníček: kanonická hesla načítáme z repozitáře slovnik.
 local_pojmy <- tempfile(fileext = ".yaml")
 tryCatch(
@@ -120,7 +123,7 @@ col_median <- "#5D2890"
 col_fill <- "#D8C9E8"
 
 ggplot2::theme_set(
-  ggplot2::theme_bw() +
+  theme_biostat() +
     ggplot2::theme(
       panel.grid.minor = ggplot2::element_blank(),
       plot.title = ggplot2::element_text(

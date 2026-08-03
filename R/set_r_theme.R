@@ -66,11 +66,21 @@ theme_biostat <- function(
   base_size   = 11,
   base_family = biostat_base_font
 ) {
+  is_html_output <-
+    requireNamespace("knitr", quietly = TRUE) && knitr::is_html_output()
+
   output_background <-
-    if (requireNamespace("knitr", quietly = TRUE) && knitr::is_html_output()) {
+    if (is_html_output) {
       biostat_background_color
     } else {
       biostat_cols[["white"]]
+    }
+
+  panel_background <-
+    if (is_html_output) {
+      biostat_cols[["white"]]
+    } else {
+      biostat_background_color
     }
 
   ggplot2::theme_bw(
@@ -88,13 +98,13 @@ theme_biostat <- function(
     legend.title     = ggplot2::element_text(size = ggplot2::rel(1)),
     legend.text      = ggplot2::element_text(size = ggplot2::rel(0.9)),
     legend.background = ggplot2::element_rect(fill = output_background, colour = NA),
-    legend.key       = ggplot2::element_rect(fill = output_background, colour = NA),
+    legend.key       = ggplot2::element_rect(fill = panel_background, colour = NA),
     strip.text       = ggplot2::element_text(face = "bold"),
     axis.title.x     = ggplot2::element_text(margin = ggplot2::margin(t = 6)),
     axis.title.y     = ggplot2::element_text(margin = ggplot2::margin(r = 8)),
     panel.border     = ggplot2::element_blank(),
     axis.line        = ggplot2::element_line(colour = "#2E2E2E", linewidth = 0.4),
-    panel.background = ggplot2::element_rect(fill = "#FFFFFF", colour = NA),
+    panel.background = ggplot2::element_rect(fill = panel_background, colour = NA),
     plot.background  = ggplot2::element_rect(fill = output_background, colour = NA),
     panel.grid.minor = ggplot2::element_blank(),
     legend.position  = "bottom"
