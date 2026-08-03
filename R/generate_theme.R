@@ -35,24 +35,35 @@ dir.create(
   recursive = TRUE
 )
 
-# Download to a temp file first; only overwrite cache on success so
-# a failed download never corrupts the committed offline seed.
-tryCatch(
-  expr = {
-    tmp <-
-      tempfile(fileext = ".R")
-    download.file(canonical_url, tmp, quiet = TRUE, mode = "wb")
-    file.copy(tmp, canonical_cache, overwrite = TRUE)
-    unlink(tmp)
-    message("Downloaded canonical generate_theme.R from _brand\n")
-  },
-  error = function(e) {
-    message(
-      "WARNING: Could not download canonical script",
-      " \u2014 using cached copy.\n",
-      "  (", e$message, ")\n"
-    )
-  }
-)
+# Prefer the sibling `_brand` repository during local development. Elsewhere,
+# download to a temporary file and preserve the committed cache on failure.
+local_brand_canonical <-
+  normalizePath(
+    file.path(dirname(here::here()), "_brand", "R", "generate_theme.R"),
+    mustWork = FALSE
+  )
+
+if (file.exists(local_brand_canonical)) {
+  file.copy(local_brand_canonical, canonical_cache, overwrite = TRUE)
+  message("Using local _brand canonical script\n")
+} else {
+  tryCatch(
+    expr = {
+      tmp <-
+        tempfile(fileext = ".R")
+      download.file(canonical_url, tmp, quiet = TRUE, mode = "wb")
+      file.copy(tmp, canonical_cache, overwrite = TRUE)
+      unlink(tmp)
+      message("Downloaded canonical generate_theme.R from _brand\n")
+    },
+    error = function(e) {
+      message(
+        "WARNING: Could not download canonical script",
+        " \u2014 using cached copy.\n",
+        "  (", e$message, ")\n"
+      )
+    }
+  )
+}
 
 source(canonical_cache)
