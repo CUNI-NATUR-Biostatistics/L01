@@ -1,0 +1,20 @@
+schema_version: 1
+course: MB120P163
+lesson: L01
+academic_year: "2026-27"
+title: "Co váží typický savec?"
+subtitle: "První setkání s daty a popisem jedné proměnné"
+resources:
+  learning:
+    html: Learning_materials/skripta.html
+    pdf: Learning_materials/skripta.pdf
+    source: Learning_materials/skripta.qmd
+  presentation:
+    html: Presentation/presentation.html
+    pdf: Presentation/presentation.pdf
+    source: Presentation/presentation.qmd
+  exercises:
+    - label: "R skript ke cvičení"
+      path: Exercises/cviceni.R
+  data: []
+  extras: []
