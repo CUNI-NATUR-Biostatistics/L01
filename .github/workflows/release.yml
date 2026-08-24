@@ -11,5 +11,5 @@ jobs:
       contents: write
       pages: write
       id-token: write
-    uses: CUNI-NATUR-Biostatistics/.github/.github/workflows/release.yml@main
+    uses: CUNI-NATUR-Biostatistics/CUNI-NATUR-Biostatistics.github.io/.github/workflows/release.yml@main
     secrets: inherit
