@@ -1,0 +1,20 @@
+name: Publish preview
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "website-release.yml"
+      - "Learning_materials/skripta.html"
+      - "Presentation/presentation.html"
+      - ".github/workflows/preview.yml"
+  workflow_dispatch:
+
+jobs:
+  preview:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: CUNI-NATUR-Biostatistics/CUNI-NATUR-Biostatistics.github.io/.github/workflows/preview.yml@main
