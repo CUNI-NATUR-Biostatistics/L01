@@ -58,9 +58,7 @@ source("R/render_skripta.R")
 source("R/render_presentation.R")
 ```
 
-`R/render_presentation.R` publikuje zamýšlený HTML výstup také do
-`docs/index.html`. Render se spouští v aktivovaném projektu `L01.Rproj` a jeho
-stav závislostí se ověřuje v čerstvé R relaci pomocí `renv::status()`.
+`R/render_presentation.R` ukládá HTML výstup do `Presentation/presentation.html`. Publikování preview a stabilních release zajišťují GitHub Actions popsané v `WEBSITE_RELEASES.md`. Render se spouští v aktivovaném projektu `L01.Rproj` a jeho stav závislostí se ověřuje v čerstvé R relaci pomocí `renv::status()`.
 
 ## Distribuce
 

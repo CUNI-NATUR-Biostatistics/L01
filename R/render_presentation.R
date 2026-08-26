@@ -15,7 +15,6 @@
 
 library(here)
 library(quarto)
-library(fs)
 
 # Synchronize the shared brand before every standalone render. `render_all.R`
 # performs this once for both outputs and sets the temporary option below so
@@ -27,14 +26,6 @@ if (!isTRUE(getOption("biostat.theme_sync_complete"))) {
 # Render -----
 quarto::quarto_render(
   input = here::here("Presentation", "presentation.qmd")
-)
-
-# Move the rendered file to the `docs` directory. -----
-
-fs::file_copy(
-  path = here::here("Presentation", "presentation.html"),
-  new_path = here::here("docs", "index.html"),
-  overwrite = TRUE
 )
 
 # Make PDF version -----
