@@ -17,4 +17,6 @@ resources:
     - label: "R skript ke cvičení"
       path: Exercises/cviceni.R
   data: []
-  extras: []
+  extras:
+    - label: "Licence materiálů a kódu"
+      path: LICENSE.md
