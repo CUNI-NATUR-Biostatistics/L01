@@ -75,19 +75,24 @@ slides_url <-
   )
 ```
 
-## Úvod do biostatistiky a kolik asi váží „typický“ savec?
+## Kolik váží „typický“ savec? {.course-title .bg-indigo}
 
-<br>
-
-::: {.text-font-heading .text-size-heading1 .text-bold}
-`r display_name`
+::: {.course-title-mark}
+![Logo kurzu Biostatistika](../theme/course-logo-reversed.svg) BIOSTATISTIKA
 :::
 
-<br>
+::: {.course-title-number}
+L01
+:::
 
-[👤](https://ondrejmottl.github.io/) Ondřej Mottl
+::: {.course-title-formal}
+Úvod do biostatistiky
+:::
 
-[Moodle](https://dl2.cuni.cz/course/view.php?id=106)
+::: {.course-title-link}
+[cuni-natur-biostatistics.github.io/materialy.html](https://cuni-natur-biostatistics.github.io/materialy.html)
+:::
+
 
 ## Ondřej Mottl
 
@@ -561,6 +566,8 @@ Správný výpočet ještě nezaručuje správnou interpretaci.
 
 
 # Od organismu k datům
+
+Stejná tabulka obsahuje hmotnost i spánek. Spánek nám nejprve ukáže, jak data zobrazit a popsat; potom se vrátíme k otázce o hmotnosti.
 
 ## Začneme jedním savcem
 
@@ -1096,7 +1103,7 @@ include_local_figure("spanek_pribyvani_druhu.gif")
 ```
 
 ::: {.takeaway-strip}
-Graf nevzniká místo dat. Vzniká postupným zobrazením hodnot, které jsme vložili do tabulky a vektoru.
+Graf nevzniká místo dat. Vzniká postupným zobrazením hodnot, které jsme vložili do tabulky a vektoru. Svislá poloha teček jen brání překryvu; osa y zde neznamená další měření.
 :::
 ## Jak vypadá spánek všech zastoupených druhů?
 
@@ -1251,7 +1258,7 @@ include_local_figure("spanek_hustota.png")
 ```
 
 ::: {.strip-amethyst}
-**Graf hustoty** zvýrazní tvar, ale neukazuje konkrétní počty ani jednotlivé druhy.
+**Graf hustoty** vyhlazuje naměřené hodnoty do souvislé křivky. Výška ukazuje hustotu, nikoli počet druhů; jednotlivé hodnoty v něm nevidíme.
 :::
 
 ## Který graf byste použili?
@@ -1561,7 +1568,7 @@ Maximum (*maximum*) je zde **`r maximum_maly` h**.
 ::::
 
 ::: {.takeaway-strip}
-Minimum a maximum ukazují krajní pozorované hodnoty. Neříkají, kde leží většina dat.
+Minimum a maximum ukazují krajní pozorované hodnoty. Když přidáme další druhy, mohou se posunout dál; silně závisejí na velikosti souboru a neříkají, kde leží většina dat.
 :::
 
 ## Průměr: hodnoty sečteme a rozdělíme
@@ -1576,6 +1583,7 @@ plot_maly_prumer <-
   ggplot2::geom_vline(
     xintercept = prumer_maly,
     color = biostat_cols[["indigo_velvet"]],
+    linetype = "dashed",
     linewidth = 1.8
   )
 
@@ -2037,6 +2045,7 @@ plot_maly_vzdalenosti <-
   ggplot2::geom_vline(
     xintercept = prumer_maly,
     color = biostat_cols[["indigo_velvet"]],
+    linetype = "dashed",
     linewidth = 1.5
   ) +
   ggplot2::geom_point(
@@ -2173,6 +2182,7 @@ plot_maly_sd <-
   ggplot2::geom_vline(
     xintercept = prumer_maly,
     color = biostat_cols[["indigo_velvet"]],
+    linetype = "dashed",
     linewidth = 1.5
   )
 
@@ -2232,6 +2242,7 @@ plot_porovnani_sd_histogram <-
   ggplot2::geom_vline(
     xintercept = 50,
     color = biostat_cols[["indigo_velvet"]],
+    linetype = "dashed",
     linewidth = 1.4
   ) +
   ggplot2::facet_wrap(
@@ -2440,6 +2451,8 @@ Nejdřív jsme rozepsali všech devět čtvercových odchylek; teprve potom jsme
 :::::
 
 ## Rozptyl rozdělí součet
+
+U jediné hodnoty by odchylka od jejího průměru byla vždy nula. U dvou hodnot po určení průměru stačí znát jednu odchylku: druhá musí být opačná. Proto při odhadu rozptylu dělíme počtem hodnot zmenšeným o jednu.
 
 ::::: {.slide-margin-top-15}
 
@@ -2719,13 +2732,13 @@ plot_hmotnost_linear <-
   ggplot2::geom_vline(
     xintercept = prumer_hmotnosti,
     color = biostat_cols[["indigo_velvet"]],
+    linetype = "dashed",
     linewidth = 1.5
   ) +
   ggplot2::geom_vline(
     xintercept = median_hmotnosti,
     color = biostat_cols[["amethyst"]],
-    linewidth = 1.5,
-    linetype = "dashed"
+    linewidth = 1.5
   ) +
   ggplot2::scale_x_continuous(
     labels = scales::label_number(
@@ -2798,13 +2811,13 @@ plot_hmotnost_log <-
   ggplot2::geom_vline(
     xintercept = prumer_hmotnosti,
     color = biostat_cols[["indigo_velvet"]],
+    linetype = "dashed",
     linewidth = 1.5
   ) +
   ggplot2::geom_vline(
     xintercept = median_hmotnosti,
     color = biostat_cols[["amethyst"]],
-    linewidth = 1.5,
-    linetype = "dashed"
+    linewidth = 1.5
   ) +
   ggplot2::scale_x_log10(
     breaks = c(
@@ -2860,7 +2873,7 @@ include_local_figure("hmotnost_logaritmicka_osa.png")
 ```
 
 ::: {.takeaway-strip}
-Graf nezměnil data. Jen nám dovolil vidět lehké i těžké druhy současně.
+Graf nezměnil data. Jen nám dovolil vidět lehké i těžké druhy současně. Plná fialová čára je medián, přerušovaná tmavá čára průměr.
 :::
 
 ## Jak dvě redakce počítaly?
@@ -2969,28 +2982,33 @@ jednotlivých savců. Čísla proto nepopisují „náhodného savce na Zemi“.
 #| include: false
 #| message: false
 #| warning: false
+stat_boxplot_hmotnost <-
+  boxplot.stats(vec_hmotnost_kg)
+
 q1_hmotnost <-
-  quantile(
-    vec_hmotnost_kg,
-    probs = 0.25,
-    names = FALSE
-  )
+  stat_boxplot_hmotnost$stats[[2]]
 
 q3_hmotnost <-
-  quantile(
-    vec_hmotnost_kg,
-    probs = 0.75,
-    names = FALSE
-  )
-
-stat_boxplot_hmotnost <-
-  boxplot.stats(log10(vec_hmotnost_kg))
+  stat_boxplot_hmotnost$stats[[4]]
 
 vous_dolni_hmotnost <-
-  10^stat_boxplot_hmotnost$stats[[1]]
+  stat_boxplot_hmotnost$stats[[1]]
 
 vous_horni_hmotnost <-
-  10^stat_boxplot_hmotnost$stats[[5]]
+  stat_boxplot_hmotnost$stats[[5]]
+
+data_boxplot_hmotnost <-
+  tibble::tibble(
+    poloha = 1,
+    vous_dolni = vous_dolni_hmotnost,
+    q1 = q1_hmotnost,
+    median = median_hmotnosti,
+    q3 = q3_hmotnost,
+    vous_horni = vous_horni_hmotnost
+  )
+
+data_odlehle_hmotnost <-
+  tibble::tibble(hmotnost_kg = stat_boxplot_hmotnost$out)
 
 plot_hmotnost_body <-
   ggplot2::ggplot(
@@ -3122,6 +3140,8 @@ include_local_figure("hmotnost_boxplot_krok_2_iqr.png")
 
 ## Přidáme vousy
 
+Vous končí u nejkrajnější pozorované hodnoty nejvýše 1,5 × IQR od okraje krabice. Body dál od krabice vyznačíme zvlášť; nejsou automaticky chybou. Pravidlo počítáme v původních kilogramech.
+
 ```{r}
 #| label: vytvorit-boxplot-krok3
 #| include: false
@@ -3215,12 +3235,30 @@ plot_hmotnost_boxplot <-
     )
   ) +
   ggplot2::geom_boxplot(
+    data = data_boxplot_hmotnost,
+    mapping = ggplot2::aes(
+      y = poloha,
+      xmin = vous_dolni,
+      xlower = q1,
+      xmiddle = median,
+      xupper = q3,
+      xmax = vous_horni
+    ),
+    stat = "identity",
     orientation = "y",
     width = 0.5,
+    inherit.aes = FALSE,
     color = biostat_cols[["indigo_velvet"]],
     fill = biostat_cols[["amethyst"]],
     alpha = 0.35,
     linewidth = 1.3
+  ) +
+  ggplot2::geom_point(
+    data = data_odlehle_hmotnost,
+    mapping = ggplot2::aes(x = hmotnost_kg, y = 1),
+    inherit.aes = FALSE,
+    color = biostat_cols[["grey_olive"]],
+    size = 3
   ) +
   ggplot2::scale_x_log10(
     breaks = c(
@@ -3298,16 +3336,34 @@ plot_hmotnost_housle <-
     trim = FALSE
   ) +
   ggplot2::geom_boxplot(
+    data = data_boxplot_hmotnost,
+    mapping = ggplot2::aes(
+      y = poloha,
+      xmin = vous_dolni,
+      xlower = q1,
+      xmiddle = median,
+      xupper = q3,
+      xmax = vous_horni
+    ),
+    stat = "identity",
     orientation = "y",
     width = 0.18,
     color = biostat_cols[["indigo_velvet"]],
     fill = biostat_cols[["parchment"]],
-    outlier.shape = NA,
+    inherit.aes = FALSE,
     linewidth = 1
+  ) +
+  ggplot2::geom_point(
+    data = data_odlehle_hmotnost,
+    mapping = ggplot2::aes(x = hmotnost_kg, y = 1),
+    inherit.aes = FALSE,
+    color = biostat_cols[["grey_olive"]],
+    size = 2.4
   ) +
   ggplot2::geom_vline(
     xintercept = prumer_hmotnosti,
-    color = biostat_cols[["orange"]],
+    color = biostat_cols[["indigo_velvet"]],
+    linetype = "dashed",
     linewidth = 1.6
   ) +
   ggplot2::scale_x_log10(
@@ -3373,8 +3429,8 @@ include_local_figure("hmotnost_houslovy_boxplot.png")
 ```
 
 ::: {.text-center style="font-size: 0.70em; line-height: 1.15;"}
-[oranžová čára = průměr]{.text-hgl-orange}<br>
-[čára v krabici = medián]{.text-hgl-indigo_velvet}
+[přerušovaná tmavá čára = průměr]{.text-hgl-indigo_velvet}<br>
+[plná čára v krabici = medián]{.text-hgl-amethyst}
 :::
 :::
 
@@ -3431,6 +3487,7 @@ U netopýra můžeme zaznamenat:
 - dobu spánku v hodinách;
 - váhu v kilogramech;
 - počet pozorovaných jedinců;
+- druh;
 - typ potravy;
 - velikostní kategorii.
 :::
@@ -3608,7 +3665,7 @@ include_local_figure("pocet_druhu_v_radu.png")
 ::: {.column width="38%" .fragment}
 ::: {.panel-result}
 [**Diskrétní numerická proměnná**]{.text-hgl-indigo_velvet}: vznikla
-[počítáním]{.text-hgl-orange}; zde měníme jednotku pozorování na taxonomický řád.
+[počítáním]{.text-hgl-orange}; zde měníme jednotku pozorování na taxonomický řád. Počet mláďat má obvykle málo možných hodnot, počet listů na stromě může mít mnoho. Podle rozsahu a biologické otázky zvolíme vhodný graf i souhrn.
 :::
 
 ```{r}

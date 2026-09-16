@@ -187,7 +187,14 @@ brand_r_local <-
   file.path(local_brand_root, "R")
 
 purrr::walk(
-  .x = c("render_all.R", "render_presentation.R", "render_skripta.R"),
+  .x = c(
+    "render_all.R",
+    "render_presentation.R",
+    "render_skripta.R",
+    "prepare_pollslive_quiz.R",
+    "serve_presentation.R",
+    "serve_presentation.mjs"
+  ),
   .f = ~ {
     sync_brand_file(
       file_label = paste0("R/", .x),
@@ -209,6 +216,20 @@ sync_brand_file(
   url_src = paste0(brand_r_url, "/Functions/render_glossary_term.R"),
   path_dest = here::here("R", "Functions", "render_glossary_term.R"),
   local_src = file.path(brand_r_local, "Functions", "render_glossary_term.R")
+)
+
+sync_brand_file(
+  file_label = "R/Functions/prepare_presentation_variant.R",
+  url_src = paste0(brand_r_url, "/Functions/prepare_presentation_variant.R"),
+  path_dest = here::here("R", "Functions", "prepare_presentation_variant.R"),
+  local_src = file.path(brand_r_local, "Functions", "prepare_presentation_variant.R")
+)
+
+sync_brand_file(
+  file_label = "R/Functions/render_presentation_outputs.R",
+  url_src = paste0(brand_r_url, "/Functions/render_presentation_outputs.R"),
+  path_dest = here::here("R", "Functions", "render_presentation_outputs.R"),
+  local_src = file.path(brand_r_local, "Functions", "render_presentation_outputs.R")
 )
 
 message("\n")
@@ -236,6 +257,68 @@ sync_brand_file(
   ),
   path_dest = here::here("theme", "semantic-boxes.lua"),
   local_src = file.path(local_brand_root, "lua", "semantic-boxes.lua")
+)
+
+sync_brand_file(
+  file_label = "theme/course-logo-reversed.svg",
+  url_src = paste0(
+    "https://raw.githubusercontent.com/",
+    "CUNI-NATUR-Biostatistics/_brand/main/",
+    "assets/logo/biostatistika-icon-reversed.svg"
+  ),
+  path_dest = here::here("theme", "course-logo-reversed.svg"),
+  local_src = file.path(
+    local_brand_root,
+    "assets",
+    "logo",
+    "biostatistika-icon-reversed.svg"
+  )
+)
+
+logo_sources <- c(
+  "course-logo-horizontal.svg" = "biostatistika-logo-horizontal.svg",
+  "course-icon.svg" = "biostatistika-icon.svg",
+  "skripta-favicon.html" = "skripta-favicon.html"
+)
+for (destination_name in names(logo_sources)) {
+  logo_file <- logo_sources[[destination_name]]
+  sync_brand_file(
+    file_label = paste0("theme/", destination_name),
+    url_src = paste0(
+      "https://raw.githubusercontent.com/",
+      "CUNI-NATUR-Biostatistics/_brand/main/",
+      "assets/logo/", logo_file
+    ),
+    path_dest = here::here("theme", destination_name),
+    local_src = file.path(local_brand_root, "assets", "logo", logo_file)
+  )
+}
+
+sync_brand_file(
+  file_label = "Learning_materials/course-logo-vertical.svg",
+  url_src = paste0(
+    "https://raw.githubusercontent.com/",
+    "CUNI-NATUR-Biostatistics/_brand/main/",
+    "assets/logo/biostatistika-logo-vertical.svg"
+  ),
+  path_dest = here::here("Learning_materials", "course-logo-vertical.svg"),
+  local_src = file.path(
+    local_brand_root,
+    "assets",
+    "logo",
+    "biostatistika-logo-vertical.svg"
+  )
+)
+
+sync_brand_file(
+  file_label = "Learning_materials/skripta-logo.typ",
+  url_src = paste0(
+    "https://raw.githubusercontent.com/",
+    "CUNI-NATUR-Biostatistics/_brand/main/",
+    "assets/logo/skripta-logo.typ"
+  ),
+  path_dest = here::here("Learning_materials", "skripta-logo.typ"),
+  local_src = file.path(local_brand_root, "assets", "logo", "skripta-logo.typ")
 )
 
 message("\n")
@@ -280,6 +363,12 @@ tryCatch(
         "theme/custom_theme.json",
         "theme/rn-shorthand.lua",
         "theme/semantic-boxes.lua",
+        "theme/course-logo-reversed.svg",
+        "theme/course-logo-horizontal.svg",
+        "theme/course-icon.svg",
+        "theme/skripta-favicon.html",
+        "Learning_materials/course-logo-vertical.svg",
+        "Learning_materials/skripta-logo.typ",
         "R/cache/generate_theme_canonical.R",
         paste0(
           "R/Functions/Theme_generation/",
@@ -294,9 +383,14 @@ tryCatch(
           )
         ),
         "R/Functions/render_glossary_term.R",
+        "R/Functions/prepare_presentation_variant.R",
+        "R/Functions/render_presentation_outputs.R",
         "R/render_all.R",
         "R/render_presentation.R",
-        "R/render_skripta.R"
+        "R/render_skripta.R",
+        "R/prepare_pollslive_quiz.R",
+        "R/serve_presentation.R",
+        "R/serve_presentation.mjs"
       )
     manifest_outputs <-
       c(

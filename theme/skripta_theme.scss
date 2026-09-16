@@ -75,6 +75,16 @@ $callout-color-caution:   #C94C4C;
 
 /*-- scss:rules --*/
 
+// Approved course logo on the reading-material title block.
+#title-block-header .quarto-title::before {
+  content: '';
+  display: block;
+  width: min(100%, 260px);
+  height: 82px;
+  margin-bottom: 1.2rem;
+  background: url('../theme/course-logo-horizontal.svg') left center / contain no-repeat;
+}
+
 // ---------------------------------------------------------------------------
 // Semantic question callout (created by theme/semantic-boxes.lua)
 // ---------------------------------------------------------------------------
@@ -87,6 +97,11 @@ div.callout-question.callout-style-default > .callout-header {
 }
 
 // ---------------------------------------------------------------------------
+// Long optional material: retain the HTML collapse affordance.
+div.callout-extra.callout {
+  border-left-color: shift-color($amethyst, $callout-border-scale);
+}
+
 // Code blocks
 // ---------------------------------------------------------------------------
 pre.sourceCode {
