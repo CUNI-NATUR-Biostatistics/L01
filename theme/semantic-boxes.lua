@@ -13,6 +13,7 @@ local semantic_types = {
   ["box-data"] = "tip",
   ["panel-data"] = "tip",
   ["card-data"] = "tip",
+  ["box-extra"] = "note",
   ["box-rule"] = "note",
   ["card-rule"] = "note",
   ["panel-note"] = "note",
@@ -42,6 +43,8 @@ local function filtered_classes(classes)
   for _, class_name in ipairs(classes) do
     if semantic_types[class_name] == nil then
       result:insert(class_name)
+    elseif class_name == "box-extra" then
+      result:insert("callout-extra")
     end
   end
   return result

@@ -15,13 +15,17 @@ format:
     embed-resources: true
     theme: [flatly, ../theme/skripta_theme.scss]
     highlight-style: github
-    include-in-header: "../theme/fonts-include.html"
+    include-in-header:
+      - "../theme/fonts-include.html"
+      - "../theme/skripta-favicon.html"
   typst:
     toc: true
     toc-depth: 3
     number-sections: true
     output-file: "skripta_raw.pdf"
-    include-in-header: "skripta_theme.typ"
+    include-in-header:
+      - "skripta_theme.typ"
+      - "skripta-logo.typ"
 date: 2026/07/26
 date-format: long
 date-modified: last-modified
@@ -1926,6 +1930,8 @@ ggplot2::ggplot(
   ggplot2::theme(legend.position = "none")
 ```
 
+::: {.box-data collapse="true" title="Extra: od odchylek k součtu čtverců, rozptylu a SD"}
+
 Tabulka propojuje každou hodnotu s jejím místem v dalším výpočtu:
 
 ```{r}
@@ -2020,8 +2026,7 @@ $$
 \left(x_i-\overline{x}\right)^2
 $$
 
-`r render_glossary_term("rozptyl", display = "Výběrový rozptyl")` (anglicky
-*sample variance*) získáme vydělením součtu čtverců počtem hodnot minus jedna.
+`r render_glossary_term("rozptyl", display = "Výběrový rozptyl")` (anglicky *sample variance*) získáme vydělením součtu čtverců počtem hodnot minus jedna. Když máme jedinou hodnotu, její průměr je ona sama a odchylka je vždy nula: o skutečné proměnlivosti tak nic nezjistíme. U dvou hodnot po určení průměru stačí znát jednu odchylku, protože druhá musí být opačná. Po odhadu průměru tedy zbývá o jednu nezávislou odchylku méně; tím si vysvětlíme dělitele `n - 1` bez formální definice stupňů volnosti.
 
 Nejdříve slovy:
 
@@ -2102,6 +2107,10 @@ var(vec_maly_spanek)
 # Směrodatná odchylka v hodinách.
 sd(vec_maly_spanek)
 ```
+
+:::
+
+Směrodatná odchylka (SD) vyjadřuje, jak rozptýlené jsou hodnoty kolem průměru, ve stejných jednotkách jako původní měření. Pro doby spánku ji spočítáme v R pomocí `sd(vec_maly_spanek)`. Podrobný výpočet přes součet čtverců a rozptyl je v rámečku Extra.
 
 ### SD jako vzdálenost na grafu
 
@@ -2252,12 +2261,12 @@ zastoupených druhů.
 #| echo: false
 #| message: false
 #| warning: false
-q1_hmotnost <- quantile(vec_hmotnost_kg, probs = 0.25, names = FALSE)
-q3_hmotnost <- quantile(vec_hmotnost_kg, probs = 0.75, names = FALSE)
-iqr_hmotnost <- IQR(vec_hmotnost_kg)
+stat_boxplot_hmotnost <- boxplot.stats(vec_hmotnost_kg)
+q1_hmotnost <- stat_boxplot_hmotnost$stats[[2]]
+q3_hmotnost <- stat_boxplot_hmotnost$stats[[4]]
+iqr_hmotnost <- q3_hmotnost - q1_hmotnost
 hranice_dolni_hmotnost <- q1_hmotnost - 1.5 * iqr_hmotnost
 hranice_horni_hmotnost <- q3_hmotnost + 1.5 * iqr_hmotnost
-stat_boxplot_hmotnost <- boxplot.stats(vec_hmotnost_kg)
 vous_dolni_hmotnost <- stat_boxplot_hmotnost$stats[[1]]
 vous_horni_hmotnost <- stat_boxplot_hmotnost$stats[[5]]
 vec_odlehle_hmotnost <- stat_boxplot_hmotnost$out
@@ -3048,6 +3057,8 @@ Příklady:
 - počet semen,
 - počet návštěv květu,
 - počet přečtených sekvencí.
+
+Oba počty jsou diskrétní, ale při volbě grafu a souhrnu záleží také na rozsahu možných hodnot a biologické otázce: počet mláďat mívá jen několik hodnot, zatímco počet listů na stromě může být velmi vysoký. Samotný štítek „diskrétní“ nám proto neurčí jeden univerzální graf.
 
 V našem datasetu můžeme změnit pozorovací jednotku a spočítat, kolik druhů
 zastupuje každý taxonomický řád:

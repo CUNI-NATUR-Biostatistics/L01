@@ -82,6 +82,7 @@
 
 // ---------------------------------------------------------------------------
 // Callout blocks (override Quarto defaults with brand colours)
+// Callouts remain breakable so long supplementary sections can flow across pages.
 // Quarto passes these background_color values per type:
 //   note     #dae6fb   tip      #ccf1e3
 //   warning  #fcefdc   caution  #ffe5d0   important  #f7dddc
@@ -109,7 +110,7 @@
     rgb("#F3A712")  // semantic question → orange
   }
   block(
-    breakable: false,
+    breakable: true,
     fill: accent,
     stroke: (paint: accent, thickness: 0.5pt, cap: "round"),
     width: 100%,
