@@ -1930,6 +1930,8 @@ ggplot2::ggplot(
   ggplot2::theme(legend.position = "none")
 ```
 
+::: {.box-data collapse="true" title="Extra: od odchylek k součtu čtverců, rozptylu a SD"}
+
 Tabulka propojuje každou hodnotu s jejím místem v dalším výpočtu:
 
 ```{r}
@@ -2105,6 +2107,10 @@ var(vec_maly_spanek)
 # Směrodatná odchylka v hodinách.
 sd(vec_maly_spanek)
 ```
+
+:::
+
+Směrodatná odchylka (SD) vyjadřuje, jak rozptýlené jsou hodnoty kolem průměru, ve stejných jednotkách jako původní měření. Pro doby spánku ji spočítáme v R pomocí `sd(vec_maly_spanek)`. Podrobný výpočet přes součet čtverců a rozptyl je v rámečku Extra.
 
 ### SD jako vzdálenost na grafu
 

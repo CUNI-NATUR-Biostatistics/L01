@@ -55,3 +55,9 @@ The existing written materials already explain boxplot whiskers and note that ex
 - Fresh `renv::status()` reports dependency and version drift in this local environment. `renv.lock` was not changed for this feedback revision; no snapshot was taken.
 - Independent `vision-corrector` review found one medium boxplot consistency issue: displayed quartiles used `quantile()` while whiskers/outliers used `boxplot.stats()` hinges. Resolved by deriving box edges, median, whiskers, outliers, IQR, and fences from the same raw-scale `boxplot.stats()` result; both canonical artifacts were rerendered and corrected slides 63–66 were visually rechecked.
 - Narrow independent re-review confirmed that the boxplot finding is resolved and that no blocker remains in the corrected sections.
+
+## 2026-09-18 author feedback revision
+
+The detailed sum-of-squares, sample-variance, and SD calculation in `Learning_materials/skripta.qmd` is now inside a collapsed Extra box. The signed-deviation graph and a short SD definition remain in the main flow.
+
+Validation: canonical `Rscript R/render_skripta.R` passed; the 47-page PDF was visually checked across the Extra box and the following SD explanation. Fresh-session `renv::status()` reports pre-existing library/lockfile drift unrelated to this text-only edit.
