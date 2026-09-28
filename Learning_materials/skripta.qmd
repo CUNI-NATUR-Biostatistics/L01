@@ -49,38 +49,51 @@ library(glossary)
 # Načteme společný kurzový vzhled grafů před úpravami pro tuto lekci.
 source(here::here("R", "set_r_theme.R"))
 
-# Slovníček: kanonická hesla načítáme z repozitáře slovnik.
-local_pojmy <- tempfile(fileext = ".yaml")
-tryCatch(
-  {
-    download.file(
-      url = paste0(
-        "https://raw.githubusercontent.com/",
-        "CUNI-NATUR-Biostatistics/slovnik/main/pojmy.yaml"
-      ),
-      destfile = local_pojmy,
-      quiet = TRUE
-    )
-    glossary::glossary_path(local_pojmy)
-  },
-  error = function(e) {
-    message("Glossary YAML unavailable: ", conditionMessage(e))
-  }
-)
-tryCatch(
-  {
-    source(
-      paste0(
-        "https://raw.githubusercontent.com/",
-        "CUNI-NATUR-Biostatistics/slovnik/main/",
-        "R/Functions/render_glossary_term.R"
+# Slovníček: při práci v kurzovém workspace použijeme přímo kanonický
+# soubor; vzdálené načtení zůstává zálohou pro samostatný checkout.
+local_pojmy <- here::here("..", "slovnik", "pojmy.yaml")
+if (!file.exists(local_pojmy)) {
+  local_pojmy <- tempfile(fileext = ".yaml")
+  tryCatch(
+    {
+      download.file(
+        url = paste0(
+          "https://raw.githubusercontent.com/",
+          "CUNI-NATUR-Biostatistics/slovnik/main/pojmy.yaml"
+        ),
+        destfile = local_pojmy,
+        quiet = TRUE
       )
-    )
-  },
-  error = function(e) {
-    source(here::here("R/Functions/render_glossary_term.R"))
-  }
-)
+    },
+    error = function(e) {
+      message("Glossary YAML unavailable: ", conditionMessage(e))
+    }
+  )
+}
+if (file.exists(local_pojmy)) {
+  glossary::glossary_path(local_pojmy)
+}
+
+local_render_glossary <-
+  here::here("..", "slovnik", "R", "Functions", "render_glossary_term.R")
+if (file.exists(local_render_glossary)) {
+  source(local_render_glossary)
+} else {
+  tryCatch(
+    {
+      source(
+        paste0(
+          "https://raw.githubusercontent.com/",
+          "CUNI-NATUR-Biostatistics/slovnik/main/",
+          "R/Functions/render_glossary_term.R"
+        )
+      )
+    },
+    error = function(e) {
+      source(here::here("R/Functions/render_glossary_term.R"))
+    }
+  )
+}
 ```
 
 ```{r}
@@ -563,6 +576,13 @@ jsou úplné, ale například stav ochrany chybí u
 `r sum(is.na(ggplot2::msleep[["conservation"]]))` druhů a typ potravy u
 `r sum(is.na(ggplot2::msleep[["vore"]]))` druhů. Chybějící hodnota není nula;
 znamená, že údaj v tabulce nemáme.
+:::
+
+::: {.box-data collapse="true" title="Doplňující: výběr není celá populace"}
+
+`r render_glossary_term("vyber", display = "Výběr")` je soubor pozorování, která máme skutečně k dispozici. Cílová populace je širší celek, o kterém bychom chtěli něco říct. Dataset `msleep` obsahuje zastoupené druhy savců, ale není automaticky náhodným průřezem všech savců ani všech jedinců. `r render_glossary_term("prumer", display = "Průměr")`, `r render_glossary_term("median", display = "medián")` nebo `r render_glossary_term("smerodatna-odchylka", display = "SD")` proto nejprve přesně popisují tento soubor; možnost zobecnění závisí také na tom, jak byly druhy vybrány a jak vznikly jejich souhrnné hodnoty.
+
+Dvě tabulky mohou mít stejný počet řádků a stejně přesně vypočtené statistiky, ale různou vypovídací hodnotu. Pokud v jedné chybějí například málo prozkoumané noční druhy, samotný výpočet tuto nerovnováhu neopraví. V lekci o `r render_glossary_term("nejistota", display = "nejistotě")` se vrátíme k odhadu z jednoho výběru; později budeme řešit také situace, kdy řádky nepředstavují nezávislé informační jednotky.
 :::
 
 ## Vizualizace dat: nejdříve se podívejte
@@ -2111,6 +2131,13 @@ sd(vec_maly_spanek)
 :::
 
 Směrodatná odchylka (SD) vyjadřuje, jak rozptýlené jsou hodnoty kolem průměru, ve stejných jednotkách jako původní měření. Pro doby spánku ji spočítáme v R pomocí `sd(vec_maly_spanek)`. Podrobný výpočet přes součet čtverců a rozptyl je v rámečku Extra.
+
+::: {.box-data collapse="true" title="Doplňující: SD není standardní chyba"}
+
+SD popisuje, jak se od sebe liší **pozorované hodnoty** — zde doby spánku jednotlivých zastoupených druhů. `r render_glossary_term("standardni-chyba", display = "Standardní chyba")` (SE) bude později popisovat něco jiného: jak přesný je **`r render_glossary_term("odhad", display = "odhad")`**, například odhad průměru nebo `r render_glossary_term("sklon", display = "sklonu")` modelu.
+
+Velká SD tedy neznamená automaticky chybný výpočet a malá SD neznamená automaticky přesný odhad pro celou populaci. Zatím stačí držet dvě otázky odděleně: **jak rozdílná jsou pozorování?** odpovídá SD; **jak přesný je náš odhad?** začne odpovídat SE v lekci o nejistotě odhadu.
+:::
 
 ### SD jako vzdálenost na grafu
 
