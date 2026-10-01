@@ -181,16 +181,28 @@ V této lekci zůstaneme u prvního statistického kroku: jak poctivě popsat
 | Tyto podklady | Úplnější vysvětlení a reprodukovatelné příklady | Čtěte je před výukou nebo se k nim vraťte při opakování. |
 | Výstupy v HTML a PDF | Dvě podoby stejného obsahu | HTML nabízí interaktivní prvky; PDF se hodí pro souvislé čtení a poznámky. |
 
-### Kde najdete materiály
+### Kde najdete materiály a informace
 
-[Moodle je závazný rozcestník kurzu.](https://dl2.cuni.cz/course/view.php?id=106)
-Pro každou lekci zde najdete:
+**Hlavním veřejným rozcestníkem je [HUB kurzu](https://cuni-natur-biostatistics.github.io/).** Na stránce [Materiály](https://cuni-natur-biostatistics.github.io/materialy.html) najdete pro každou zveřejněnou lekci stabilní studentské verze:
 
 | Materiál | Dostupné podoby | K čemu slouží |
 |---|---|---|
 | Skripta | HTML; PDF pro tisk | Úplnější výklad pro přípravu, samostudium a opakování |
 | Prezentace | HTML; PDF pro tisk | Stručnější záznam společné práce na přednášce |
 | R skripty | soubory s kódem | Praktická práce s daty v R |
+| Data | datové soubory | Data potřebná pro praktickou práci a samostatné procvičování |
+
+```{=typst}
+#pagebreak()
+```
+
+Různé kurzové systémy mají odlišné úlohy:
+
+| Systém | K čemu slouží |
+|---|---|
+| **HUB** | Aktuální informace o kurzu, rozvrh, pravidla hodnocení, veřejné studijní materiály a archiv semestrů |
+| **SIS** | Zápis do předmětu a skupin, termíny zkoušek a oficiální studijní evidence |
+| **Moodle** | Testy, zadání, odevzdávání, individuální výsledky a oznámení určená zapsaným studentům |
 
 ### Účast, zápočet a zkouška
 
@@ -208,8 +220,7 @@ Při učení můžete AI používat. U zápočtu a zkoušky pracujete samostatn�
 internetu a AI.
 :::
 
-Závazný formát, bodové hranice, povolené zdroje, termíny, způsob odevzdávání,
-opravné možnosti a aktuální organizační pokyny jsou uvedeny na Moodle.
+Aktuální [pravidla hodnocení](https://cuni-natur-biostatistics.github.io/hodnoceni.html) jsou uvedena na HUBu. Termíny zkoušek a zápis na ně jsou v SIS. Termíny praktického zápočtu, odevzdávání, individuální výsledky a neveřejné organizační pokyny jsou v Moodle.
 
 ## Jak číst skripta
 

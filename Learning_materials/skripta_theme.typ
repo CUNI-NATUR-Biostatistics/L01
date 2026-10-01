@@ -97,17 +97,17 @@
   body_background_color: white
 ) = {
   let accent = if background_color == rgb("#ccf1e3") {
-    rgb("#8A8A8A")  // tip → grey_olive
+    rgb("#8A8A8A")  // tip <U+2192> grey_olive
   } else if background_color == rgb("#fcefdc") {
-    rgb("#F3A712")  // warning → orange
+    rgb("#F3A712")  // warning <U+2192> orange
   } else if background_color == rgb("#ffe5d0") {
-    rgb("#C94C4C")  // caution → warning red
+    rgb("#C94C4C")  // caution <U+2192> warning red
   } else if background_color == rgb("#f7dddc") {
-    rgb("#5D2890")  // important → indigo_velvet
+    rgb("#5D2890")  // important <U+2192> indigo_velvet
   } else if background_color == rgb("#dae6fb") {
-    rgb("#86579E")  // note → amethyst
+    rgb("#86579E")  // note <U+2192> amethyst
   } else {
-    rgb("#F3A712")  // semantic question → orange
+    rgb("#F3A712")  // semantic question <U+2192> orange
   }
   block(
     breakable: true,
