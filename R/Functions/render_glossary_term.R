@@ -29,8 +29,20 @@
 #'   HTML output, or the plain \code{display} string otherwise.
 render_glossary_term <- function(slug, display = slug) {
   if (knitr::is_html_output()) {
-    res_term <-
-      glossary::glossary(slug, display = display)
+    glossary_file <- glossary::glossary_path()
+    if (is.character(glossary_file) && length(glossary_file) == 1L &&
+        file.exists(glossary_file)) {
+      entry <- yaml::read_yaml(glossary_file)[[slug]]
+      definition <- if (is.list(entry)) entry[["def"]] else entry
+      if (is.null(definition)) definition <- ""
+      res_term <- glossary::glossary(
+        term = slug,
+        display = display,
+        def = definition
+      )
+    } else {
+      res_term <- glossary::glossary(term = slug, display = display)
+    }
   } else {
     res_term <- display
   }

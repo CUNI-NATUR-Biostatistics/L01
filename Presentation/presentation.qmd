@@ -18,6 +18,22 @@ filters:
 #| label: setup
 #| include: false
 options(htmltools.dir.version = FALSE)
+
+if (
+  identical(.Platform$OS.type, "windows") &&
+    !isTRUE(l10n_info()[["UTF-8"]])
+) {
+  locale_utf8 <-
+    Sys.setlocale(
+      category = "LC_CTYPE",
+      locale = "Czech_Czechia.utf8"
+    )
+
+  if (is.na(locale_utf8) || !isTRUE(l10n_info()[["UTF-8"]])) {
+    stop("Presentation rendering requires a UTF-8 locale.")
+  }
+}
+
 knitr::opts_chunk$set(
   fig.width = 7,
   fig.height = 5,
@@ -100,7 +116,14 @@ L01
 
 ::: {.column width="38%"}
 
-![](Materials/instructor_ondrej_mottl.png){fig-alt="Portrét vyučujícího Ondřeje Mottla v terénu." width="92%"}
+```{r}
+#| label: zobrazit-portret-vyucujiciho
+#| echo: false
+#| fig-alt: "Portrét vyučujícího Ondřeje Mottla v terénu."
+#| out-width: "92%"
+
+include_local_figure("instructor_ondrej_mottl.png")
+```
 
 :::
 
@@ -132,7 +155,7 @@ Foto: Vladimír Šigut, Univerzita Karlova
 
 <br>
 
-:::: {.columns .align-top .text-center}
+:::: {.columns .align-top .text-center .justify-center}
 
 ::: {.column .fragment .text-center width="31%"}
 
@@ -140,7 +163,23 @@ Foto: Vladimír Šigut, Univerzita Karlova
 
 napříč měřítky
 
-![](Materials/research_biodiversity_scales_transparent.png){fig-alt="Ilustrace biodiverzity od jednotlivého organismu přes vegetační plochu po krajinu." width="88%"}
+:::: {.r-hstack}
+
+::: {.column width="89%"}
+
+```{r}
+#| label: zobrazit-vyzkum-biodiverzity
+#| echo: false
+#| fig-alt: "Ilustrace biodiverzity od jednotlivého organismu přes vegetační plochu po krajinu."
+#| fig-align: center
+#| out-width: "99%"
+
+include_local_figure("research_biodiversity_scales_transparent.png")
+```
+
+:::
+
+::::
 
 :::
 
@@ -150,7 +189,23 @@ napříč měřítky
 
 nové metody
 
-![](Materials/research_big_data_methods_transparent.png){fig-alt="Ilustrace ekologických pozorování, která vstupují do statistické analýzy." width="88%"}
+:::: {.r-hstack}
+
+::: {.column width="89%"}
+
+```{r}
+#| label: zobrazit-vyzkum-velka-data
+#| echo: false
+#| fig-alt: "Ilustrace ekologických pozorování, která vstupují do statistické analýzy."
+#| fig-align: center
+#| out-width: "99%"
+
+include_local_figure("research_big_data_methods_transparent.png")
+```
+
+:::
+
+::::
 
 :::
 
@@ -160,7 +215,23 @@ nové metody
 
 reprodukovatelnost
 
-![](Materials/research_open_science_transparent.png){fig-alt="Ilustrace otevřeného a opakovatelného výzkumného postupu od terénu přes analýzu ke sdílenému výsledku." width="88%"}
+:::: {.r-hstack}
+
+::: {.column width="89%"}
+
+```{r}
+#| label: zobrazit-otevrena-veda
+#| echo: false
+#| fig-alt: "Ilustrace otevřeného a opakovatelného výzkumného postupu od terénu přes analýzu ke sdílenému výsledku."
+#| fig-align: center
+#| out-width: "99%"
+
+include_local_figure("research_open_science_transparent.png")
+```
+
+:::
+
+::::
 
 :::
 
@@ -170,7 +241,7 @@ reprodukovatelnost
 Ilustrace vytvořené pomocí OpenAI, 2026
 :::
 
-## Každý týden propojí tři způsoby práce
+## Co se od vás očekává?
 
 ::::: {.slide-margin-top-15}
 
@@ -186,7 +257,7 @@ Ilustrace vytvořené pomocí OpenAI, 2026
 
 ### Před výukou
 
-Krátce projdete materiály a zkusíte si položené otázky.
+Krátce projdete materiály (skripta).
 
 :::
 
@@ -194,15 +265,15 @@ Krátce projdete materiály a zkusíte si položené otázky.
 
 ### 90 minut přednášky
 
-Budeme hlasovat, číst grafy a společně obhajovat interpretace.
+Aktivní účast na přednášce.
 
 :::
 
 ::: {.column .fragment width="31%"}
 
-### 90 minut praktika
+### 120 minut praktika
 
-V jedné z pěti paralelních skupin (přibližně 26 studentů) budete analyzovat data v R s podporou vyučujících.
+V jedné z pěti paralelních skupin budete analyzovat data v R.
 
 :::
 
@@ -210,12 +281,13 @@ V jedné z pěti paralelních skupin (přibližně 26 studentů) budete analyzov
 
 :::::
 
-## Materiály najdete na Moodle {.text-center}
+## Materiály najdete na webu kurzu (HUB) {.text-center}
 
 ::::: {.slide-margin-top-15}
 
 ::: {.takeaway-strip}
-[Moodle je závazný rozcestník kurzu.](https://dl2.cuni.cz/course/view.php?id=106){.text-hgl-indigo_velvet}
+[cuni-natur-biostatistics.github.io](https://cuni-natur-biostatistics.github.io)<br>
+[bit.ly/CUNI-MB120P163](https://bit.ly/CUNI-MB120P163)
 :::
 
 <br>
@@ -250,6 +322,10 @@ Kód pro praktickou práci s daty v R.
 
 ::::
 
+::: {.footer}
+SIS slouží pro zápis a termíny zkoušek. Moodle slouží pro testy, odevzdávání, výsledky a neveřejná oznámení.
+:::
+
 :::::
 
 ## Výuka je dobrovolná, kompetence povinné
@@ -276,7 +352,7 @@ Získáte vysvětlení, podporu a zpětnou vazbu.
 
 ### Při samostudiu
 
-Všechny požadované znalosti najdete ve skriptech a R skriptech.
+Všechny požadované znalosti najdete ve skriptech a cvičeních v R.
 
 :::
 
@@ -340,7 +416,7 @@ U zápočtu a zkoušky pracujete [samostatně bez internetu a AI]{.text-hgl-oran
 :::
 
 ::: {.footer}
-Závazný formát, bodové hranice, povolené zdroje, termíny a opravné možnosti jsou uvedeny na Moodle.
+Pravidla hodnocení: [web kurzu (HUB)](https://cuni-natur-biostatistics.github.io/hodnoceni.html). Termíny zkoušek: [SIS](https://is.cuni.cz/studium/predmety/index.php?do=predmet&kod=MB120P163). Neveřejné pokyny a výsledky: [Moodle](https://dl2.cuni.cz/course/view.php?id=106).
 :::
 
 :::::
@@ -429,12 +505,12 @@ Po dnešní přednášce budete schopni:
 - vysvětlit, proč jedno správně vypočtené číslo ještě nemusí být dobrý titulek
 :::
 
-## Jak budeme dnes pracovat?
+## Jak budeme pracovat?
 
 ::::: {.slide-margin-top-15}
 
 ::: {.takeaway-strip}
-**Otázka → data → graf → souhrn → opatrná interpretace**
+**Otázka → data → graf → souhrn → (opatrná interpretace)**
 :::
 
 <br>
@@ -463,7 +539,7 @@ HTML nabízí záložky a rozbalovací otázky; PDF je vhodné pro souvislé čt
 
 ##
 
-::::: {style="height: 510px; display: flex; flex-direction: column; justify-content: space-between;"}
+::::: {.layout-stack}
 
 :::: {.columns .align-stretch}
 
@@ -518,7 +594,7 @@ Hlasování: který titulek je správný?
 ::::
 
 ::: {.takeaway-strip}
-Nejdřív hlasujte sami. Potom svoji volbu obhajte sousedovi.
+Hlasujte samostatně a svou volbu pak obhajte sousedovi.
 :::
 
 :::::
@@ -549,7 +625,7 @@ Nechám přibližně 20 sekund na individuální volbu a 60–90 sekund na obhaj
 :::: {.slide-margin-top-15}
 
 ::: {.text-size-heading2 .text-bold .text-center}
-Nejdřív zjistíme, [co bylo změřeno]{.text-hgl-graphite}
+Zjistíme, [co bylo změřeno]{.text-hgl-graphite}
 a [jak hodnoty vypadají]{.text-hgl-orange}.
 :::
 
@@ -567,9 +643,9 @@ Správný výpočet ještě nezaručuje správnou interpretaci.
 
 # Od organismu k datům
 
-Stejná tabulka obsahuje hmotnost i spánek. Spánek nám nejprve ukáže, jak data zobrazit a popsat; potom se vrátíme k otázce o hmotnosti.
-
 ## Začneme jedním savcem
+
+Stejná tabulka obsahuje hmotnost i spánek. Na době spánku si ukážeme, jak data zobrazit a popsat. K otázce o hmotnosti se vrátíme s těmito nástroji.
 
 ```{r}
 #| label: pripravit-data-savcu
@@ -602,7 +678,7 @@ vec_spanek_h <-
   dplyr::pull(spanek_h)
 ```
 
-:::: {.columns .align-center}
+:::: {.columns .align-center .fragment}
 
 ::: {.column width="50%"}
 ::: {.text-size-heading2 .text-bold}
@@ -616,7 +692,7 @@ Výzkumníci studovali spánkové návyky savců a u geparda zaznamenali
 
 <br>
 
-::: {.panel-data}
+::: {.panel-data .fragment}
 [Při záznamu měření]{.panel-title}
 
 Výsledek pro jeden zastoupený druh zapíšeme do jednoho řádku tabulky.
@@ -627,9 +703,16 @@ Výsledek pro jeden zastoupený druh zapíšeme do jednoho řádku tabulky.
 
 <br>
 
-![](Materials/mammal_cheetah_illustrative.png){fig-alt="Humorná ilustrace geparda spícího v pyžamu." width="100%"}
+```{r}
+#| label: zobrazit-geparda
+#| echo: false
+#| fig-alt: "Humorná ilustrace geparda spícího v pyžamu."
+#| out-width: "100%"
 
-::: {style="font-size: 0.45em; text-align: right;"}
+include_local_figure("mammal_cheetah_illustrative.png")
+```
+
+::: {.text-size-tiny .text-right}
 Ilustrace vytvořená pomocí AI.
 :::
 :::
@@ -750,12 +833,6 @@ Jednu hodinu měření.
 
 ::::
 
-<br>
-
-::: {.takeaway-strip}
-Když nehlasujeme: doplňte větu „Jeden řádek této tabulky představuje …“
-:::
-
 :::::
 
 ## Jeden řádek = jeden zastoupený druh
@@ -772,7 +849,7 @@ Každá hodnota spánku patří jednomu **druhu**, který je v tabulce zastoupen
 :::
 :::
 
-::: {.column width="48%"}
+::: {.column width="48%" .fragment}
 ::: {.panel-warning}
 [Co z toho neplyne]{.panel-title}
 
@@ -880,7 +957,7 @@ Tabulka uchovává i jména druhů. Samotný vektor uchovává jen hodnoty a jej
 :::
 :::
 
-## Co zkontrolujeme dřív, než počítáme?
+## Základní operace
 
 ::::: {.slide-margin-top-15}
 
@@ -896,12 +973,12 @@ length(
 )
 ```
 
-::: {.panel-result}
+::: {.panel-result .fragment}
 `length()` říká, kolik hodnot máme.
 :::
 :::
 
-::: {.column width="48%"}
+::: {.column width="48%" .fragment}
 ```{r}
 #| label: zkontrolovat-hlavu-vektoru
 #| echo: true
@@ -912,7 +989,7 @@ head(
 )
 ```
 
-::: {.panel-result}
+::: {.panel-result .fragment}
 `head()` ukáže první hodnoty (2 hodnoty v našem případě).
 :::
 :::
@@ -930,8 +1007,7 @@ head(
 - **`r ncol(data_savci)` sloupců:** například spánek, hmotnost, potrava nebo taxonomický řád;
 :::
 
-<br>
-
+::: {.fragment}
 ```{r}
 #| label: zobrazit-prvni-radky-dat
 #| echo: false
@@ -943,8 +1019,10 @@ data_savci |>
     align = c("l", "l", "l", "r", "r")
   )
 ```
+:::
 
-::: {.takeaway-strip}
+
+::: {.takeaway-strip .fragment}
 Než popisujeme čísla, vždy si ujasníme **jednotku pozorování**, význam proměnné a jednotky měření.
 :::
 
@@ -964,7 +1042,7 @@ path_gif_spanek <-
   )
 
 if (!file.exists(path_gif_spanek)) {
-  set.seed(20260727)
+  set.seed(900723)
 
   plot_pozice_animace <-
     ggplot2::ggplot(
@@ -1102,7 +1180,7 @@ if (!file.exists(path_gif_spanek)) {
 include_local_figure("spanek_pribyvani_druhu.gif")
 ```
 
-::: {.takeaway-strip}
+::: {.takeaway-strip .fragment}
 Graf nevzniká místo dat. Vzniká postupným zobrazením hodnot, které jsme vložili do tabulky a vektoru. Svislá poloha teček jen brání překryvu; osa y zde neznamená další měření.
 :::
 ## Jak vypadá spánek všech zastoupených druhů?
@@ -1162,7 +1240,9 @@ ggview::save_ggplot(
 include_local_figure("spanek_bodovy_graf.png")
 ```
 
+::: {.fragment}
 *Kde leží nejkratší a nejdelší doba spánku? Kde se body hromadí?*
+:::
 
 ## Stejná data, seskupená do intervalů
 
@@ -1369,48 +1449,6 @@ vec_maly_spanek <-
   data_maly_spanek |>
   dplyr::pull(spanek_h)
 
-vec_spanek_deviti <-
-  vec_maly_spanek
-
-prumer_maly <-
-  mean(vec_maly_spanek)
-
-median_maly <-
-  median(vec_maly_spanek)
-
-txt_prumer_maly <-
-  formatC(
-    prumer_maly,
-    format = "f",
-    digits = 2,
-    decimal.mark = ","
-  )
-
-txt_median_maly <-
-  formatC(
-    median_maly,
-    format = "f",
-    digits = 1,
-    decimal.mark = ","
-  )
-
-q1_maly <-
-  quantile(
-    vec_maly_spanek,
-    probs = 0.25,
-    names = FALSE
-  )
-
-q3_maly <-
-  quantile(
-    vec_maly_spanek,
-    probs = 0.75,
-    names = FALSE
-  )
-
-sd_maly <-
-  sd(vec_maly_spanek)
-
 plot_maly_spanek <-
   ggplot2::ggplot(
     data = data_maly_spanek,
@@ -1461,18 +1499,15 @@ include_local_figure("devet_druhu_spanek.png")
 
 *Kam byste umístili jeden bod, který má zastoupit všech devět hodnot?*
 
-## Minimum: nejmenší pozorovaná hodnota
+## Minimum (*minimum*): nejmenší pozorovaná hodnota
 
 ```{r}
-#| label: vytvorit-graf-minima-a-maxima
+#| label: vytvorit-graf-minima
 #| include: false
 #| message: false
 #| warning: false
 minimum_maly <-
   min(vec_maly_spanek)
-
-maximum_maly <-
-  max(vec_maly_spanek)
 
 plot_maly_minimum <-
   plot_maly_spanek +
@@ -1482,27 +1517,11 @@ plot_maly_minimum <-
     linewidth = 1.8
   )
 
-plot_maly_maximum <-
-  plot_maly_spanek +
-  ggplot2::geom_vline(
-    xintercept = maximum_maly,
-    color = biostat_cols[["orange"]],
-    linewidth = 1.8
-  )
-
 ggview::save_ggplot(
   plot = plot_maly_minimum,
   file = here::here(
     path_materials,
     "devet_druhu_minimum.png"
-  )
-)
-
-ggview::save_ggplot(
-  plot = plot_maly_maximum,
-  file = here::here(
-    path_materials,
-    "devet_druhu_maximum.png"
   )
 )
 ```
@@ -1524,19 +1543,49 @@ include_local_figure("devet_druhu_minimum.png")
 #| label: spocitat-minimum-v-r
 #| echo: true
 #| eval: true
+vec_spanek_9 <- c(
+  2.9, 3.8, 4, 8, 8.4,
+  9.1, 9.7, 10.1, 12.5
+)
+
 min(
-  x = vec_spanek_deviti
+  x = vec_spanek_9
 )
 ```
 
 ::: {.panel-result}
-Minimum (*minimum*) je zde **`r minimum_maly` h**.
+Minimum je zde **`r minimum_maly` h**.
 :::
 :::
 
 ::::
 
-## Maximum: největší pozorovaná hodnota
+## Maximum (*maximum*): největší pozorovaná hodnota
+
+```{r}
+#| label: vytvorit-graf-maxima
+#| include: false
+#| message: false
+#| warning: false
+maximum_maly <-
+  max(vec_maly_spanek)
+
+plot_maly_maximum <-
+  plot_maly_spanek +
+  ggplot2::geom_vline(
+    xintercept = maximum_maly,
+    color = biostat_cols[["orange"]],
+    linewidth = 1.8
+  )
+
+ggview::save_ggplot(
+  plot = plot_maly_maximum,
+  file = here::here(
+    path_materials,
+    "devet_druhu_maximum.png"
+  )
+)
+```
 
 :::: {.columns .align-center}
 
@@ -1556,18 +1605,18 @@ include_local_figure("devet_druhu_maximum.png")
 #| echo: true
 #| eval: true
 max(
-  x = vec_spanek_deviti
+  x = vec_spanek_9
 )
 ```
 
 ::: {.panel-result}
-Maximum (*maximum*) je zde **`r maximum_maly` h**.
+Maximum je zde **`r maximum_maly` h**.
 :::
 :::
 
 ::::
 
-::: {.takeaway-strip}
+::: {.takeaway-strip .fragment}
 Minimum a maximum ukazují krajní pozorované hodnoty. Když přidáme další druhy, mohou se posunout dál; silně závisejí na velikosti souboru a neříkají, kde leží většina dat.
 :::
 
@@ -1578,6 +1627,17 @@ Minimum a maximum ukazují krajní pozorované hodnoty. Když přidáme další 
 #| include: false
 #| message: false
 #| warning: false
+prumer_maly <-
+  mean(vec_maly_spanek)
+
+txt_prumer_maly <-
+  formatC(
+    prumer_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
 plot_maly_prumer <-
   plot_maly_spanek +
   ggplot2::geom_vline(
@@ -1607,27 +1667,25 @@ include_local_figure("devet_druhu_prumer.png")
 :::
 
 ::: {.column width="34%"}
-**Aritmetický průměr = `r txt_prumer_maly` h**
 
 ```{r}
 #| label: spocitat-prumer-v-r
 #| echo: true
 #| eval: true
-vec_spanek_deviti <-
-  c(
-    2.9, 3.8, 4.0, 8.0, 8.4,
-    9.1, 9.7, 10.1, 12.5
-  )
-
 mean(
-  x = vec_spanek_deviti
+  x = vec_spanek_9
 )
 ```
+
+::: {.panel-result}
+Průměr je zde **`r txt_prumer_maly` h**.
+:::
+
 :::
 
 ::::
 
-::: {.strip-indigo}
+::: {.strip-indigo .fragment}
 **Aritmetický průměr (*mean*)** používá každou hodnotu a může být citlivý na hodnoty daleko od ostatních.
 :::
 
@@ -1638,6 +1696,17 @@ mean(
 #| include: false
 #| message: false
 #| warning: false
+median_maly <-
+  median(vec_maly_spanek)
+
+txt_median_maly <-
+  formatC(
+    median_maly,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+
 plot_maly_median <-
   plot_maly_spanek +
   ggplot2::geom_vline(
@@ -1673,7 +1742,7 @@ include_local_figure("devet_druhu_median.png")
 #| echo: true
 #| eval: true
 median(
-  x = vec_spanek_deviti
+  x = vec_spanek_9
 )
 ```
 
@@ -1684,7 +1753,7 @@ median(
 
 ::::
 
-::: {.strip-indigo}
+::: {.strip-indigo .fragment}
 **Medián (*median*)** je prostřední hodnota seřazeného souboru.
 :::
 
@@ -1695,6 +1764,20 @@ median(
 #| include: false
 #| message: false
 #| warning: false
+q1_maly <-
+  quantile(
+    vec_maly_spanek,
+    probs = 0.25,
+    names = FALSE
+  )
+
+q3_maly <-
+  quantile(
+    vec_maly_spanek,
+    probs = 0.75,
+    names = FALSE
+  )
+
 plot_maly_kvartily <-
   plot_maly_spanek +
   ggplot2::geom_vline(
@@ -1704,6 +1787,56 @@ plot_maly_kvartily <-
     linetype = "dashed"
   )
 
+ggview::save_ggplot(
+  plot = plot_maly_kvartily,
+  file = here::here(
+    path_materials,
+    "devet_druhu_kvartily.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="64%"}
+```{r}
+#| label: zobrazit-graf-kvartilu
+#| echo: false
+include_local_figure("devet_druhu_kvartily.png")
+```
+:::
+
+::: {.column width="32%" .fragment}
+<br>
+
+```{r}
+#| label: spocitat-kvartily-v-r
+#| echo: true
+#| eval: true
+quantile(
+  x = vec_spanek_9,
+  probs = c(0.25, 0.75)
+)
+```
+
+::: {.panel-result}
+Q1 odděluje dolní čtvrtinu, Q3 horní čtvrtinu hodnot.
+:::
+:::
+
+::::
+
+::: {.strip-amethyst .fragment}
+**Kvartily (*quartiles*) Q1 a Q3** určují hranice prostředních 50 % seřazených hodnot.
+:::
+
+## IQR je šířka prostřední poloviny
+
+```{r}
+#| label: vytvorit-graf-iqr
+#| include: false
+#| message: false
+#| warning: false
 plot_maly_iqr <-
   plot_maly_spanek +
   ggplot2::annotate(
@@ -1723,14 +1856,6 @@ plot_maly_iqr <-
   )
 
 ggview::save_ggplot(
-  plot = plot_maly_kvartily,
-  file = here::here(
-    path_materials,
-    "devet_druhu_kvartily.png"
-  )
-)
-
-ggview::save_ggplot(
   plot = plot_maly_iqr,
   file = here::here(
     path_materials,
@@ -1738,42 +1863,6 @@ ggview::save_ggplot(
   )
 )
 ```
-
-:::: {.columns .align-top}
-
-::: {.column width="64%"}
-```{r}
-#| label: zobrazit-graf-kvartilu
-#| echo: false
-include_local_figure("devet_druhu_kvartily.png")
-```
-:::
-
-::: {.column width="32%"}
-<br>
-
-```{r}
-#| label: spocitat-kvartily-v-r
-#| echo: true
-#| eval: true
-quantile(
-  x = vec_spanek_deviti,
-  probs = c(0.25, 0.75)
-)
-```
-
-::: {.panel-result}
-Q1 odděluje dolní čtvrtinu, Q3 horní čtvrtinu hodnot.
-:::
-:::
-
-::::
-
-::: {.strip-amethyst}
-**Kvartily (*quartiles*) Q1 a Q3** určují hranice prostředních 50 % seřazených hodnot.
-:::
-
-## IQR je šířka prostřední poloviny
 
 :::: {.columns .align-top}
 
@@ -1793,14 +1882,14 @@ include_local_figure("devet_druhu_iqr.png")
 #| echo: true
 #| eval: true
 IQR(
-  x = vec_spanek_deviti
+  x = vec_spanek_9
 )
 ```
 :::
 
 ::::
 
-::: {.strip-amethyst}
+::: {.strip-amethyst .fragment}
 **IQR (*interquartile range*) = Q3 − Q1.** Popisuje rozptýlení prostřední poloviny hodnot.
 :::
 
@@ -1891,138 +1980,24 @@ ggview::save_ggplot(
 include_local_figure("dva_soubory_stejny_prumer.png")
 ```
 
-::: {.takeaway-strip}
-**30 sekund:** IQR sleduje prostřední polovinu. Jak jedním číslem shrnout vzdálenosti všech hodnot od průměru?
-:::
 
-## Od průměru změříme odchylku každé hodnoty
+## Odchylka od průměru
 
 ```{r}
 #| label: vytvorit-porovnani-sd
 #| include: false
 #| message: false
 #| warning: false
-rozptyl_maly <-
-  var(vec_maly_spanek)
-
 data_sd_vypocet <-
   data_maly_spanek |>
   dplyr::mutate(
     prumer = prumer_maly,
     odchylka = spanek_h - prumer,
-    ctverec_odchylky = odchylka^2,
     poloha = dplyr::if_else(
       odchylka < 0,
       "pod průměrem",
       "nad průměrem"
     )
-  )
-
-soucet_odchylek_maly <-
-  sum(data_sd_vypocet$odchylka)
-
-soucet_ctvercu_maly <-
-  sum(data_sd_vypocet$ctverec_odchylky)
-
-n_maly <-
-  nrow(data_sd_vypocet)
-
-txt_soucet_odchylek_maly <-
-  formatC(
-    soucet_odchylek_maly,
-    format = "f",
-    digits = 2,
-    decimal.mark = ","
-  )
-
-txt_soucet_ctvercu_maly <-
-  formatC(
-    soucet_ctvercu_maly,
-    format = "f",
-    digits = 2,
-    decimal.mark = ","
-  )
-
-txt_rozptyl_maly <-
-  formatC(
-    rozptyl_maly,
-    format = "f",
-    digits = 2,
-    decimal.mark = ","
-  )
-
-txt_sd_maly <-
-  formatC(
-    sd_maly,
-    format = "f",
-    digits = 2,
-    decimal.mark = ","
-  )
-
-hodnota_kocka_maly <-
-  data_sd_vypocet |>
-  dplyr::filter(
-    druh_cz == "kočka domácí"
-  ) |>
-  dplyr::pull(spanek_h)
-
-odchylka_kocka_maly <-
-  hodnota_kocka_maly - prumer_maly
-
-ctverec_kocka_maly <-
-  odchylka_kocka_maly^2
-
-txt_hodnota_kocka_maly <-
-  formatC(
-    hodnota_kocka_maly,
-    format = "f",
-    digits = 1,
-    decimal.mark = ","
-  )
-
-txt_odchylka_kocka_maly <-
-  formatC(
-    odchylka_kocka_maly,
-    format = "f",
-    digits = 2,
-    decimal.mark = ","
-  )
-
-txt_ctverec_kocka_maly <-
-  formatC(
-    ctverec_kocka_maly,
-    format = "f",
-    digits = 2,
-    decimal.mark = ","
-  )
-
-txt_hodnoty_maly <-
-  formatC(
-    vec_maly_spanek,
-    format = "f",
-    digits = 1,
-    decimal.mark = ","
-  )
-
-txt_ctverce_radky_maly <-
-  vapply(
-    X = split(
-      seq_along(txt_hodnoty_maly),
-      ceiling(
-        seq_along(txt_hodnoty_maly) / 3
-      )
-    ),
-    FUN = function(index) {
-      paste0(
-        "(",
-        txt_hodnoty_maly[index],
-        " − ",
-        txt_prumer_maly,
-        ")²",
-        collapse = " + "
-      )
-    },
-    FUN.VALUE = character(1)
   )
 
 plot_maly_vzdalenosti <-
@@ -2079,6 +2054,139 @@ plot_maly_vzdalenosti <-
     units = "px"
   )
 
+ggview::save_ggplot(
+  plot = plot_maly_vzdalenosti,
+  file = here::here(
+    path_materials,
+    "devet_druhu_odchylky_od_prumeru.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="68%"}
+```{r}
+#| label: zobrazit-odchylky-od-prumeru
+#| echo: false
+#| out-width: "95%"
+include_local_figure(
+  "devet_druhu_odchylky_od_prumeru.png"
+)
+```
+:::
+
+::: {.column width="28%" .fragment}
+::: {.panel-note}
+[Odchylka (*deviation*)]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+odchylka doby spánku =
+
+doba spánku druhu −
+
+průměrná doba spánku
+:::
+
+[Fialová]{.text-hgl-amethyst} vede pod průměr, [oranžová]{.text-hgl-orange} nad něj.
+:::
+:::
+
+::::
+
+::: {.takeaway-strip}
+Délka barevného úseku ukazuje, jak daleko je každá hodnota od [aritmetického průměru]{.text-hgl-indigo}.
+:::
+
+## Odchylka u kočky
+
+```{r}
+#| label: spocitat-odchylku-kocky
+#| include: false
+hodnota_kocka_maly <-
+  data_sd_vypocet |>
+  dplyr::filter(
+    druh_cz == "kočka domácí"
+  ) |>
+  dplyr::pull(spanek_h)
+
+odchylka_kocka_maly <-
+  hodnota_kocka_maly - prumer_maly
+
+txt_hodnota_kocka_maly <-
+  formatC(
+    hodnota_kocka_maly,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+
+txt_odchylka_kocka_maly <-
+  formatC(
+    odchylka_kocka_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="62%"}
+```{r}
+#| label: zobrazit-odchylku-kocky
+#| echo: false
+#| out-width: "95%"
+include_local_figure(
+  "devet_druhu_odchylky_od_prumeru.png"
+)
+```
+:::
+
+::: {.column width="34%"}
+::: {.panel-data}
+[Hodnoty z horního řádku]{.panel-title}
+
+Kočka domácí: **`r txt_hodnota_kocka_maly` h**
+
+Aritmetický průměr: **`r txt_prumer_maly` h**
+:::
+
+::: {.panel-result .fragment}
+[Dosazení]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+`r txt_hodnota_kocka_maly` h − `r txt_prumer_maly` h =
+
+`r txt_odchylka_kocka_maly` h
+:::
+:::
+:::
+
+::::
+
+::: {.takeaway-strip .fragment}
+Kladný výsledek říká, že kočka domácí spí déle než průměr devíti druhů.
+:::
+
+## Odchylky se navzájem vyruší
+
+```{r}
+#| label: vytvorit-soucet-odchylek
+#| include: false
+#| message: false
+#| warning: false
+soucet_odchylek_maly <-
+  sum(data_sd_vypocet$odchylka)
+
+txt_soucet_odchylek_maly <-
+  formatC(
+    soucet_odchylek_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
 plot_maly_odchylky <-
   ggplot2::ggplot(
     data = data_sd_vypocet,
@@ -2119,6 +2227,75 @@ plot_maly_odchylky <-
     units = "px"
   )
 
+ggview::save_ggplot(
+  plot = plot_maly_odchylky,
+  file = here::here(
+    path_materials,
+    "devet_druhu_odchylky_soucet.png"
+  )
+)
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="62%"}
+```{r}
+#| label: zobrazit-soucet-odchylek
+#| echo: false
+include_local_figure(
+  "devet_druhu_odchylky_soucet.png"
+)
+```
+:::
+
+::: {.column width="34%" .fragment}
+::: {.panel-result}
+[Součet odchylek]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+součet odchylek =
+
+kladné odchylky + záporné odchylky
+:::
+
+::: {.text-size-large .text-bold .text-center}
+= `r txt_soucet_odchylek_maly` h
+:::
+
+Kolem průměru se navzájem vyváží.
+:::
+:::
+
+::::
+
+::: {.box-question .fragment}
+[Když prostý součet vždy vyjde přibližně nula, jak zachováme velikost vzdáleností?]{.panel-lead}
+:::
+
+## Odchylky umocníme na druhou
+
+```{r}
+#| label: vytvorit-ctverce-odchylek
+#| include: false
+#| message: false
+#| warning: false
+data_sd_vypocet <-
+  data_sd_vypocet |>
+  dplyr::mutate(
+    ctverec_odchylky = odchylka^2
+  )
+
+ctverec_kocka_maly <-
+  odchylka_kocka_maly^2
+
+txt_ctverec_kocka_maly <-
+  formatC(
+    ctverec_kocka_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
 plot_maly_ctverce_odchylek <-
   ggplot2::ggplot(
     data = data_sd_vypocet,
@@ -2145,28 +2322,237 @@ plot_maly_ctverce_odchylek <-
   )
 
 ggview::save_ggplot(
-  plot = plot_maly_vzdalenosti,
-  file = here::here(
-    path_materials,
-    "devet_druhu_odchylky_od_prumeru.png"
-  )
-)
-
-ggview::save_ggplot(
-  plot = plot_maly_odchylky,
-  file = here::here(
-    path_materials,
-    "devet_druhu_odchylky_soucet.png"
-  )
-)
-
-ggview::save_ggplot(
   plot = plot_maly_ctverce_odchylek,
   file = here::here(
     path_materials,
     "devet_druhu_ctverce_odchylek.png"
   )
 )
+```
+
+:::: {.columns .align-top}
+
+::: {.column width="62%"}
+```{r}
+#| label: zobrazit-ctverce-odchylek
+#| echo: false
+include_local_figure(
+  "devet_druhu_ctverce_odchylek.png"
+)
+```
+:::
+
+::: {.column width="34%" .fragment}
+::: {.panel-result}
+[Čtverec odchylky]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+čtverec odchylky = odchylka²
+:::
+
+Všechny příspěvky jsou nezáporné.
+
+::: {.text-size-large .text-bold .text-center .fragment}
+(`r txt_hodnota_kocka_maly` − `r txt_prumer_maly`)² =
+
+`r txt_odchylka_kocka_maly`² =
+
+`r txt_ctverec_kocka_maly` h²
+:::
+
+:::
+
+::: {.panel-note .fragment}
+Nejvíce zde přispívá kočka domácí, protože leží nejdále od průměru.
+:::
+:::
+
+::::
+
+## Stejný krok rozepíšeme pro všech devět druhů
+
+```{r}
+#| label: pripravit-soucet-ctvercu-odchylek
+#| include: false
+soucet_ctvercu_maly <-
+  sum(data_sd_vypocet$ctverec_odchylky)
+
+txt_soucet_ctvercu_maly <-
+  formatC(
+    soucet_ctvercu_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+
+txt_hodnoty_maly <-
+  formatC(
+    vec_maly_spanek,
+    format = "f",
+    digits = 1,
+    decimal.mark = ","
+  )
+
+txt_ctverce_radky_maly <-
+  purrr::map_chr(
+    .x = split(
+      seq_along(txt_hodnoty_maly),
+      ceiling(
+        seq_along(txt_hodnoty_maly) / 3
+      )
+    ),
+    .f = function(index) {
+      paste0(
+        "(",
+        txt_hodnoty_maly[index],
+        " − ",
+        txt_prumer_maly,
+        ")²",
+        collapse = " + "
+      )
+    }
+  )
+```
+
+::::: {.slide-margin-top-15}
+
+::: {.panel-data}
+[Všechny hodnoty jsou převzaté z grafu]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+`r txt_ctverce_radky_maly[[1]]` +
+
+`r txt_ctverce_radky_maly[[2]]` +
+
+`r txt_ctverce_radky_maly[[3]]`
+:::
+
+::: {.text-size-large .text-bold .text-center .fragment}
+= `r txt_soucet_ctvercu_maly` h²
+:::
+:::
+
+::: {.takeaway-strip .fragment}
+Součet devíti čtverců odchylek shrnuje jejich celkovou velikost do jednoho čísla.
+:::
+
+:::::
+
+## Výběrový rozptyl
+
+```{r}
+#| label: spocitat-rozptyl-maleho-souboru
+#| include: false
+rozptyl_maly <-
+  var(vec_maly_spanek)
+
+n_maly <-
+  length(vec_maly_spanek)
+
+txt_rozptyl_maly <-
+  formatC(
+    rozptyl_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
+```
+
+<br>
+
+::::: {}
+
+::: {.panel-data}
+[Výpočet slovy]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+výběrový rozptyl (*sample variance*) =
+
+[součet čtvercových odchylek]{.text-hgl-indigo} dělený
+
+[počtem hodnot]{.text-hgl-orange} [zmenšeným o jednu]{.text-hgl-amethyst}
+:::
+:::
+
+::: {.panel-result .fragment}
+[Dosazení hodnot]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+`r txt_soucet_ctvercu_maly` h² /
+(`r n_maly` − 1) =
+
+`r txt_soucet_ctvercu_maly` h² /
+`r n_maly - 1` =
+**`r txt_rozptyl_maly` h²**
+:::
+:::
+
+::: {.strip-orange .fragment}
+Jednotkou rozptylu jsou **hodiny na druhou**. Proto se rozptyl hůře interpretuje přímo.
+:::
+
+:::::
+
+## Vzorec shrnuje stejný výpočet
+
+:::: {.columns .align-top}
+
+::: {.column width="48%"}
+::: {.panel-result}
+[Obecný vzorec]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+s² = Σ(xᵢ − x̄)² / (n − 1)
+:::
+:::
+
+```{r}
+#| label: spocitat-rozptyl-v-r
+#| echo: true
+#| eval: true
+var(
+  x = vec_spanek_9
+)
+```
+:::
+
+::: {.column width="48%"}
+::: {.panel-note}
+[Co znamenají symboly?]{.panel-title}
+
+- **s²** — výběrový rozptyl;
+- **xᵢ** — doba spánku jednoho druhu;
+- **x̄** — aritmetický průměr;
+- **n** — počet hodnot;
+- **Σ** — sečteme příspěvky všech druhů.
+:::
+:::
+
+::::
+
+<br>
+
+::: {.takeaway-strip .fragment}
+Vzorec zapisuje stejný výpočet pro libovolný počet hodnot.
+:::
+
+## Směrodatná odchylka
+
+```{r}
+#| label: vytvorit-sd-jako-oblast
+#| include: false
+#| message: false
+#| warning: false
+sd_maly <-
+  sd(vec_maly_spanek)
+
+txt_sd_maly <-
+  formatC(
+    sd_maly,
+    format = "f",
+    digits = 2,
+    decimal.mark = ","
+  )
 
 plot_maly_sd <-
   plot_maly_spanek +
@@ -2193,31 +2579,108 @@ ggview::save_ggplot(
     "devet_druhu_sd_oblast.png"
   )
 )
+```
 
-set.seed(20260727)
+:::: {.columns .align-top}
+
+::: {.column width="58%"}
+```{r}
+#| label: zobrazit-sd-jako-oblast
+#| echo: false
+include_local_figure("devet_druhu_sd_oblast.png")
+```
+:::
+
+::: {.column width="38%"}
+::: {.panel-data}
+[Vztah k rozptylu]{.panel-title}
+
+::: {.text-size-body .text-bold .text-center}
+směrodatná odchylka =
+
+druhá odmocnina z rozptylu
+:::
+:::
+
+::: {.panel-result .fragment}
+[Dosazení hodnot]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+√`r txt_rozptyl_maly` h² =
+**`r txt_sd_maly` h**
+:::
+:::
+
+::: {.panel-note .fragment}
+[Vzorec]{.panel-title}
+
+::: {.text-size-large .text-bold .text-center}
+s = √s²
+:::
+
+**s** je směrodatná odchylka a **s²** výběrový rozptyl.
+:::
+:::
+
+::::
+
+::: {.takeaway-strip .fragment}
+V R stejný krok provede `sd(x = vec_spanek_9)`. **SD (*standard deviation*)** je zpět v [původních jednotkách]{.text-hgl-indigo}.
+:::
+
+## Stejná průměrná mzda, jiné SD
+
+```{r}
+#| label: vytvorit-histogramy-sd
+#| include: false
+#| message: false
+#| warning: false
+set.seed(900723)
+
+pocet_zamestnancu <-
+  240
+
+prumer_mzdy_tis <-
+  50
+
+sd_firma_a_tis <-
+  3
+
+sd_firma_b_tis <-
+  12
+
+popisek_firma_a <-
+  stringr::str_glue(
+    "Firma A: SD {sd_firma_a_tis} tis."
+  )
+
+popisek_firma_b <-
+  stringr::str_glue(
+    "Firma B: SD {sd_firma_b_tis} tis."
+  )
 
 vec_mzda_firma_a <-
   as.numeric(
     scale(
-      rnorm(n = 240)
+      rnorm(n = pocet_zamestnancu)
     )
-  ) * 3 + 50
+  ) * sd_firma_a_tis + prumer_mzdy_tis
 
 vec_mzda_firma_b <-
   as.numeric(
     scale(
-      rnorm(n = 240)
+      rnorm(n = pocet_zamestnancu)
     )
-  ) * 12 + 50
+  ) * sd_firma_b_tis + prumer_mzdy_tis
 
 data_mzdy_sd_histogram <-
   tibble::tibble(
     firma = rep(
       c(
-        "Firma A: SD 3 tis.",
-        "Firma B: SD 12 tis."
+        popisek_firma_a,
+        popisek_firma_b
       ),
-      each = 240
+      each = pocet_zamestnancu
     ),
     mzda_tis_kc = c(
       vec_mzda_firma_a,
@@ -2240,7 +2703,7 @@ plot_porovnani_sd_histogram <-
     alpha = 0.7
   ) +
   ggplot2::geom_vline(
-    xintercept = 50,
+    xintercept = prumer_mzdy_tis,
     color = biostat_cols[["indigo_velvet"]],
     linetype = "dashed",
     linewidth = 1.4
@@ -2269,316 +2732,6 @@ ggview::save_ggplot(
 )
 ```
 
-:::: {.columns .align-top}
-
-::: {.column width="68%"}
-```{r}
-#| label: zobrazit-odchylky-od-prumeru
-#| echo: false
-#| out-width: "95%"
-include_local_figure(
-  "devet_druhu_odchylky_od_prumeru.png"
-)
-```
-:::
-
-::: {.column width="28%" .fragment}
-::: {.panel-note}
-[Odchylka]{.panel-title}
-
-::: {.text-size-body .text-bold .text-center}
-odchylka doby spánku =
-
-doba spánku druhu −
-
-průměrná doba spánku
-:::
-
-[Fialová]{.text-hgl-amethyst} vede pod průměr, [oranžová]{.text-hgl-orange} nad něj.
-:::
-:::
-
-::::
-
-::: {.takeaway-strip}
-Délka barevného úseku ukazuje, jak daleko je každá hodnota od [aritmetického průměru]{.text-hgl-indigo}.
-:::
-
-## U kočky dosadíme dvě čísla z grafu
-
-:::: {.columns .align-top}
-
-::: {.column width="62%"}
-```{r}
-#| label: zobrazit-odchylku-kocky
-#| echo: false
-#| out-width: "95%"
-include_local_figure(
-  "devet_druhu_odchylky_od_prumeru.png"
-)
-```
-:::
-
-::: {.column width="34%"}
-::: {.panel-data}
-[Hodnoty z horního řádku]{.panel-title}
-
-Kočka domácí: **`r txt_hodnota_kocka_maly` h**
-
-Aritmetický průměr: **`r txt_prumer_maly` h**
-:::
-
-::: {.panel-result .fragment}
-[Dosazení]{.panel-title}
-
-::: {.text-size-large .text-bold .text-center}
-`r txt_hodnota_kocka_maly` h − `r txt_prumer_maly` h =
-
-`r txt_odchylka_kocka_maly` h
-:::
-:::
-:::
-
-::::
-
-::: {.takeaway-strip}
-Kladný výsledek říká, že kočka domácí spí déle než průměr devíti druhů.
-:::
-
-## Odchylky se navzájem vyruší
-
-:::: {.columns .align-top}
-
-::: {.column width="62%"}
-```{r}
-#| label: zobrazit-soucet-odchylek
-#| echo: false
-include_local_figure(
-  "devet_druhu_odchylky_soucet.png"
-)
-```
-:::
-
-::: {.column width="34%" .fragment}
-::: {.panel-result}
-[Součet odchylek]{.panel-title}
-
-::: {.text-size-body .text-bold .text-center}
-součet odchylek =
-
-kladné odchylky + záporné odchylky
-:::
-
-::: {.text-size-large .text-bold .text-center .fragment}
-= `r txt_soucet_odchylek_maly` h
-:::
-
-Kolem průměru se navzájem vyváží.
-:::
-:::
-
-::::
-
-::: {.box-question .fragment}
-[Když prostý součet vždy vyjde přibližně nula, jak zachováme velikost vzdáleností?]{.panel-lead}
-:::
-
-## Odchylky umocníme na druhou
-
-:::: {.columns .align-top}
-
-::: {.column width="62%"}
-```{r}
-#| label: zobrazit-ctverce-odchylek
-#| echo: false
-include_local_figure(
-  "devet_druhu_ctverce_odchylek.png"
-)
-```
-:::
-
-::: {.column width="34%" .fragment}
-::: {.panel-result}
-[Čtvercová odchylka]{.panel-title}
-
-::: {.text-size-body .text-bold .text-center}
-čtvercová odchylka =
-
-odchylka × odchylka
-:::
-
-::: {.text-size-large .text-bold .text-center .fragment}
-`r txt_odchylka_kocka_maly` h ×
-`r txt_odchylka_kocka_maly` h =
-
-`r txt_ctverec_kocka_maly` h²
-:::
-
-Všechny příspěvky jsou nezáporné.
-:::
-
-::: {.panel-note}
-Nejvíce zde přispívá kočka domácí, protože leží nejdále od průměru.
-:::
-:::
-
-::::
-
-## Stejný krok rozepíšeme pro všech devět druhů
-
-::::: {.slide-margin-top-15}
-
-::: {.panel-data}
-[Všechny hodnoty jsou převzaté z grafu]{.panel-title}
-
-::: {.text-size-body .text-bold .text-center}
-`r txt_ctverce_radky_maly[[1]]` +
-
-`r txt_ctverce_radky_maly[[2]]` +
-
-`r txt_ctverce_radky_maly[[3]]`
-:::
-
-::: {.text-size-large .text-bold .text-center .fragment}
-= `r txt_soucet_ctvercu_maly` h²
-:::
-:::
-
-::: {.takeaway-strip .fragment}
-Nejdřív jsme rozepsali všech devět čtvercových odchylek; teprve potom jsme jejich součet zkrátili na jedno číslo.
-:::
-
-:::::
-
-## Rozptyl rozdělí součet
-
-U jediné hodnoty by odchylka od jejího průměru byla vždy nula. U dvou hodnot po určení průměru stačí znát jednu odchylku: druhá musí být opačná. Proto při odhadu rozptylu dělíme počtem hodnot zmenšeným o jednu.
-
-::::: {.slide-margin-top-15}
-
-::: {.panel-data}
-[Nejdřív slovy]{.panel-title}
-
-::: {.text-size-large .text-bold .text-center}
-výběrový rozptyl =
-
-[součet čtvercových odchylek]{.text-hgl-indigo} dělený
-
-[počtem hodnot]{.text-hgl-orange} [zmenšeným o jednu]{.text-hgl-amethyst}
-:::
-:::
-
-::: {.panel-result .fragment}
-[Potom dosadíme čísla]{.panel-title}
-
-::: {.text-size-large .text-bold .text-center}
-`r txt_soucet_ctvercu_maly` h² /
-(`r n_maly` − 1) =
-
-`r txt_soucet_ctvercu_maly` h² /
-`r n_maly - 1` =
-**`r txt_rozptyl_maly` h²**
-:::
-:::
-
-::: {.strip-orange .fragment}
-Jednotkou rozptylu jsou **hodiny na druhou**. Proto se rozptyl hůře interpretuje přímo.
-:::
-
-:::::
-
-## Zápis zkrátíme
-
-:::: {.columns .align-top}
-
-::: {.column width="48%"}
-::: {.panel-result}
-[Obecný vzorec]{.panel-title}
-
-::: {.text-size-large .text-bold .text-center}
-s² = Σ(xᵢ − x̄)² / (n − 1)
-:::
-:::
-
-```{r}
-#| label: spocitat-rozptyl-v-r
-#| echo: true
-#| eval: true
-var(
-  x = vec_spanek_deviti
-)
-```
-:::
-
-::: {.column width="48%"}
-::: {.panel-note}
-[Co znamenají symboly?]{.panel-title}
-
-- **s²** — výběrový rozptyl;
-- **xᵢ** — doba spánku jednoho druhu;
-- **x̄** — aritmetický průměr;
-- **n** — počet hodnot;
-- **Σ** — sečteme příspěvky všech druhů.
-:::
-:::
-
-::::
-
-::: {.takeaway-strip .fragment}
-Vzorec je jen krátký zápis postupu, který jsme už provedli slovy a s konkrétními čísly.
-:::
-
-## Směrodatná odchylka
-
-:::: {.columns .align-top}
-
-::: {.column width="58%"}
-```{r}
-#| label: zobrazit-sd-jako-oblast
-#| echo: false
-include_local_figure("devet_druhu_sd_oblast.png")
-```
-:::
-
-::: {.column width="38%"}
-::: {.panel-data}
-[Nejdřív slovy]{.panel-title}
-
-::: {.text-size-body .text-bold .text-center}
-směrodatná odchylka =
-
-druhá odmocnina z rozptylu
-:::
-:::
-
-::: {.panel-result .fragment}
-[Potom čísla]{.panel-title}
-
-::: {.text-size-large .text-bold .text-center}
-√`r txt_rozptyl_maly` h² =
-**`r txt_sd_maly` h**
-:::
-:::
-
-::: {.panel-note .fragment}
-[Vzorec]{.panel-title}
-
-::: {.text-size-large .text-bold .text-center}
-s = √s²
-:::
-
-**s** je směrodatná odchylka a **s²** výběrový rozptyl.
-:::
-:::
-
-::::
-
-::: {.takeaway-strip .fragment}
-V R stejný krok provede `sd(x = vec_spanek_deviti)`. **SD (*standard deviation*)** je zpět v [původních jednotkách]{.text-hgl-indigo}.
-:::
-
-## Stejná průměrná mzda, jiné SD
-
 ```{r}
 #| label: zobrazit-histogramy-sd
 #| echo: false
@@ -2587,7 +2740,7 @@ include_local_figure("stejny_prumer_jina_sd_histogram.png")
 ```
 
 ::: {.takeaway-strip}
-V obou firmách je průměr 50 tisíc Kč. Vyšší SD ve firmě B znamená širší histogram.
+V obou firmách je průměr `r prumer_mzdy_tis` tisíc Kč. Vyšší SD ve firmě B (`r sd_firma_b_tis` tisíc Kč oproti `r sd_firma_a_tis` tisícům Kč) znamená širší histogram.
 :::
 
 ## Které souhrny patří k sobě?
@@ -2630,10 +2783,6 @@ medián + SD
 
 <br>
 <br>
-
-::: {.takeaway-strip}
-Když nehlasujeme: napište si, která míra rozptýlení používá vzdálenosti od průměru.
-:::
 
 :::::
 
@@ -2690,13 +2839,24 @@ Má jedno číslo zastoupit druhy od velmi malých savců až po slony?
 
 <br>
 
-Rozložení tělesné hmotnosti musíme vidět dřív, než vybereme souhrn.
+
+::: {.fragment}
+Volbu souhrnu opřeme o tvar dat v grafu.
+:::
+
 :::
 
 ::: {.column width="53%"}
-![](Materials/mammal_elephant_illustrative.png){fig-alt="Humorná ilustrace slona stojícího na malé osobní váze." width="100%"}
+```{r}
+#| label: zobrazit-slona
+#| echo: false
+#| fig-alt: "Humorná ilustrace slona stojícího na malé osobní váze."
+#| out-width: "100%"
 
-::: {style="font-size: 0.45em; text-align: right;"}
+include_local_figure("mammal_elephant_illustrative.png")
+```
+
+::: {.text-size-tiny .text-right}
 Ilustrace vytvořená pomocí AI.
 :::
 :::
@@ -2754,8 +2914,7 @@ plot_hmotnost_linear <-
     ylim = c(0.6, 1.4)
   ) +
   ggplot2::labs(
-    x = "Tělesná hmotnost druhu (kg)",
-    title = "Lineární osa"
+    x = NULL
   ) +
   theme_biostat(base_size = 18) +
   ggplot2::theme(
@@ -2782,7 +2941,11 @@ ggview::save_ggplot(
 include_local_figure("hmotnost_linearni_osa.png")
 ```
 
-::: {.strip-orange}
+::: {.text-center .text-size-body}
+**Tělesná hmotnost druhu (kg), lineární osa**
+:::
+
+::: {.strip-orange .fragment}
 Několik velmi těžkých druhů roztáhne osu tak silně, že většina bodů splývá u nuly.
 :::
 
@@ -2845,7 +3008,7 @@ plot_hmotnost_log <-
     ylim = c(0.55, 1.45)
   ) +
   ggplot2::labs(
-    x = "Tělesná hmotnost (kg; logaritmická osa)"
+    x = NULL
   ) +
   theme_biostat(base_size = 18) +
   ggplot2::theme(
@@ -2872,8 +3035,140 @@ ggview::save_ggplot(
 include_local_figure("hmotnost_logaritmicka_osa.png")
 ```
 
-::: {.takeaway-strip}
+::: {.text-center .text-size-body}
+**Tělesná hmotnost (kg), logaritmická osa**
+:::
+
+::: {.takeaway-strip .fragment}
 Graf nezměnil data. Jen nám dovolil vidět lehké i těžké druhy současně. Plná fialová čára je medián, přerušovaná tmavá čára průměr.
+:::
+
+## Co znamená logaritmická osa?
+
+::: {.text-size-heading2 .text-bold .text-center}
+Stejná vzdálenost na ose znamená stejný násobek.
+:::
+
+```{r}
+#| label: vytvorit-vysvetleni-logaritmicke-osy
+#| include: false
+#| message: false
+#| warning: false
+vec_log_hmotnost_kg <-
+  c(
+    0.1,
+    1,
+    10,
+    100,
+    1000
+  )
+
+data_log_hodnoty <-
+  tibble::tibble(
+    hmotnost_kg = vec_log_hmotnost_kg,
+    popisek =
+      c(
+        "0,1 kg",
+        "1 kg",
+        "10 kg",
+        "100 kg",
+        "1 000 kg"
+      )
+  )
+
+data_log_intervaly <-
+  tibble::tibble(
+    dolni = head(
+      x = vec_log_hmotnost_kg,
+      n = -1
+    ),
+    horni = tail(
+      x = vec_log_hmotnost_kg,
+      n = -1
+    )
+  ) |>
+  dplyr::mutate(
+    stred = sqrt(dolni * horni),
+    popisek = "10x"
+  )
+
+plot_log_osa_vysvetleni <-
+  ggplot2::ggplot(
+    data = data_log_hodnoty,
+    mapping = ggplot2::aes(
+      x = hmotnost_kg,
+      y = 0
+    )
+  ) +
+  ggplot2::geom_segment(
+    mapping = ggplot2::aes(
+      x = min(vec_log_hmotnost_kg),
+      xend = max(vec_log_hmotnost_kg),
+      y = 0,
+      yend = 0
+    ),
+    color = biostat_cols[["graphite"]],
+    linewidth = 1.2
+  ) +
+  ggplot2::geom_point(
+    color = biostat_cols[["indigo_velvet"]],
+    size = 5
+  ) +
+  ggplot2::geom_text(
+    mapping = ggplot2::aes(label = popisek),
+    color = biostat_cols[["graphite"]],
+    nudge_y = -0.12,
+    size = 6
+  ) +
+  ggplot2::geom_text(
+    data = data_log_intervaly,
+    mapping = ggplot2::aes(
+      x = stred,
+      y = 0.13,
+      label = popisek
+    ),
+    inherit.aes = FALSE,
+    color = biostat_cols[["orange"]],
+    fontface = "bold",
+    size = 6
+  ) +
+  ggplot2::scale_x_log10(
+    limits = c(0.08, 1250)
+  ) +
+  ggplot2::coord_cartesian(
+    ylim = c(-0.2, 0.2),
+    clip = "off"
+  ) +
+  ggplot2::labs(
+    x = NULL,
+    y = NULL
+  ) +
+  theme_biostat() +
+  ggplot2::theme(
+    axis.title = ggplot2::element_blank(),
+    axis.text = ggplot2::element_blank(),
+    axis.ticks = ggplot2::element_blank(),
+    panel.grid = ggplot2::element_blank()
+  )
+
+ggview::save_ggplot(
+  plot = plot_log_osa_vysvetleni,
+  file = here::here(
+    path_materials,
+    "logaritmicka_osa_vysvetleni.png"
+  )
+)
+```
+
+```{r}
+#| label: zobrazit-vysvetleni-logaritmicke-osy
+#| echo: false
+#| out-width: "92%"
+include_local_figure("logaritmicka_osa_vysvetleni.png")
+```
+
+::: {.takeaway-strip}
+Úsek od 1 do 10 kg je stejně dlouhý jako úsek od 10 do 100 kg. Nulu ani zápornou hodnotu na logaritmické ose zobrazit nelze.
 :::
 
 ## Jak dvě redakce počítaly?
@@ -2884,9 +3179,9 @@ Graf nezměnil data. Jen nám dovolil vidět lehké i těžké druhy současně.
 
 ::: {.column width="48%"}
 ::: {.card-data}
-[Titulek A]{.card-title}
+[Titulek A · průměr]{.card-title}
 
-Průměr: [**`r txt_prumer_hmotnosti` kg**]{.text-hgl-indigo_velvet}
+„Průměrný savec váží [**`r txt_prumer_hmotnosti` kg**]{.text-hgl-indigo_velvet}.“
 :::
 
 ::: {.card-question}
@@ -2900,9 +3195,9 @@ Průměr: [**`r txt_prumer_hmotnosti` kg**]{.text-hgl-indigo_velvet}
 
 ::: {.column width="48%"}
 ::: {.card-data}
-[Titulek B]{.card-title}
+[Titulek B · medián]{.card-title}
 
-Medián: [**`r txt_median_hmotnosti` kg**]{.text-hgl-amethyst}
+„Běžný savec váží jen [**`r txt_median_hmotnosti` kg**]{.text-hgl-amethyst}.“
 :::
 
 ::: {.card-question}
@@ -2916,7 +3211,9 @@ Medián: [**`r txt_median_hmotnosti` kg**]{.text-hgl-amethyst}
 
 ::::
 
-::: {.takeaway-strip}
+<br>
+
+::: {.takeaway-strip .fragment}
 Obě čísla jsou správně vypočtená. Ani jedno však není univerzální „typický savec“.
 :::
 
@@ -2940,9 +3237,6 @@ Přepište jeden titulek tak, aby byl pravdivý i po přečtení grafu.
 
 <br>
 
-::: {.takeaway-strip}
-Když nepracujeme ve skupině: napište jednu větu, která uvádí souhrn, jednotku pozorování a omezení tabulky.
-:::
 
 ## Co z tabulky smíme tvrdit?
 
@@ -2982,34 +3276,6 @@ jednotlivých savců. Čísla proto nepopisují „náhodného savce na Zemi“.
 #| include: false
 #| message: false
 #| warning: false
-stat_boxplot_hmotnost <-
-  boxplot.stats(vec_hmotnost_kg)
-
-q1_hmotnost <-
-  stat_boxplot_hmotnost$stats[[2]]
-
-q3_hmotnost <-
-  stat_boxplot_hmotnost$stats[[4]]
-
-vous_dolni_hmotnost <-
-  stat_boxplot_hmotnost$stats[[1]]
-
-vous_horni_hmotnost <-
-  stat_boxplot_hmotnost$stats[[5]]
-
-data_boxplot_hmotnost <-
-  tibble::tibble(
-    poloha = 1,
-    vous_dolni = vous_dolni_hmotnost,
-    q1 = q1_hmotnost,
-    median = median_hmotnosti,
-    q3 = q3_hmotnost,
-    vous_horni = vous_horni_hmotnost
-  )
-
-data_odlehle_hmotnost <-
-  tibble::tibble(hmotnost_kg = stat_boxplot_hmotnost$out)
-
 plot_hmotnost_body <-
   ggplot2::ggplot(
     data = data_hmotnost,
@@ -3100,6 +3366,15 @@ include_local_figure("hmotnost_boxplot_krok_1_median.png")
 #| include: false
 #| message: false
 #| warning: false
+stat_boxplot_hmotnost <-
+  boxplot.stats(vec_hmotnost_kg)
+
+q1_hmotnost <-
+  stat_boxplot_hmotnost$stats[[2]]
+
+q3_hmotnost <-
+  stat_boxplot_hmotnost$stats[[4]]
+
 plot_box_krok2 <-
   plot_hmotnost_body +
   ggplot2::annotate(
@@ -3147,6 +3422,12 @@ Vous končí u nejkrajnější pozorované hodnoty nejvýše 1,5 × IQR od okraj
 #| include: false
 #| message: false
 #| warning: false
+vous_dolni_hmotnost <-
+  stat_boxplot_hmotnost$stats[[1]]
+
+vous_horni_hmotnost <-
+  stat_boxplot_hmotnost$stats[[5]]
+
 plot_box_krok3 <-
   plot_hmotnost_body +
   ggplot2::annotate(
@@ -3226,6 +3507,19 @@ ale nejsou automaticky chybné.
 #| include: false
 #| message: false
 #| warning: false
+data_boxplot_hmotnost <-
+  tibble::tibble(
+    poloha = 1,
+    vous_dolni = vous_dolni_hmotnost,
+    q1 = q1_hmotnost,
+    median = median_hmotnosti,
+    q3 = q3_hmotnost,
+    vous_horni = vous_horni_hmotnost
+  )
+
+data_odlehle_hmotnost <-
+  tibble::tibble(hmotnost_kg = stat_boxplot_hmotnost$out)
+
 plot_hmotnost_boxplot <-
   ggplot2::ggplot(
     data = data_hmotnost,
@@ -3428,17 +3722,13 @@ include_local_figure("hmotnost_boxplot.png")
 include_local_figure("hmotnost_houslovy_boxplot.png")
 ```
 
-::: {.text-center style="font-size: 0.70em; line-height: 1.15;"}
+::: {.text-center .text-size-smaller}
 [přerušovaná tmavá čára = průměr]{.text-hgl-indigo_velvet}<br>
 [plná čára v krabici = medián]{.text-hgl-amethyst}
 :::
 :::
 
 ::::
-
-::: {.takeaway-strip}
-Když nehlasujeme: napište si jednu vlastnost rozdělení, kterou housle ukazují lépe než samotná krabice.
-:::
 
 ## Houslový graf vrací tvar
 
@@ -3498,9 +3788,16 @@ Typ neurčuje vzhled čísla. Určuje jej [význam proměnné]{.text-hgl-orange}
 :::
 
 ::: {.column width="52%"}
-![](Materials/mammal_bat_illustrative.png){fig-alt="Humorná ilustrace netopýra zapisujícího údaje do terénního formuláře." width="100%"}
+```{r}
+#| label: zobrazit-netopyra
+#| echo: false
+#| fig-alt: "Humorná ilustrace netopýra zapisujícího údaje do terénního formuláře."
+#| out-width: "100%"
 
-::: {style="font-size: 0.45em; text-align: right;"}
+include_local_figure("mammal_bat_illustrative.png")
+```
+
+::: {.text-size-tiny .text-right}
 Ilustrace vytvořená pomocí AI.
 :::
 :::
@@ -3665,7 +3962,7 @@ include_local_figure("pocet_druhu_v_radu.png")
 ::: {.column width="38%" .fragment}
 ::: {.panel-result}
 [**Diskrétní numerická proměnná**]{.text-hgl-indigo_velvet}: vznikla
-[počítáním]{.text-hgl-orange}; zde měníme jednotku pozorování na taxonomický řád. Počet mláďat má obvykle málo možných hodnot, počet listů na stromě může mít mnoho. Podle rozsahu a biologické otázky zvolíme vhodný graf i souhrn.
+[počítáním]{.text-hgl-orange}; může nabývat pouze celočíselných hodnot (např. 1, 5, 10).
 :::
 
 ```{r}
@@ -3753,7 +4050,7 @@ include_local_figure("typ_potravy_sloupce.png")
 ::: {.column width="38%" .fragment}
 ::: {.panel-result}
 [**Nominální kategoriální proměnná**]{.text-hgl-indigo_velvet}: smysl dávají
-[četnosti a podíly]{.text-hgl-orange}, ne průměr kódů.
+[četnosti a podíly]{.text-hgl-orange}, ne průměr.
 :::
 
 ```{r}
@@ -3923,8 +4220,8 @@ Typ proměnné zužuje, které grafy, souhrny a později i modely dávají smysl
 :::: {.slide-margin-top-15}
 
 ::: {.incremental}
-- [Každý řádek]{.text-hgl-graphite} nejdřív spojíme s jeho skutečnou jednotkou pozorování.
-- Nejdříve data ohodnotíme [graficky]{.text-hgl-indigo_velvet}, než data nahradíme souhrnem (jedním číslem).
+- [Každý řádek]{.text-hgl-graphite} spojíme s jeho skutečnou jednotkou pozorování.
+- Data zhodnotíme [graficky]{.text-hgl-indigo_velvet} před výběrem souhrnného čísla.
 - [Průměr + SD]{.text-hgl-orange}; [medián + IQR]{.text-hgl-amethyst}.
 - [Význam proměnné]{.text-hgl-orange} určuje její typ. Podle toho vybereme vhodný graf a vhodný souhrn.
 :::

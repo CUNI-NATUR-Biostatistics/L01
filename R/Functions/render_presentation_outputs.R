@@ -1,6 +1,27 @@
 # Render RevealJS and its static PDF variant, then publish outputs together.
 
 render_presentation_outputs <- function() {
+  if (identical(.Platform$OS.type, "windows")) {
+    # R does not recognise the Unix-style C.UTF-8 locale on Windows. Force the
+    # native UTF-8 locale so child render sessions preserve Czech plot labels.
+    Sys.setenv(
+      LANG = ".UTF-8",
+      LC_ALL = ".UTF-8",
+      LC_COLLATE = ".UTF-8",
+      LC_CTYPE = ".UTF-8",
+      LC_MONETARY = ".UTF-8",
+      LC_TIME = ".UTF-8"
+    )
+    locale_result <-
+      Sys.setlocale(
+        category = "LC_CTYPE",
+        locale = ".UTF-8"
+      )
+    if (!nzchar(locale_result)) {
+      stop("Could not activate the Windows UTF-8 locale for rendering.")
+    }
+  }
+
   source(here::here("R", "prepare_pollslive_quiz.R"))
   source(here::here("R", "Functions", "prepare_presentation_variant.R"))
   quiz <- prepare_pollslive_quiz()
