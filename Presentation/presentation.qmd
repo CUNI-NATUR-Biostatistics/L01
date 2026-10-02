@@ -421,6 +421,8 @@ Pravidla hodnocení: [web kurzu (HUB)](https://cuni-natur-biostatistics.github.i
 
 :::::
 
+{{< include ../pollslive/generated/active.qmd >}}
+
 # Kolik váží běžný savec?
 
 ##

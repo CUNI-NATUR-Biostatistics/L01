@@ -1,0 +1,6 @@
+node_modules/
+.client-cache/
+.pollslive-cache/
+.pollslive-output/
+generated/
+generated.next-*/

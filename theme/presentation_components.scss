@@ -602,6 +602,29 @@ $bg-red-tint:      #FFF1F1;
   line-height: 1.25;
 }
 
+.reveal section.pollslive-onboarding > h2 {
+  font-size: 1.35em;
+}
+
+.reveal section.pollslive-onboarding .quiz-options ul {
+  gap: 0.5rem 0.8rem;
+  max-width: 88%;
+  margin: 0.55rem auto;
+  font-size: 0.9em;
+  line-height: 1.25;
+}
+
+.reveal section.pollslive-onboarding .quiz-options li {
+  padding: 0.45rem 0.65rem;
+}
+
+.reveal section.pollslive-onboarding .quiz-answer {
+  max-width: 90%;
+  margin-top: 0.7rem;
+  font-size: 0.8em;
+  line-height: 1.3;
+}
+
 .reveal .pollslive-results iframe {
   display: block;
   width: 100%;

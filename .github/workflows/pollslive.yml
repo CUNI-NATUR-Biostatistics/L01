@@ -1,0 +1,29 @@
+name: Validate PollsLive course quiz
+
+on:
+  pull_request:
+    paths:
+      - "pollslive/**"
+      - "R/render_pollslive_assets.R"
+      - "Presentation/presentation.qmd"
+      - ".github/workflows/pollslive.yml"
+  push:
+    paths:
+      - "pollslive/**"
+      - "R/render_pollslive_assets.R"
+      - "Presentation/presentation.qmd"
+      - ".github/workflows/pollslive.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate dormant or credential-free lesson inputs
+        run: node pollslive/validate.mjs
