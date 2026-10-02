@@ -91,7 +91,26 @@ slides_url <-
   )
 ```
 
-## Kolik váží „typický“ savec? {.course-title .bg-indigo}
+## Kolik váží „typický“ savec? {.course-title .course-title-illustrated .bg-indigo}
+
+<style>
+.reveal .slides section.course-title-illustrated::before,
+.reveal .slides section.course-title-illustrated::after {
+  content: none;
+  display: none;
+}
+</style>
+
+::: {.absolute top="9%" right="-1%" width="36%"}
+```{r}
+#| label: zobrazit-titulni-ilustraci
+#| echo: false
+#| fig-alt: "Humorná ilustrace slona na váze, netopýra zapisujícího údaje a spícího geparda; trojice ukazuje velkou rozmanitost savců."
+#| out-width: "100%"
+
+include_local_figure("typicky_savec_titulni_ilustrace.png")
+```
+:::
 
 ::: {.course-title-mark}
 ![Logo kurzu Biostatistika](../theme/course-logo-reversed.svg) BIOSTATISTIKA

@@ -107,4 +107,6 @@ Validation completed on 2026-10-01:
 - independent read-only review found no placement or knowledge-state leakage issue;
 - the separately reviewed transition slide was subsequently removed in response to the course author's 2026-10-02 visual review.
 
-The L01 activation entry remains disabled. Before the ordinary pinned client can consume the new onboarding type, the reviewed `_internal` changes must be committed and the 40-character client pin in L01 and `_L-template` updated to that commit. Live synchronization and activation are separate later steps and have not been performed.
+Follow-up validation on 2026-10-02 confirmed that `_internal/main` and `origin/main` both point to `d7e38bb21de3cb50ff780e946e78e3af755ff327`, which contains the approved onboarding schema and rendering support. L01 now pins that exact revision. The verified client was cached through the synchronized preparation route; synchronization then stopped at the intended guard because the local lesson branch has no upstream. An offline render subsequently completed all 85 slides to HTML and PDF, including the new title illustration and the PollsLive fallback slides.
+
+The L01 activation entry remains disabled. Live synchronization requires a pushed lesson branch with an upstream; opening voting and activating the quiz remain separate later steps and have not been performed.
