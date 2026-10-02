@@ -34,7 +34,7 @@ Následující odkazy vedou vždy na nejnovější schválené vydání L01. Roz
 | Skripta | [Číst online](https://cuni-natur-biostatistics.github.io/L01/current/learning/) | [Stáhnout PDF](https://cuni-natur-biostatistics.github.io/L01/current/learning/skripta.pdf) |
 | Prezentace | [Otevřít slidy](https://cuni-natur-biostatistics.github.io/L01/current/presentation/) | [Stáhnout PDF](https://cuni-natur-biostatistics.github.io/L01/current/presentation/presentation.pdf) |
 
-Pro navazující praktické cvičení je připraven [R skript ke stažení](https://cuni-natur-biostatistics.github.io/L01/current/code/cviceni.R). Skript obsahuje úlohy a kód, se kterými budete pracovat během praktika.
+Pro navazující praktické cvičení si stáhněte [R skript](https://cuni-natur-biostatistics.github.io/L01/current/code/cviceni.R) a [data o savcích ve formátu CSV](https://cuni-natur-biostatistics.github.io/L01/current/data/msleep.csv). Skript obsahuje úlohy a kód, se kterými budete pracovat během praktika; pokyny na jeho začátku vysvětlují, kam oba soubory uložit.
 
 - [HUB kurzu](https://cuni-natur-biostatistics.github.io/) je hlavní vstup ke všem veřejným studijním materiálům.
 - [Moodle kurzu](https://dl2.cuni.cz/course/view.php?id=106) slouží zapsaným studentům pro oznámení, testy, zadání, odevzdávání a individuální výsledky.
@@ -46,6 +46,8 @@ Pro navazující praktické cvičení je připraven [R skript ke stažení](http
 - `Learning_materials/skripta.qmd` je zdroj skript; výsledky jsou `Learning_materials/skripta.html` a `Learning_materials/skripta.pdf`.
 - `Presentation/presentation.qmd` je zdroj slidů; výsledky jsou `Presentation/presentation.html` a `Presentation/presentation.pdf`.
 - `Exercises/cviceni.R` je studentský R skript pro praktické cvičení.
+- `data/msleep.csv` jsou veřejně distribuovaná data pro praktické cvičení; jejich původ a podmínky použití popisuje `data/README.md`.
+- `R/prepare_msleep_data.R` reprodukovatelně vytváří a kontroluje distribuovaný CSV soubor.
 - `R/` obsahuje podporované renderovací a tematické nástroje.
 - `theme/` obsahuje synchronizovanou lokální kopii společné vizuální identity kurzu.
 

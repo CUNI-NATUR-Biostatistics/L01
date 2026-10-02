@@ -16,7 +16,11 @@ resources:
   exercises:
     - label: "R skript ke cvičení"
       path: Exercises/cviceni.R
-  data: []
+  data:
+    - label: "Data o spánku savců"
+      path: data/msleep.csv
   extras:
     - label: "Licence materiálů a kódu"
       path: LICENSE.md
+    - label: "Původ výukových dat"
+      path: data/README.md

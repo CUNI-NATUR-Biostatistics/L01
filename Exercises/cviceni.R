@@ -16,12 +16,30 @@
 # Příprava -----
 #----------------------------------------------------------#
 
+# Z veřejné stránky lekce stáhněte dva soubory:
+# - skript cviceni.R:
+#   https://cuni-natur-biostatistics.github.io/L01/current/code/cviceni.R
+# - data msleep.csv:
+#   https://cuni-natur-biostatistics.github.io/L01/current/data/msleep.csv
+#   Jde o kurzovou kopii tabulky ggplot2::msleep. Původ a licence:
+#   https://cuni-natur-biostatistics.github.io/L01/current/data/README.md
+#
+# V počítači vytvořte složku L01_praktikum a v ní podsložku data.
+# Soubor cviceni.R uložte do L01_praktikum a msleep.csv do data.
+# RStudio Project používá L01_praktikum jako hlavní složku práce. Soubor
+# s koncovkou .Rproj pomáhá RStudio tuto složku znovu otevřít; skript
+# a data přitom zůstávají samostatnými soubory uvnitř složky.
+# V RStudio zvolte File > New Project > Existing Directory, vyberte
+# L01_praktikum a potvrďte Create Project. Potom otevřete cviceni.R.
+# Odpovědi a vlastní příkazy zapisujte přímo do své kopie souboru
+# a průběžně ji ukládejte pomocí Ctrl + S.
+
 #--------------------------------------------------#
 ## Jak se skriptem pracovat -----
 #--------------------------------------------------#
 
-# Ve výuce postupujte po společné trase označené ZÁKLAD,
-# VYZKOUŠEJTE a KONTROLA. Vyučující bude říkat, kdy se zastavit.
+# Postupujte po společné trase označené ZÁKLAD,
+# VYZKOUŠEJTE a KONTROLA.
 #
 # Při samostudiu:
 # 1. Začněte v čisté relaci R.
@@ -53,31 +71,29 @@
 ## Technická kontrola -----
 #--------------------------------------------------#
 
-# Pro toto cvičení potřebujeme balíček {ggplot2}, protože obsahuje
-# datovou tabulku msleep. Balíček nepřipojujeme pomocí library().
+# Cesta začíná v hlavní složce otevřeného projektu.
+# Kontrola nic nestahuje ani nemění ve vašem počítači.
+soubor_savci <- "data/msleep.csv"
 
 if (
-  !requireNamespace(
-    package = "ggplot2",
-    quietly = TRUE
-  )) {
+  !file.exists(soubor_savci)) {
   stop(
-    "Chybí balíček {ggplot2}. Podle pokynů kurzu jej nainstalujte a spusťte skript znovu.",
+    paste0(
+      "Soubor data/msleep.csv nebyl nalezen. ",
+      "Otevřete projekt L01_praktikum a zkontrolujte název ",
+      "i umístění CSV ve složce data."
+    ),
     call. = FALSE
   )
 }
-
-# Pokud pracujete mimo připravené kurzové prostředí a kontrola selhala,
-# můžete po domluvě s vyučujícím jednou spustit:
-# install.packages(pkgs = "ggplot2")
 
 
 #----------------------------------------------------------#
 # Připomenutí základů práce v R -----
 #----------------------------------------------------------#
 
-# Tento blok zůstává v L01 jako rychlé připomenutí. Vyučující jej může
-# přeskočit, pokud skupina základní práci v R bezpečně ovládá.
+# Tento blok je rychlé připomenutí. Pokud základní práci v R bezpečně
+# ovládáte, přejděte rovnou k části Společná trasa: ZÁKLAD.
 #
 # V RStudiu pracujeme hlavně se čtyřmi místy:
 # - skript uchovává příkazy jako záznam postupu;
@@ -155,7 +171,10 @@ pocet_nohou
 # ZÁKLAD | Načteme schválená data o savcích.
 # Každý řádek představuje jeden druh zastoupený v datové tabulce.
 data_savci <-
-  ggplot2::msleep
+  read.csv(
+    file = soubor_savci,
+    na.strings = ""
+  )
 
 # Prohlédneme prvních šest řádků.
 head(
@@ -1056,13 +1075,13 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 
 # Účel: Rozpoznat text, který R omylem chápe jako jména objektů.
 # Vstup: Následující záměrně chybný, zakomentovaný řádek.
-# vec_zvirata <- c(kocka, pes, morce)
+# vec_zvirata <- c(kočka, pes, morče)
 # Úkol: Přepište řádek tak, aby vznikl textový vektor tří názvů.
 
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Vektor obsahuje "kocka", "pes" a "morce"
+# Očekávaný výsledek: Vektor obsahuje "kočka", "pes" a "morče"
 # a příkaz nevyžaduje předem existující objekty těchto jmen.
 # Nápověda 1: R rozlišuje textovou hodnotu od jména objektu podle zápisu.
 # Nápověda 2: Každý název uzavřete do uvozovek; funkce c() zůstává stejná.
