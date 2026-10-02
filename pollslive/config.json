@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "clientRepository": "CUNI-NATUR-Biostatistics/_internal",
+  "clientRevision": "d7e38bb21de3cb50ff780e946e78e3af755ff327",
+  "definition": "pollslive/quiz.json",
+  "documentDirectory": "Presentation",
+  "generatedDirectory": "pollslive/generated",
+  "assetPreparation": {
+    "command": ["Rscript", "R/render_pollslive_assets.R"]
+  },
+  "synchronization": {
+    "repository": "CUNI-NATUR-Biostatistics/_internal",
+    "workflow": "pollslive-sync.yml",
+    "ref": "main"
+  }
+}

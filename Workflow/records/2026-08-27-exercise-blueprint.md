@@ -13,7 +13,7 @@
 
 ## Intended use
 
-The same public `Exercises/cviceni.R` supports a teacher-paced 90-minute practical and independent self-study. The shared route contains approximately 60-65 minutes of direct work, leaving time for explanation and slower groups. A separate bank of 25 optional tasks supports faster students and later revision.
+The same public `Exercises/cviceni.R` supports a teacher-paced 120-minute practical and independent self-study. The shared route contains approximately 60-65 minutes of direct work, leaving time for explanation, the data-file setup, and slower groups. A separate bank of 25 optional tasks supports faster students and later revision.
 
 ## Outcomes-to-task map
 
@@ -28,7 +28,7 @@ The same public `Exercises/cviceni.R` supports a teacher-paced 90-minute practic
 
 ## Assumed knowledge and permanent refresher
 
-L01 permanently retains a bounded, skippable refresher covering script versus console, `Ctrl + Enter`, comments, calculator use, `<-`, objects in the current session, and the script as a durable record. Teachers may skip it when the group is already comfortable with these skills. Projects, paths, CSV import/export, and general package management remain outside L01.
+L01 permanently retains a bounded, skippable refresher covering script versus console, `Ctrl + Enter`, comments, calculator use, `<-`, objects in the current session, and the script as a durable record. Teachers may skip it when the group is already comfortable with these skills. The initial distribution route introduces one bounded project, relative-path, and CSV-import setup so that students can use the downloadable teaching data. General import/export and package management remain outside L01.
 
 ## Timing budget
 
@@ -41,15 +41,15 @@ L01 permanently retains a bounded, skippable refresher covering script versus co
 | Variable types and description choice | 10 min |
 | Integrated typical-mammal task | 10 min |
 
-The direct-work estimate is 62-65 minutes. With teacher explanation, comparison of answers and transitions, the intended facilitated route is 80-90 minutes. `L01-K03` is a short teacher-led checkpoint rather than an individual task, and the longer same-mean/different-variability comparison was moved to optional task `L01-N25`. Optional tasks are excluded from the shared timing. A novice classroom timing trial remains part of human review.
+The direct-work estimate is 62-65 minutes. With file setup, teacher explanation, comparison of answers and transitions, the intended facilitated route fits comfortably within the 120-minute practical. `L01-K03` is a short teacher-led checkpoint rather than an individual task, and the longer same-mean/different-variability comparison was moved to optional task `L01-N25`. Optional tasks are excluded from the shared timing. A novice classroom timing trial remains part of human review.
 
 ## Data and dependencies
 
 - Approved dataset: `ggplot2::msleep`
 - Observational unit: one mammal species represented in the dataset
-- Package dependency: `ggplot2`, checked with `requireNamespace()` and never installed automatically
+- Distribution dependency: `data/msleep.csv`, checked with `file.exists()` and imported with `read.csv()` from the lesson project
 - Core vectors: total sleep, body mass, feeding type, counts of represented species per taxonomic order, and a short artificial ordered example
-- External files, working-directory assumptions, private helpers, and internet access: none
+- External files: the public exercise script and `data/msleep.csv`; no private helpers or runtime internet access
 
 ## Optional practice plan
 

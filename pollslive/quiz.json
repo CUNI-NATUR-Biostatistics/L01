@@ -1,0 +1,44 @@
+{
+  "$schema": "https://cuni-natur-biostatistics.github.io/schemas/pollslive-quiz-v2.json",
+  "schemaVersion": 2,
+  "academicYear": "2026-27",
+  "lesson": "L01",
+  "quizType": "onboarding",
+  "lectureDate": "2026-10-05",
+  "title": "L01 – Tři otázky na rozjezd – 2026/27",
+  "questions": [
+    {
+      "id": "cil-kurzu",
+      "text": "Co se v tomto kurzu pokusíme z biologických dat „vyždímat“?",
+      "options": [
+        { "id": "co-nejvice-tabulek", "label": "Co nejvíce tabulek" },
+        { "id": "nove-informace", "label": "Nové informace" },
+        { "id": "spravnou-odpoved-za-kazdou-cenu", "label": "Správnou odpověď za každou cenu" }
+      ],
+      "correctOptionId": "nove-informace",
+      "explanation": "Cílem je získávat z biologických dat nové informace a umět přitom vysvětlit, jak jsme k závěru došli."
+    },
+    {
+      "id": "pouzivani-ai",
+      "text": "Kdy můžete v tomto kurzu používat AI?",
+      "options": [
+        { "id": "nikdy", "label": "Nikdy" },
+        { "id": "uceni-ne-hodnoceni", "label": "Při učení a přípravě, ale ne u zápočtu a zkoušky" },
+        { "id": "vzdy-s-uvedenim", "label": "Také u zápočtu a zkoušky, pokud použití AI uvedete" }
+      ],
+      "correctOptionId": "uceni-ne-hodnoceni",
+      "explanation": "AI můžete používat při učení. U praktického zápočtu a závěrečné zkoušky pracujete samostatně bez internetu a AI."
+    },
+    {
+      "id": "verejne-materialy",
+      "text": "Kde najdete veřejné materiály ke každé lekci?",
+      "options": [
+        { "id": "web-hub", "label": "Na webu kurzu (HUB)" },
+        { "id": "moodle", "label": "V Moodle" },
+        { "id": "sis", "label": "V SIS" }
+      ],
+      "correctOptionId": "web-hub",
+      "explanation": "Veřejné materiály jsou na webu kurzu (HUB). Moodle slouží pro testy, odevzdávání, výsledky a neveřejná oznámení; SIS pro zápis a termíny zkoušek."
+    }
+  ]
+}
