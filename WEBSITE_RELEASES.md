@@ -10,6 +10,8 @@ Pushing a matching HTML or manifest change to `main` publishes the instructor pr
 
 Create a stable release only after the locally rendered HTML and PDF files have been reviewed and committed. Tags use the form `LXX-vMAJOR.MINOR.PATCH-YYYYMMDD[-moodle]`.
 
+GitHub Pages identifies a deployment by its source commit. If the instructor preview has already deployed the exact commit intended for release, first add a release-only documentation commit that does not trigger the preview workflow, and tag that commit. This gives the stable deployment a distinct identity and prevents GitHub Pages from reusing the preview artifact.
+
 The course hub links only to stable materials. Preview URLs are public but are intended for instructor review.
 
 The HUB is the canonical public student entry point. Moodle remains the private channel for tests, submissions, individual results, restricted assignments, and enrolled-student announcements. The optional `-moodle` suffix only adds a ZIP to the same public release.
