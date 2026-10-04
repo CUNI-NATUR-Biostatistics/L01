@@ -1,0 +1,5 @@
+# Store and check out text files with LF line endings on every platform.
+# Files synchronised from _brand are written with LF; without this rule a
+# Windows checkout (core.autocrlf=true) reports them as modified after every
+# render even though their content is unchanged.
+* text=auto eol=lf
