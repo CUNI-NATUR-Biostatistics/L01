@@ -16,6 +16,10 @@
 - The skripta link points to the HUB page `jak-pracovat-s-materialy.html`, not the HUB home page, because that page holds the list. This differs by one link from the wording shown for approval.
 - The Lepš entry was corrected from the SIS draft text ("Skripta Biologické fakulty Jihočeské univerzity", no co-author or year) to: Lepš, J., Šmilauer, P. (2024): *Biostatistika*, 2. přepracované vydání, Nakladatelství Jihočeské univerzity, České Budějovice, ISBN 978-80-7694-066-6. Source: the publisher's catalogue entry and a library record, which agree.
 - Descriptions of Thulin, Gosnell, Irizarry (both parts) and PH525x were rewritten from each book's own website.
+- Revision requested by the course owner on 2026-10-04 after the PRs were opened:
+  - The skripta literature now uses the same format as the HUB page: separate `Knihy` and `Online zdroje v angličtině` tables, full citations, language labels, and the same descriptions and closing note.
+  - The course website is now called "web kurzu (HUB)" throughout the skripta, the L01 README and the HUB home-page system card, matching the presentation.
+  - This also resolves the reviewer's cosmetic findings about uneven citations and the vague R-syntax sentence.
 
 ## Review and validation
 
