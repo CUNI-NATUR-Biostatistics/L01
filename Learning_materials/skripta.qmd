@@ -192,6 +192,24 @@ V této lekci zůstaneme u prvního statistického kroku: jak poctivě popsat
 | R skripty | soubory s kódem | Praktická práce s daty v R |
 | Data | datové soubory | Data potřebná pro praktickou práci a samostatné procvičování |
 
+### Doporučená literatura
+
+K absolvování kurzu **stačí HUB, skripta a prezentace**. Literatura je
+nepovinná a hodí se, když chcete látku vidět z jiného úhlu nebo si ji procvičit
+na dalších příkladech. Požadavky kurzu určují materiály na HUBu, ne uvedené
+knihy.
+
+| Zdroj | K čemu se hodí |
+|---|---|
+| Lepš, J., Šmilauer, P. (2024): *Biostatistika*, 2. vyd. (česky) | Česká učebnice statistiky pro biology s postupy v programech Statistica a R |
+| Crawley, M. J. (2013): *The R Book*, 2. vyd. | Rozsáhlá příručka k R a statistickým postupům v něm |
+| Dalgaard, P.: *Introductory Statistics with R* | Stručný úvod do statistiky s ukázkami v R |
+| Wickham, H., Çetinkaya-Rundel, M., Grolemund, G.: [*R for Data Science*](https://r4ds.hadley.nz/), 2. vyd. (anglicky, online) | Práce s daty a grafy v R |
+| Ismay, C., Kim, A. Y., Valdivia, A.: [*ModernDive*](https://moderndive.com/v2/), 2. vyd. (anglicky, online) | Statistické myšlení a R krok za krokem |
+
+Online zdroje mohou používat jiný zápis R kódu než naše skripta. Úplný a
+aktuální seznam literatury najdete na stránce [Jak pracovat s materiály](https://cuni-natur-biostatistics.github.io/jak-pracovat-s-materialy.html) na HUBu kurzu.
+
 ```{=typst}
 #pagebreak()
 ```
