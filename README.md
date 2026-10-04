@@ -4,7 +4,7 @@
 
 Tento repozitář obsahuje první lekci kurzu [Biostatistika a plánování ekologických pokusů (MB120P163)](https://cuni-natur-biostatistics.github.io/) vyučovaného na Přírodovědecké fakultě Univerzity Karlovy.
 
-Úplný přehled kurzu, rozvrh, pravidla hodnocení a materiály ostatních lekcí najdete na [veřejném HUBu kurzu](https://cuni-natur-biostatistics.github.io/).
+Úplný přehled kurzu, rozvrh, pravidla hodnocení a materiály ostatních lekcí najdete na [veřejném webu kurzu (HUB)](https://cuni-natur-biostatistics.github.io/).
 
 ## O této lekci
 
@@ -36,7 +36,7 @@ Následující odkazy vedou vždy na nejnovější schválené vydání L01. Roz
 
 Pro navazující praktické cvičení si stáhněte [R skript](https://cuni-natur-biostatistics.github.io/L01/current/code/cviceni.R) a [data o savcích ve formátu CSV](https://cuni-natur-biostatistics.github.io/L01/current/data/msleep.csv). Skript obsahuje úlohy a kód, se kterými budete pracovat během praktika; pokyny na jeho začátku vysvětlují, kam oba soubory uložit.
 
-- [HUB kurzu](https://cuni-natur-biostatistics.github.io/) je hlavní vstup ke všem veřejným studijním materiálům.
+- [Web kurzu (HUB)](https://cuni-natur-biostatistics.github.io/) je hlavní vstup ke všem veřejným studijním materiálům.
 - [Moodle kurzu](https://dl2.cuni.cz/course/view.php?id=106) slouží zapsaným studentům pro oznámení, testy, zadání, odevzdávání a individuální výsledky.
 
 ## Pro vyučující a správce

@@ -183,7 +183,7 @@ V této lekci zůstaneme u prvního statistického kroku: jak poctivě popsat
 
 ### Kde najdete materiály a informace
 
-**Hlavním veřejným rozcestníkem je [HUB kurzu](https://cuni-natur-biostatistics.github.io/).** Na stránce [Materiály](https://cuni-natur-biostatistics.github.io/materialy.html) najdete pro každou zveřejněnou lekci stabilní studentské verze:
+**Hlavním veřejným rozcestníkem je [web kurzu (HUB)](https://cuni-natur-biostatistics.github.io/).** Na stránce [Materiály](https://cuni-natur-biostatistics.github.io/materialy.html) najdete pro každou zveřejněnou lekci stabilní studentské verze:
 
 | Materiál | Dostupné podoby | K čemu slouží |
 |---|---|---|
@@ -191,6 +191,33 @@ V této lekci zůstaneme u prvního statistického kroku: jak poctivě popsat
 | Prezentace | HTML; PDF pro tisk | Stručnější záznam společné práce na přednášce |
 | R skripty | soubory s kódem | Praktická práce s daty v R |
 | Data | datové soubory | Data potřebná pro praktickou práci a samostatné procvičování |
+
+### Doporučená literatura
+
+K absolvování kurzu **stačí materiály zveřejněné na webu kurzu (HUB)**:
+skripta, prezentace, R skripty a data. Literatura je nepovinná a hodí se, když
+chcete látku vidět z jiného úhlu nebo si ji procvičit na dalších příkladech.
+Požadavky kurzu určují tyto materiály, ne uvedené knihy.
+
+**Knihy**
+
+| Zdroj | K čemu se hodí |
+|---|---|
+| Lepš, J., Šmilauer, P. (2024): *Biostatistika*, 2. přepracované vydání. Nakladatelství Jihočeské univerzity, České Budějovice. ISBN 978-80-7694-066-6. (česky) | Česká učebnice statistiky pro biology s postupy v programech Statistica a R. |
+| Crawley, M. J. (2013): *The R Book*, 2. vydání. John Wiley & Sons, Chichester. (anglicky) | Rozsáhlá příručka k R a statistickým postupům v něm. |
+| Dalgaard, P.: *Introductory Statistics with R*. Springer. (anglicky) | Stručný úvod do statistiky s ukázkami v R. |
+
+**Online zdroje v angličtině**
+
+| Zdroj | K čemu se hodí |
+|---|---|
+| Wickham, H., Çetinkaya-Rundel, M., Grolemund, G.: [*R for Data Science*](https://r4ds.hadley.nz/), 2. vydání. | Práce s daty a grafy v R. |
+| Ismay, C., Kim, A. Y., Valdivia, A.: [*Statistical Inference via Data Science: A ModernDive into R and the Tidyverse*](https://moderndive.com/v2/), 2. vydání. | Statistické myšlení a R krok za krokem. |
+
+Online zdroje mohou používat jiný styl zápisu R kódu než naše materiály nebo
+pokrývat širší témata. Úplný a aktuální seznam literatury najdete na stránce
+[Jak pracovat s materiály](https://cuni-natur-biostatistics.github.io/jak-pracovat-s-materialy.html)
+na webu kurzu (HUB).
 
 ```{=typst}
 #pagebreak()
@@ -200,7 +227,7 @@ Různé kurzové systémy mají odlišné úlohy:
 
 | Systém | K čemu slouží |
 |---|---|
-| **HUB** | Aktuální informace o kurzu, rozvrh, pravidla hodnocení, veřejné studijní materiály a archiv semestrů |
+| **Web kurzu (HUB)** | Aktuální informace o kurzu, rozvrh, pravidla hodnocení, veřejné studijní materiály a archiv semestrů |
 | **SIS** | Zápis do předmětu a skupin, termíny zkoušek a oficiální studijní evidence |
 | **Moodle** | Testy, zadání, odevzdávání, individuální výsledky a oznámení určená zapsaným studentům |
 
@@ -220,7 +247,7 @@ Při učení můžete AI používat. U zápočtu a zkoušky pracujete samostatn�
 internetu a AI.
 :::
 
-Aktuální [pravidla hodnocení](https://cuni-natur-biostatistics.github.io/hodnoceni.html) jsou uvedena na HUBu. Termíny zkoušek a zápis na ně jsou v SIS. Termíny praktického zápočtu, odevzdávání, individuální výsledky a neveřejné organizační pokyny jsou v Moodle.
+Aktuální [pravidla hodnocení](https://cuni-natur-biostatistics.github.io/hodnoceni.html) jsou uvedena na webu kurzu (HUB). Termíny zkoušek a zápis na ně jsou v SIS. Termíny praktického zápočtu, odevzdávání, individuální výsledky a neveřejné organizační pokyny jsou v Moodle.
 
 ## Jak číst skripta
 
