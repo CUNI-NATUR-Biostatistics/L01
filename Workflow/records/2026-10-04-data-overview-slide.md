@@ -1,5 +1,9 @@
 # L01 presentation amendment — data overview slide
 
+## Process exception
+
+The change reached `main` directly as `e7be33f`, without a pull request. The authoring assistant created the branch with `git switch -c lesson/l01-data-overview-slide origin/main`, which set `origin/main` as its upstream, so a plain `git push` updated `main`. On 2026-10-04 the course owner chose to keep the change on `main` rather than revert and re-apply it, because a PR would contain the same approved, reviewed and rendered diff. After the push, the PollsLive validation workflow and the preview deployment both succeeded. Students were unaffected until the next release, because `/L01/current/` changes only with a tag. To prevent a repeat, branches are now created from local `main` without an upstream and pushed with `git push -u origin <branch>`.
+
 ## Approval and scope
 
 - Date: 2026-10-04
