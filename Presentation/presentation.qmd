@@ -444,6 +444,49 @@ Pravidla hodnocení: [web kurzu (HUB)](https://cuni-natur-biostatistics.github.i
 
 # Kolik váží běžný savec?
 
+## Tabulka savců
+
+```{r}
+#| label: pripravit-tabulku-savcu
+#| include: false
+#| message: false
+#| warning: false
+data_savci <-
+  ggplot2::msleep |>
+  dplyr::transmute(
+    druh = name,
+    typ_potravy = dplyr::recode(
+      vore,
+      "carni" = "masožravec",
+      "herbi" = "býložravec",
+      "insecti" = "hmyzožravec",
+      "omni" = "všežravec",
+      .missing = "neuvedeno"
+    ),
+    rad = order,
+    spanek_h = sleep_total,
+    hmotnost_kg = bodywt
+  )
+```
+
+<br>
+
+```{r}
+#| label: zobrazit-ukazku-tabulky-savcu
+#| echo: false
+#| message: false
+#| warning: false
+data_savci |>
+  dplyr::slice_head(n = 3) |>
+  knitr::kable(
+    align = c("l", "l", "l", "r", "r")
+  )
+```
+
+::: {.text-size-tiny}
+Ukázka z tabulky `msleep` (celkem `r nrow(data_savci)` řádků).
+:::
+
 ##
 
 <br>
@@ -673,23 +716,6 @@ Stejná tabulka obsahuje hmotnost i spánek. Na době spánku si ukážeme, jak 
 #| include: false
 #| message: false
 #| warning: false
-data_savci <-
-  ggplot2::msleep |>
-  dplyr::transmute(
-    druh = name,
-    typ_potravy = dplyr::recode(
-      vore,
-      "carni" = "masožravec",
-      "herbi" = "býložravec",
-      "insecti" = "hmyzožravec",
-      "omni" = "všežravec",
-      .missing = "neuvedeno"
-    ),
-    rad = order,
-    spanek_h = sleep_total,
-    hmotnost_kg = bodywt
-  )
-
 data_spanek <-
   data_savci |>
   tidyr::drop_na(spanek_h)
