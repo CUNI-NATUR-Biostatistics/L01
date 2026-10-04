@@ -1,5 +1,25 @@
-# Ignore the raw presentation PDF, which is large and not needed in the repository
-Presentation\presentation_raw.pdf
+# Standard local R / RStudio project files
+.Rhistory
+.Rapp.history
+.RData
+.RDataTmp
+.Ruserdata
+.Renviron
 .Rproj.user
-# Theme generation R functions — downloaded from _brand at render time (see R/generate_theme.R)
+
+# Quarto and OS artefacts
+.quarto/
+Thumbs.db
+.DS_Store
+
+# Temporary debugging workspace
+Temp/*
+!Temp/.gitkeep
+
+# Generated PDFs not kept in git
+Presentation/presentation_raw.pdf
+Learning_materials/skripta_raw.pdf
+
+# Theme generation R functions — downloaded from _brand at render time
+# (see R/generate_theme.R)
 R/Functions/Theme_generation/
