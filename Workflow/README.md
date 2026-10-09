@@ -12,4 +12,6 @@ Required boundaries:
 | Presentation | 4–5 | `lesson/l01-presentation` |
 | Exercise | Post-presentation | `lesson/l01-exercises` |
 
-The next branch starts from updated `main` only after the preceding pull request is merged. Exercise authoring follows explicit Stage 5 approval and the merged presentation PR. Stage 6 release validation follows the merged exercise PR when an exercise is included.
+The next branch starts from updated `main` only after the preceding pull request is merged. Exercise authoring follows explicit Stage 5 approval and the merged presentation PR.
+
+For release preparation, post-merge validation, and publication receipts, follow the [canonical publication workflow](../../_internal/.ai/core/publication.md#release-preparation-and-recordkeeping). Workflow record-copying and stage-log steps apply to authoring and pre-merge preparation. Post-merge release results go in the GitHub Release description and leave the lesson working tree unchanged; actual source fixes retain the normal branch and PR workflow.
