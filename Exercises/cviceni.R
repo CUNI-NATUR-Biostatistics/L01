@@ -45,8 +45,8 @@
 # 1. Začněte v čisté relaci R.
 # 2. Spouštějte skript shora dolů pomocí Ctrl + Enter.
 # 3. Vlastní kód pište pod řádek "Vaše řešení".
-# 4. Výsledek porovnejte s komentářem "Očekávaný výsledek".
-# 5. Nápovědy čtěte postupně, až když je potřebujete.
+# 4. Nápovědy čtěte postupně, až když je potřebujete.
+# 5. Výsledek porovnejte s komentářem "Očekávaný výsledek".
 #
 # Úlohy NAVÍC jsou dobrovolné. Slouží rychlejším skupinám
 # a pozdějšímu procvičení; nemusíte je dokončit během praktika.
@@ -118,10 +118,10 @@ if (
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Jedno číslo, 30.
 # Nápověda 1: R bez závorek provádí násobení před sčítáním;
 # budete potřebovat operátory + a *.
 # Nápověda 2: Součet, který se má provést první, uzavřete do závorek.
+# Očekávaný výsledek: Jedno číslo, 30.
 # Interpretace: Jaký výsledek by vznikl bez závorek a proč?
 
 
@@ -144,10 +144,10 @@ pocet_nohou
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Environment obsahuje pocet_kridel s hodnotou 2.
 # Nápověda 1: Samotné přiřazení objekt vytvoří, ale ve skriptu
 # automaticky nevypíše jeho hodnotu.
 # Nápověda 2: Použijte <- a na další řádek napište jen pocet_kridel.
+# Očekávaný výsledek: Environment obsahuje pocet_kridel s hodnotou 2.
 # Interpretace: Co by po restartu R zůstalo — objekt v paměti, nebo příkaz ve skriptu?
 
 
@@ -205,11 +205,11 @@ str(object = data_savci)
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: 83 řádků, 11 sloupců; jeden řádek je jeden
-# zastoupený druh savce, nikoli jeden jedinec ani všechny druhy savců.
 # Nápověda 1: Rozlište rozměry tabulky od biologického významu řádku.
 # Nápověda 2: Počty přečtěte z nrow() a ncol(); význam řádku ověřte
 # v prvních záznamech a popisu dat.
+# Očekávaný výsledek: 83 řádků, 11 sloupců; jeden řádek je jeden
+# zastoupený druh savce, nikoli jeden jedinec ani všechny druhy savců.
 # Interpretace: Na jakou populaci nesmíme výsledky automaticky zobecnit?
 
 
@@ -236,10 +236,10 @@ head(
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Vektor má 83 hodnot; první jsou 11.9, 7, 9.6,
-# 9.1, 20 a 9.6 hodiny.
 # Nápověda 1: Sloupec tabulky vyberete pomocí znaku $.
 # Nápověda 2: Použijte data_savci$awake, potom length() a head().
+# Očekávaný výsledek: Vektor má 83 hodnot; první jsou 11.9, 7, 9.6,
+# 9.1, 20 a 9.6 hodiny.
 # Interpretace: Co představuje jedna hodnota ve vektoru vec_bdeni?
 
 
@@ -270,11 +270,11 @@ stripchart(
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: Rozsah je přibližně 2-20 hodin a mnoho hodnot
-# leží zhruba mezi 8 a 14 hodinami.
 # Nápověda 1: Každý bod představuje jednu hodnotu jednoho zastoupeného druhu.
 # Nápověda 2: Na vodorovné ose najděte oba krajní body a úsek,
 # kde je bodů nad sebou nejvíce.
+# Očekávaný výsledek: Rozsah je přibližně 2-20 hodin a mnoho hodnot
+# leží zhruba mezi 8 a 14 hodinami.
 # Interpretace: Kterou informaci bychom z jediného průměru neviděli?
 
 
@@ -304,11 +304,11 @@ hist(
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Graf má méně a širších sloupců, ale obsahuje
-# stejných 83 pozorování a stejný rozsah hodnot.
 # Nápověda 1: Šířku intervalů určuje způsob vytvoření jejich hranic.
 # Nápověda 2: V argumentu breaks použijte seq() s hranicemi 0 a 22
 # a nastavte by = 4.
+# Očekávaný výsledek: Graf má méně a širších sloupců, ale obsahuje
+# stejných 83 pozorování a stejný rozsah hodnot.
 # Interpretace: Co určila data a co jste zvolili vy?
 
 
@@ -334,11 +334,11 @@ boxplot(
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: Zvýrazní medián, prostřední polovinu a rozsah
-# bez možných odlehlých hodnot; skryje jednotlivé hodnoty a jejich hromadění.
 # Nápověda 1: Krabicový graf hodnoty shrnuje, bodový graf je ukazuje jednotlivě.
 # Nápověda 2: V krabici najděte čáru mediánu a potom porovnejte,
 # zda v obou grafech vidíte jednotlivé hodnoty a jejich hromadění.
+# Očekávaný výsledek: Zvýrazní medián, prostřední polovinu a rozsah
+# bez možných odlehlých hodnot; skryje jednotlivé hodnoty a jejich hromadění.
 # Interpretace: Proč může být užitečné vidět více než jeden typ grafu?
 
 
@@ -370,11 +370,11 @@ barplot(
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: Nejčastější známá kategorie je herbi s 32 druhy;
-# typ potravy chybí u 7 zastoupených druhů.
 # Nápověda 1: Výška sloupce a číslo v tabulce vyjadřují stejnou četnost.
 # Nápověda 2: Najděte známou kategorii s nejvyšší četností
 # a samostatně řádek nebo sloupec označený <NA>.
+# Očekávaný výsledek: Nejčastější známá kategorie je herbi s 32 druhy;
+# typ potravy chybí u 7 zastoupených druhů.
 # Interpretace: Proč nesmíme sedm chybějících údajů označit za nový typ potravy?
 
 
@@ -414,12 +414,12 @@ sd(x = vec_spanek)
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: 1.9; 19.9; přibližně 10.43; 7.85; 10.1;
-# 13.75; 5.9 a přibližně 4.45 hodiny.
 # Nápověda 1: Rozdělte výstupy na polohu, variabilitu a krajní hodnoty;
 # všechny ponechte v původní jednotce proměnné.
 # Nápověda 2: Q1 a Q3 ohraničují prostředních 50 % hodnot a jejich
 # rozdíl je IQR; průměr a SD tvoří druhou přirozenou dvojici.
+# Očekávaný výsledek: 1.9; 19.9; přibližně 10.43; 7.85; 10.1;
+# 13.75; 5.9 a přibližně 4.45 hodiny.
 # Interpretace: Jak spolu Q1, Q3 a IQR popisují prostřední polovinu hodnot?
 # Která dvojice polohy a variability se přirozeně doplňuje?
 
@@ -451,11 +451,11 @@ median(x = vec_maly_s_extremem)
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: Průměr se změnil z 10 na 15.6,
-# medián pouze z 10 na 10.
 # Nápověda 1: Extrémní hodnota nemusí ovlivnit všechny míry středu stejně.
 # Nápověda 2: Porovnejte oba výstupy mean() a oba výstupy median();
 # do součtu pro průměr vstupuje celá velikost hodnoty 40.
+# Očekávaný výsledek: Průměr se změnil z 10 na 15.6,
+# medián pouze z 10 na 10.
 # Interpretace: Který souhrn je v tomto příkladu odolnější vůči extrému?
 
 
@@ -511,12 +511,12 @@ str(object = vec_doba_spanku)
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: doba spánku je spojitá; počet druhů diskrétní;
-# typ potravy nominální; velikostní kategorie ordinální.
 # Nápověda 1: Typ určujte podle významu a způsobu vzniku hodnot,
 # nikoli jen podle jejich vzhledu v R.
 # Nápověda 2: Měření je spojité, počet diskrétní, názvy bez pořadí
 # nominální a názvy s přirozeným pořadím ordinální.
+# Očekávaný výsledek: doba spánku je spojitá; počet druhů diskrétní;
+# typ potravy nominální; velikostní kategorie ordinální.
 # Interpretace: Proč může být číslo někdy kategorií a text někdy pořadím?
 
 
@@ -533,14 +533,14 @@ str(object = vec_doba_spanku)
 # Vaše řešení:
 
 
+# Nápověda 1: Číselné a kategoriální proměnné nepopisujeme stejným způsobem.
+# Nápověda 2: Pro kategorie použijte četnosti a sloupcový graf;
+# pro číselná data graf rozdělení a souhrn středu i variability.
 # Očekávaný výsledek: Pro spojitou proměnnou bodový graf, histogram
 # nebo boxplot a dvojice medián + IQR nebo průměr + SD podle tvaru;
 # pro diskrétní četnosti a bodový, sloupcový nebo vhodný histogram;
 # pro nominální četnosti a sloupcový graf; pro ordinální četnosti
 # a sloupcový graf se zachovaným pořadím kategorií.
-# Nápověda 1: Číselné a kategoriální proměnné nepopisujeme stejným způsobem.
-# Nápověda 2: Pro kategorie použijte četnosti a sloupcový graf;
-# pro číselná data graf rozdělení a souhrn středu i variability.
 # Interpretace: Proč neexistuje jeden nejlepší graf a souhrn pro všechny typy?
 
 
@@ -564,11 +564,11 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Většina hodnot je stlačena u nízkých hmotností
-# a několik velmi vysokých hodnot výrazně prodlužuje pravý konec rozdělení.
 # Nápověda 1: Jeden graf má ukázat tvar rozdělení a druhý jeho kvartilový souhrn.
 # Nápověda 2: Použijte hist() a boxplot(); u boxplot() nastavte
 # horizontal = TRUE.
+# Očekávaný výsledek: Většina hodnot je stlačena u nízkých hmotností
+# a několik velmi vysokých hodnot výrazně prodlužuje pravý konec rozdělení.
 # Interpretace: Je rozdělení přibližně symetrické?
 
 
@@ -583,12 +583,12 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Průměr je přibližně 166.14 kg,
-# medián 1.67 kg.
 # Nápověda 1: Potřebujete jednu míru využívající všechny velikosti hodnot
 # a jednu míru založenou na jejich pořadí.
 # Nápověda 2: Použijte mean() a median(); oběma předejte
 # vec_hmotnost argumentem x.
+# Očekávaný výsledek: Průměr je přibližně 166.14 kg,
+# medián 1.67 kg.
 # Interpretace: Který souhrn více ovlivnili nejtěžší savci?
 
 
@@ -604,13 +604,13 @@ vec_hmotnost <-
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: Medián 1.67 kg lépe popisuje prostřední zastoupený
-# druh v silně pravostranném rozdělení. Závěr se týká druhů zastoupených
-# v tabulce, nikoli jednotlivých savců ani automaticky všech druhů savců.
 # Nápověda 1: U silně pravostranných dat hledejte souhrn,
 # který méně ovlivní několik mimořádně velkých hodnot.
 # Nápověda 2: Porovnejte citlivost průměru a mediánu a z L01-K04
 # převezměte správnou jednotku pozorování i hranici zobecnění.
+# Očekávaný výsledek: Medián 1.67 kg lépe popisuje prostřední zastoupený
+# druh v silně pravostranném rozdělení. Závěr se týká druhů zastoupených
+# v tabulce, nikoli jednotlivých savců ani automaticky všech druhů savců.
 # Interpretace: Jak by se význam průměru změnil, kdyby každý řádek byl jedinec?
 
 
@@ -638,9 +638,9 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Číselný vektor délky 5 v uvedeném pořadí.
 # Nápověda 1: Nejprve spojte jednotlivé hodnoty do jednoho objektu.
 # Nápověda 2: Hodnoty vložte do c() a výsledek přiřaďte pomocí <-.
+# Očekávaný výsledek: Číselný vektor délky 5 v uvedeném pořadí.
 # Interpretace: Co by v biologické tabulce představovala jedna hodnota?
 
 
@@ -655,9 +655,9 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Délka 83; hodnoty 12.1, 17 a 14.4.
 # Nápověda 1: Jedna kontrola má popsat velikost vektoru, druhá jeho začátek.
 # Nápověda 2: Použijte length() a v head() nastavte n = 3.
+# Očekávaný výsledek: Délka 83; hodnoty 12.1, 17 a 14.4.
 
 
 #----------------------------------------#
@@ -671,9 +671,9 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: 11 názvů proměnných a čtyři poslední druhy.
 # Nápověda 1: Potřebujete jednu funkci pro sloupce a jinou pro konec tabulky.
 # Nápověda 2: Použijte names() a tail() s argumentem n = 4.
+# Očekávaný výsledek: 11 názvů proměnných a čtyři poslední druhy.
 # Interpretace: Proč samotný název sloupce nemusí stačit k pochopení proměnné?
 
 
@@ -688,9 +688,9 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Vektor délky 83; některé hodnoty chybí.
 # Nápověda 1: Vyberte požadovaný sloupec pomocí $ a uložte jej jako vektor.
 # Nápověda 2: Použijte data_savci$brainwt a délku ověřte pomocí length().
+# Očekávaný výsledek: Vektor délky 83; některé hodnoty chybí.
 # Interpretace: Znamená délka 83, že známe hmotnost mozku pro všech 83 druhů?
 
 
@@ -710,9 +710,9 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Minimum 4.1 a maximum 22.1 hodiny.
 # Nápověda 1: Hledáte oba krajní body číselných hodnot.
 # Nápověda 2: Použijte min() a max() a sloupec předejte argumentem x.
+# Očekávaný výsledek: Minimum 4.1 a maximum 22.1 hodiny.
 # Interpretace: Jak souvisejí tyto hodnoty s dobou spánku během 24 hodin?
 
 
@@ -727,9 +727,9 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Průměr přibližně 13.57 a medián 13.9 hodiny.
 # Nápověda 1: Porovnejte míru založenou na součtu s mírou založenou na pořadí.
 # Nápověda 2: Použijte mean() a median() s proměnnou v argumentu x.
+# Očekávaný výsledek: Průměr přibližně 13.57 a medián 13.9 hodiny.
 # Interpretace: Jsou si souhrny bližší než u tělesné hmotnosti?
 
 
@@ -744,9 +744,9 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Přibližně 0.174, 1.670 a 41.750 kg.
 # Nápověda 1: Hledané percentily odpovídají třem podílům mezi 0 a 1.
 # Nápověda 2: V quantile() nastavte probs = c(0.25, 0.50, 0.75).
+# Očekávaný výsledek: Přibližně 0.174, 1.670 a 41.750 kg.
 # Interpretace: Jak je možné, že 75 % hodnot nepřesahuje 41.75 kg,
 # ale průměr je přibližně 166 kg?
 
@@ -762,11 +762,11 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: IQR je přibližně 41.58 kg,
-# SD přibližně 786.84 kg.
 # Nápověda 1: Jedna míra popisuje prostřední polovinu hodnot,
 # druhá využívá odchylky všech hodnot od průměru.
 # Nápověda 2: Použijte IQR() a sd() s vec_hmotnost v argumentu x.
+# Očekávaný výsledek: IQR je přibližně 41.58 kg,
+# SD přibližně 786.84 kg.
 # Interpretace: Který souhrn silněji odráží několik mimořádně těžkých druhů?
 
 
@@ -781,10 +781,10 @@ vec_hmotnost <-
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Rozdíl je přibližně 41.58 kg a shoduje se s IQR().
 # Nápověda 1: IQR je šířka intervalu obsahujícího prostřední polovinu hodnot.
 # Nápověda 2: Z výstupu quantile() odečtěte Q1 od Q3 a výsledek
 # porovnejte s IQR(x = vec_hmotnost).
+# Očekávaný výsledek: Rozdíl je přibližně 41.58 kg a shoduje se s IQR().
 # Interpretace: Proč medián do šířky prostřední poloviny nevstupuje?
 
 
@@ -802,11 +802,11 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Oba průměry jsou 10. Směrodatná odchylka
-# je přibližně 1.58 pro vec_uzky a 6.32 pro vec_siroky.
 # Nápověda 1: Stejná poloha nevylučuje odlišnou variabilitu.
 # Nápověda 2: Pro každý vektor spusťte mean() a sd(), tedy celkem
 # čtyři samostatné výpočty.
+# Očekávaný výsledek: Oba průměry jsou 10. Směrodatná odchylka
+# je přibližně 1.58 pro vec_uzky a 6.32 pro vec_siroky.
 # Interpretace: Proč samotný průměr nestačí k popisu těchto vektorů?
 
 
@@ -826,11 +826,11 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Jemnější členění ukáže více lokálních nerovností,
-# ale oba grafy zobrazují stejná data.
 # Nápověda 1: Počet intervalů mění rozlišení histogramu, nikoli vstupní data.
 # Nápověda 2: Spusťte hist() dvakrát a v argumentu breaks použijte
 # nejprve 5 a potom 20.
+# Očekávaný výsledek: Jemnější členění ukáže více lokálních nerovností,
+# ale oba grafy zobrazují stejná data.
 # Interpretace: Který prvek grafu je volbou analytika?
 
 
@@ -845,11 +845,11 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Hodnoty se na logaritmické škále rozloží
-# po ose rovnoměrněji než v původních kilogramech.
 # Nápověda 1: Nejdříve změňte škálu hodnot a teprve potom je zobrazte.
 # Nápověda 2: Do argumentu x funkce hist() vložte log10(vec_hmotnost)
 # a popisek nastavte argumentem xlab.
+# Očekávaný výsledek: Hodnoty se na logaritmické škále rozloží
+# po ose rovnoměrněji než v původních kilogramech.
 # Interpretace: Které pořadí a biologické informace se zachovaly
 # a které číselné vzdálenosti se na log10 škále změnily?
 
@@ -865,11 +865,11 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Nejvyšší četnost má NA s 29 záznamy;
-# z pojmenovaných kategorií má lc 27 záznamů.
 # Nápověda 1: Chybějící hodnoty musí zůstat ve výpočtu četností viditelné.
 # Nápověda 2: V table() nastavte useNA = "ifany" a výslednou tabulku
 # předejte argumentu height v barplot().
+# Očekávaný výsledek: Nejvyšší četnost má NA s 29 záznamy;
+# z pojmenovaných kategorií má lc 27 záznamů.
 # Interpretace: Proč nelze chybějící údaj interpretovat jako stupeň ohrožení?
 
 
@@ -889,12 +889,12 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Tabulka obsahuje 19 zastoupených řádů savců;
-# nejvíce je Rodentia
-# s 22 zastoupenými druhy.
 # Nápověda 1: Kategorie řádu shrňte podle počtu jejich výskytů.
 # Nápověda 2: Sloupec order vyberte pomocí $ a jeho hodnoty předejte
 # funkci table() jako pojmenovaný vstup rad.
+# Očekávaný výsledek: Tabulka obsahuje 19 zastoupených řádů savců;
+# nejvíce je Rodentia
+# s 22 zastoupenými druhy.
 # Interpretace: Jak se změnila jednotka pozorování proti data_savci?
 
 
@@ -909,10 +909,10 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Smysluplná je tabulka četností a sloupcový graf;
-# průměr ani SD pro názvy kategorií význam nemají.
 # Nápověda 1: Nominální proměnnou popisujte četnostmi, nikoli průměrem.
 # Nápověda 2: Četnosti vytvořte pomocí table() a zobrazte pomocí barplot().
+# Očekávaný výsledek: Smysluplná je tabulka četností a sloupcový graf;
+# průměr ani SD pro názvy kategorií význam nemají.
 # Interpretace: Proč pořadí kategorií není biologickou informací?
 
 
@@ -927,11 +927,11 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Kategorie jsou v pořadí malý, střední, velký,
-# nikoli v abecedním pořadí.
 # Nápověda 1: U ordinální proměnné musí graf zachovat přirozené pořadí kategorií.
 # Nápověda 2: Pořadí je uloženo v levels faktoru; použijte table()
 # a jeho výsledek předejte do barplot().
+# Očekávaný výsledek: Kategorie jsou v pořadí malý, střední, velký,
+# nikoli v abecedním pořadí.
 # Interpretace: Co by se ztratilo, kdybychom pořadí hladin neuložili?
 
 
@@ -947,12 +947,12 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: R může oba objekty popsat jako numeric/double,
-# ale doba spánku je spojitá a počet druhů diskrétní proměnná.
 # Nápověda 1: Technické uložení objektu a statistický význam proměnné
 # jsou dvě různé otázky.
 # Nápověda 2: Uložení zjistěte pomocí class() a typeof(); statistický typ
 # určete podle toho, zda hodnoty vznikly měřením nebo počítáním.
+# Očekávaný výsledek: R může oba objekty popsat jako numeric/double,
+# ale doba spánku je spojitá a počet druhů diskrétní proměnná.
 # Interpretace: Proč technické uložení samo nestačí k volbě grafu?
 
 
@@ -972,10 +972,10 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Funkce vrátí NA, protože alespoň jedna hodnota chybí.
 # Nápověda 1: Nejdříve pozorujte výchozí chování funkce při výskytu NA.
 # Nápověda 2: Zavolejte mean() s příslušným sloupcem v argumentu x
 # a argument na.rm zatím nepřidávejte.
+# Očekávaný výsledek: Funkce vrátí NA, protože alespoň jedna hodnota chybí.
 # Interpretace: Znamená NA, že průměr známých hodnot neexistuje?
 
 
@@ -991,11 +991,11 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Chybí 22 hodnot; průměr 61 známých hodnot
-# je přibližně 1.88 hodiny.
 # Nápověda 1: Logické hodnoty TRUE lze sečíst a chybějící hodnoty
 # lze při výpočtu výslovně odstranit.
 # Nápověda 2: Použijte sum(is.na(...)) a v mean() nastavte na.rm = TRUE.
+# Očekávaný výsledek: Chybí 22 hodnot; průměr 61 známých hodnot
+# je přibližně 1.88 hodiny.
 # Interpretace: Ke kolika druhům se vypočítaný průměr skutečně vztahuje?
 
 
@@ -1010,10 +1010,10 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Průměr je přibližně 1.88 hodiny,
-# medián 1.5 hodiny.
 # Nápověda 1: Obě míry středu musí pracovat se stejnou sadou známých hodnot.
 # Nápověda 2: Použijte mean() a median() a v obou nastavte na.rm = TRUE.
+# Očekávaný výsledek: Průměr je přibližně 1.88 hodiny,
+# medián 1.5 hodiny.
 # Interpretace: Co musíme uvést, aby čtenář věděl, jak jsme naložili s NA?
 
 
@@ -1034,12 +1034,12 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: 83 známých hodnot; průměr přibližně 13.57,
-# medián 13.9 hodiny. Interpretace musí mluvit o zastoupených druzích.
 # Nápověda 1: Úplnost dat a tvar rozdělení určují, jak opatrně
 # budete později číst číselné souhrny.
 # Nápověda 2: Začněte length() a sum(is.na(...)), potom navazujte
 # postupem použitým pro vec_spanek.
+# Očekávaný výsledek: 83 známých hodnot; průměr přibližně 13.57,
+# medián 13.9 hodiny. Interpretace musí mluvit o zastoupených druzích.
 # Interpretace: Která informace z grafu se nevešla do jediného souhrnu?
 
 
@@ -1055,12 +1055,12 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Známe 56 hodnot; průměr je přibližně 0.282 kg,
-# medián přibližně 0.0124 kg a rozdělení je silně pravostranné.
 # Nápověda 1: Nejdříve oddělte známé hodnoty od NA a potom posuďte
 # tvar jejich rozdělení.
 # Nápověda 2: Počet známých hodnot zjistěte pomocí sum(!is.na(...))
 # a u mean() i median() nastavte na.rm = TRUE.
+# Očekávaný výsledek: Známe 56 hodnot; průměr je přibližně 0.282 kg,
+# medián přibližně 0.0124 kg a rozdělení je silně pravostranné.
 # Interpretace: Který souhrn lépe popisuje prostřední známou hodnotu a proč?
 
 
@@ -1081,10 +1081,10 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Vektor obsahuje "kočka", "pes" a "morče"
-# a příkaz nevyžaduje předem existující objekty těchto jmen.
 # Nápověda 1: R rozlišuje textovou hodnotu od jména objektu podle zápisu.
 # Nápověda 2: Každý název uzavřete do uvozovek; funkce c() zůstává stejná.
+# Očekávaný výsledek: Vektor obsahuje "kočka", "pes" a "morče"
+# a příkaz nevyžaduje předem existující objekty těchto jmen.
 # Interpretace: Jakou chybovou zprávu by vyvolal původní řádek?
 
 
@@ -1100,10 +1100,10 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše řešení:
 
 
-# Očekávaný výsledek: Průměr je přibližně 10.43 hodiny.
 # Nápověda 1: Chyba „object not found“ často znamená nesprávné jméno objektu.
 # Nápověda 2: Porovnejte příkaz s Environment; správný objekt se jmenuje
 # vec_spanek.
+# Očekávaný výsledek: Průměr je přibližně 10.43 hodiny.
 # Interpretace: Proč je přesné a stabilní pojmenování důležité?
 
 
@@ -1126,13 +1126,13 @@ vec_siroky <- c(2, 6, 10, 14, 18)
 # Vaše odpověď:
 
 
-# Očekávaný výsledek: Počet pozorování a naměřené hmotnosti jsou údaje;
-# jednotka pozorování vyplývá z designu a definice tabulky;
-# šířka intervalů, barva a volba souhrnu jsou rozhodnutí analytika.
 # Nápověda 1: Ptejte se, zda položka vznikla pozorováním, návrhem tabulky,
 # nebo rozhodnutím při analýze.
 # Nápověda 2: Naměřené hodnoty oddělte od jednotky pozorování; mezi volby
 # analytika zařaďte to, co lze změnit úpravou grafu nebo souhrnu.
+# Očekávaný výsledek: Počet pozorování a naměřené hmotnosti jsou údaje;
+# jednotka pozorování vyplývá z designu a definice tabulky;
+# šířka intervalů, barva a volba souhrnu jsou rozhodnutí analytika.
 # Interpretace: Které analytické rozhodnutí mělo největší vliv na váš závěr?
 
 
