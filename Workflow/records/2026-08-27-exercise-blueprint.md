@@ -41,7 +41,7 @@ L01 permanently retains a bounded, skippable refresher covering script versus co
 | Variable types and description choice | 10 min |
 | Integrated typical-mammal task | 10 min |
 
-The direct-work estimate is 62-65 minutes. With file setup, teacher explanation, comparison of answers and transitions, the intended facilitated route fits comfortably within the 120-minute practical. `L01-K03` is a short teacher-led checkpoint rather than an individual task, and the longer same-mean/different-variability comparison was moved to optional task `L01-N25`. Optional tasks are excluded from the shared timing. A novice classroom timing trial remains part of human review.
+The direct-work estimate is 62-65 minutes. With file setup, teacher explanation, comparison of answers and transitions, the intended facilitated route fits comfortably within the 120-minute practical. `L01-K03` was a short teacher-led checkpoint rather than an individual task (since 2026-10-15 a short student prediction task, about 2 minutes; see `2026-10-15-exercise-style-c.md`), and the longer same-mean/different-variability comparison was moved to optional task `L01-N25`. Optional tasks are excluded from the shared timing. A novice classroom timing trial remains part of human review.
 
 ## Data and dependencies
 
