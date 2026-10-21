@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "fingerprintAlgorithm": "MD5",
-  "brandFingerprint": "4190e57fd56dbaf9ada460fb21c14b10",
+  "brandFingerprint": "de5feaf61b79803324901fb0d6435573",
   "inputs": {
     "theme/colors.json": "c900347b9664c2d5258a1c3aa02d2c5e",
     "theme/fonts.json": "a7fd2ddc5131dbe43f2772c5a48dbefd",
@@ -24,7 +24,7 @@
     "R/Functions/Theme_generation/generate_r_theme.R": "f09061f6b65d7bc28a4cf7fea1f11044",
     "R/Functions/render_glossary_term.R": "3f7e76cc149e67e28d0e95720d251ec0",
     "R/Functions/prepare_presentation_variant.R": "1ef7d18ceed094c19bfb67661dc7ac0e",
-    "R/Functions/render_presentation_outputs.R": "27aa2975e99a20713e84206f34a41954",
+    "R/Functions/render_presentation_outputs.R": "db735bf8c3ba0c6f842f5ad48d3f1b9e",
     "R/render_all.R": "54baae61d150fad891a1063a7eeecd9b",
     "R/render_presentation.R": "90d8294c121a197cb41710bf81c4b835",
     "R/render_skripta.R": "45ad2167954afbddb707149c00f59e24",
