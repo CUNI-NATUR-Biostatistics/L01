@@ -73,6 +73,9 @@ render_presentation_outputs <- function() {
     args = c(
       "reveal", "--fragments=false",
       "--size", "1050x700",
+      # Full headless Chrome hangs in printToPDF on Windows when its sandbox
+      # is blocked; chrome-headless-shell prints without that process.
+      "--headless", "shell",
       # `system2()` requires path arguments containing spaces to be quoted.
       shQuote(static_html),
       shQuote(raw_pdf)
